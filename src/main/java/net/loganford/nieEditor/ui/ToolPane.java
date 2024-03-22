@@ -6,8 +6,10 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ToolPane extends JPanel implements ChangeListener {
+public class ToolPane extends JPanel implements ChangeListener, ActionListener {
     private EditorWindow editorWindow;
 
     @Getter private JCheckBox snapEntities;
@@ -15,6 +17,8 @@ public class ToolPane extends JPanel implements ChangeListener {
     @Getter private JCheckBox showGrid;
     @Getter private JSpinner gridWidth;
     @Getter private JSpinner gridHeight;
+
+    @Getter private JComboBox<String> zoomBox;
 
     public ToolPane(EditorWindow editorWindow) {
         this.editorWindow = editorWindow;
@@ -49,11 +53,23 @@ public class ToolPane extends JPanel implements ChangeListener {
         gridHeight.addChangeListener(this);
         add(gridHeight);
 
+        //Zoom
         separator = new JSeparator(JSeparator.VERTICAL);
         separator.setPreferredSize(new Dimension(4, 24));
         add(separator);
 
+        JLabel zoomLabel = new JLabel("Zoom:");
+        add(zoomLabel);
+        String[] zoomOptions = {"1", "2", "4", "8"};
+        zoomBox = new JComboBox<>(zoomOptions);
+        zoomBox.addActionListener(this);
+        add(zoomBox);
+
         //Tools
+        separator = new JSeparator(JSeparator.VERTICAL);
+        separator.setPreferredSize(new Dimension(4, 24));
+        add(separator);
+
         JRadioButton penTool = new JRadioButton("Pen", true);
         JRadioButton rectangleTool = new JRadioButton("Rectangle");
         ButtonGroup toolButtonGroup = new ButtonGroup();
@@ -83,6 +99,14 @@ public class ToolPane extends JPanel implements ChangeListener {
         if(e.getSource() == showGrid) {
             editorWindow.getRoomPanel().setShowGrid(((JCheckBox)e.getSource()).isSelected());
             editorWindow.getRoomPanel().repaint();
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == zoomBox) {
+            int zoom = Integer.parseInt((String) zoomBox.getSelectedItem());
+            editorWindow.setZoom(zoom);
         }
     }
 }

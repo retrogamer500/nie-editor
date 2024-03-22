@@ -31,6 +31,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
 
     @Getter private RoomEditor roomPanel;
     @Getter private Room selectedRoom;
+    @Getter private int zoom = 1;
     private JFrame frame;
     private boolean projectDirty = false;
 
@@ -306,6 +307,12 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
         else {
             frame.setTitle("NIE Editor - " + projectFile.getName());
         }
+    }
+
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
+        getListeners().forEach(l -> l.selectedRoomChanged(getSelectedRoom()));
+        roomScrollPane.repaint();
     }
 
     private void saveVal(String key, String val) {

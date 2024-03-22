@@ -11,13 +11,7 @@ public class EntitiesTab extends JPanel {
         //Setup history list
         ScrollPane scrollPane = new ScrollPane();
 
-
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Entities");
-        DefaultMutableTreeNode n1 = new DefaultMutableTreeNode("Players");
-        DefaultMutableTreeNode n2 = new DefaultMutableTreeNode("Enemies");
-
-        root.add(n1);
-        root.add(n2);
 
         JTree tree = new JTree(root);
         tree.setRootVisible(false);
@@ -26,10 +20,9 @@ public class EntitiesTab extends JPanel {
 
         //Setup buttons
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2, 2));
-        buttonPanel.add(new JButton("Add Entity"));
-        buttonPanel.add(new JButton("Add Group"));
-        buttonPanel.add(new JButton("Remove "));
+        buttonPanel.setLayout(new GridLayout(1, 3));
+        buttonPanel.add(new JButton("Add"));
+        buttonPanel.add(new JButton("Remove"));
         buttonPanel.add(new JButton("Edit"));
         add(buttonPanel, BorderLayout.SOUTH);
     }

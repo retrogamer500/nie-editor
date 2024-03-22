@@ -28,9 +28,10 @@ public class RoomEditor extends JPanel implements ProjectListener {
         this.width = width;
         this.height = height;
 
-        setPreferredSize(new Dimension(width, height));
-        setMinimumSize(new Dimension(width, height));
-        setMaximumSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+        setMinimumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+        setMaximumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+        revalidate();
     }
 
     @Override
@@ -44,6 +45,9 @@ public class RoomEditor extends JPanel implements ProjectListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        Graphics2D g2d = ((Graphics2D) g);
+        g2d.scale(editorWindow.getZoom(), editorWindow.getZoom());
 
         if(editorWindow.getSelectedRoom() != null) {
             g.setColor(Color.lightGray);
