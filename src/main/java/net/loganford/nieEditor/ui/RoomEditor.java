@@ -19,6 +19,7 @@ public class RoomEditor extends JPanel implements ProjectListener {
     public RoomEditor(EditorWindow editorWindow, int width, int height) {
         this.editorWindow = editorWindow;
         editorWindow.getListeners().add(this);
+        setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         resizeRoom(width, height);
     }

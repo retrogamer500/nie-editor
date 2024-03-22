@@ -49,6 +49,22 @@ public class ToolPane extends JPanel implements ChangeListener {
         gridHeight.addChangeListener(this);
         add(gridHeight);
 
+        separator = new JSeparator(JSeparator.VERTICAL);
+        separator.setPreferredSize(new Dimension(4, 24));
+        add(separator);
+
+        //Tools
+        JRadioButton penTool = new JRadioButton("Pen", true);
+        JRadioButton rectangleTool = new JRadioButton("Rectangle");
+        ButtonGroup toolButtonGroup = new ButtonGroup();
+        toolButtonGroup.add(penTool);
+        toolButtonGroup.add(rectangleTool);
+        JLabel toolLabel = new JLabel("Tools:");
+        add(toolLabel);
+        add(penTool);
+        add(rectangleTool);
+
+
 
         setVisible(true);
     }

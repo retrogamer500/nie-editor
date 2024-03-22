@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ActionPerformer {
 
-    public static int MAX_HISTORY = 256;
+    public static int MAX_HISTORY = 32;
 
     private Room room;
 
