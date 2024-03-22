@@ -10,8 +10,8 @@ import java.awt.*;
 public class ToolPane extends JPanel implements ChangeListener {
     private EditorWindow editorWindow;
 
-    @Getter private JCheckBox snapObjects;
-    @Getter private JCheckBox overwriteObjects;
+    @Getter private JCheckBox snapEntities;
+    @Getter private JCheckBox overwriteEntities;
     @Getter private JCheckBox showGrid;
     @Getter private JSpinner gridWidth;
     @Getter private JSpinner gridHeight;
@@ -21,13 +21,13 @@ public class ToolPane extends JPanel implements ChangeListener {
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        snapObjects = new JCheckBox("Snap Objects", true);
-        snapObjects.addChangeListener(this);
-        add(snapObjects);
+        snapEntities = new JCheckBox("Snap Entities", true);
+        snapEntities.addChangeListener(this);
+        add(snapEntities);
 
-        overwriteObjects = new JCheckBox("Overwrite Objects", true);
-        overwriteObjects.addChangeListener(this);
-        add(overwriteObjects);
+        overwriteEntities = new JCheckBox("Overwrite Entities", true);
+        overwriteEntities.addChangeListener(this);
+        add(overwriteEntities);
 
         showGrid = new JCheckBox("Show Grid", true);
         showGrid.addChangeListener(this);

@@ -34,6 +34,7 @@ public class ActionPerformer {
         }
 
         editorWindow.getListeners().forEach(l -> l.historyChanged(room));
+        editorWindow.setProjectDirty(true);
     }
 
     public void undo(EditorWindow editorWindow) {
@@ -45,6 +46,7 @@ public class ActionPerformer {
         lastActionIndex--;
 
         editorWindow.getListeners().forEach(l -> l.historyChanged(room));
+        editorWindow.setProjectDirty(true);
     }
 
     public void redo(EditorWindow editorWindow) {
@@ -53,6 +55,7 @@ public class ActionPerformer {
             actionList.get(lastActionIndex).perform();
 
             editorWindow.getListeners().forEach(l -> l.historyChanged(room));
+            editorWindow.setProjectDirty(true);
         }
     }
 }

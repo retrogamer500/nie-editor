@@ -32,7 +32,7 @@ public class RightPane extends JPanel implements ProjectListener {
     }
 
     @Override
-    public void roomSelectionChanged(Room room) {
+    public void selectedRoomChanged(Room room) {
         setVisible(room != null);
     }
 }

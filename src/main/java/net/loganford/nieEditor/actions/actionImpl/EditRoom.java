@@ -33,8 +33,7 @@ public class EditRoom implements Action {
         room.setHeight(newHeight);
 
         editorWindow.getListeners().forEach(ProjectListener::roomListChanged);
-        editorWindow.getListeners().forEach(l -> l.roomSelectionChanged(editorWindow.getSelectedRoom()));
-        editorWindow.setProjectDirty(true);
+        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
     }
 
     @Override
@@ -44,8 +43,7 @@ public class EditRoom implements Action {
         room.setHeight(oldHeight);
 
         editorWindow.getListeners().forEach(ProjectListener::roomListChanged);
-        editorWindow.getListeners().forEach(l -> l.roomSelectionChanged(editorWindow.getSelectedRoom()));
-        editorWindow.setProjectDirty(true);
+        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
     }
 
     @Override

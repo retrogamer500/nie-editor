@@ -41,7 +41,7 @@ public class HistoryTab extends JPanel implements ProjectListener, ActionListene
     }
 
     @Override
-    public void roomSelectionChanged(Room room) {
+    public void selectedRoomChanged(Room room) {
         resetHistory(room);
     }
 

@@ -11,10 +11,7 @@ import org.apache.commons.io.FileUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -59,14 +56,17 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
             JMenu menu = new JMenu("File");
 
             JMenuItem jmi = new JMenuItem("New Project");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
             jmi = new JMenuItem("Open Project");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
             jmi = new JMenuItem("Save Project");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
@@ -83,10 +83,12 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
             JMenu menu = new JMenu("Edit");
 
             JMenuItem jmi = new JMenuItem("Undo");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
             jmi = new JMenuItem("Redo");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
@@ -125,7 +127,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
                     setProjectDirty(false);
                     getListeners().forEach(l -> l.projectChanged(project));
                     getListeners().forEach(ProjectListener::roomListChanged);
-                    getListeners().forEach(l -> l.roomSelectionChanged(null));
+                    getListeners().forEach(l -> l.selectedRoomChanged(null));
                 }
                 catch(IOException ioException) {
                     log.error("Unable to load file", ioException);
@@ -199,7 +201,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
                 setProjectDirty(false);
                 getListeners().forEach(l -> l.projectChanged(project));
                 getListeners().forEach(ProjectListener::roomListChanged);
-                getListeners().forEach(l -> l.roomSelectionChanged(null));
+                getListeners().forEach(l -> l.selectedRoomChanged(null));
 
             } catch (IOException ioException) {
                 log.error("Unable to load file", ioException);
@@ -219,6 +221,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
         }
 
         JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Create New Project");
         chooser.setSelectedFile(new File("new_project.nep"));
         chooser.setFileFilter(new FileNameExtensionFilter("NIE Editor Projects", "nep"));
         int returnVal = chooser.showSaveDialog(null);
@@ -240,7 +243,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
                 saveVal(LAST_FILE_LOCATION, projectFile.getAbsolutePath());
                 getListeners().forEach(l -> l.projectChanged(project));
                 getListeners().forEach(ProjectListener::roomListChanged);
-                getListeners().forEach(l -> l.roomSelectionChanged(null));
+                getListeners().forEach(l -> l.selectedRoomChanged(null));
             } catch (IOException ioException) {
                 log.error("Unable to save file", ioException);
                 JOptionPane.showMessageDialog(null, "Unable to save file!");
@@ -267,11 +270,11 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
 
     public void setSelectedRoom(Room room) {
         this.selectedRoom = room;
-        getListeners().forEach(l -> l.roomSelectionChanged(room));
+        getListeners().forEach(l -> l.selectedRoomChanged(room));
     }
 
     @Override
-    public void roomSelectionChanged(Room room) {
+    public void selectedRoomChanged(Room room) {
         roomScrollPane.getVerticalScrollBar().setValue(0);
         roomScrollPane.getHorizontalScrollBar().setValue(0);
     }

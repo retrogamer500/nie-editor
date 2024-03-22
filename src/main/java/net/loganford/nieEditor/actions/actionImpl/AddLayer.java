@@ -10,26 +10,28 @@ public class AddLayer implements Action {
     private EditorWindow editorWindow;
     private Room room;
     private int position;
+    private String layerName;
 
-    public AddLayer(EditorWindow editorWindow, Room room, int position) {
+    public AddLayer(EditorWindow editorWindow, Room room, String layerName, int position) {
         this.editorWindow = editorWindow;
-        this.position = position;
         this.room = room;
+        this.layerName = layerName;
+        this.position = position;
     }
 
     @Override
     public void perform() {
-        room.getLayerList().add(position, new Layer());
+        Layer layer = new Layer();
+        layer.setName(layerName);
+        room.getLayerList().add(position, layer);
 
         editorWindow.getListeners().forEach(l -> l.layersChanged(room));
-        editorWindow.setProjectDirty(true);
     }
 
     @Override
     public void undo() {
         room.getLayerList().remove(position);
         editorWindow.getListeners().forEach(l -> l.layersChanged(room));
-        editorWindow.setProjectDirty(true);
     }
 
     @Override

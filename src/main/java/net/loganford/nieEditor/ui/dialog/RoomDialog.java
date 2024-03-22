@@ -21,8 +21,8 @@ public class RoomDialog {
         String title = newRoom ? "Create Room" : "Edit Room";
 
         JTextField roomNameField = new JTextField(roomName);
-        JSpinner roomWidthSpinner = new JSpinner(new SpinnerNumberModel(roomWidth, 1, 100000, 1));
-        JSpinner roomHeightSpinner = new JSpinner(new SpinnerNumberModel(roomHeight, 1, 100000, 1));
+        JSpinner roomWidthSpinner = new JSpinner(new SpinnerNumberModel(roomWidth, 1, 1000000, 1));
+        JSpinner roomHeightSpinner = new JSpinner(new SpinnerNumberModel(roomHeight, 1, 1000000, 1));
 
         JComponent[] inputs = {
                 new JLabel("Room Name:"),

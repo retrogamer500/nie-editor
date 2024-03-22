@@ -33,7 +33,7 @@ public class RoomEditor extends JPanel implements ProjectListener {
     }
 
     @Override
-    public void roomSelectionChanged(Room room) {
+    public void selectedRoomChanged(Room room) {
         if(room != null) {
             resizeRoom(room.getWidth(), room.getHeight());
         }
