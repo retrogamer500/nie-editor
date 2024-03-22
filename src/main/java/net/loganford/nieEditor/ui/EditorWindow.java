@@ -238,6 +238,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
             try {
                 project = new Project();
                 projectFile = file;
+                selectedRoom = null;
                 FileUtils.writeStringToFile(file, project.save(), StandardCharsets.UTF_8);
                 setProjectDirty(false);
                 saveVal(LAST_FILE_LOCATION, projectFile.getAbsolutePath());
