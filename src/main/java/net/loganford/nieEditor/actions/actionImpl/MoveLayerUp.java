@@ -45,6 +45,6 @@ public class MoveLayerUp implements Action {
 
     @Override
     public String toString() {
-        return "Move Layer Down";
+        return "Move Layer Up";
     }
 }
