@@ -1,10 +1,15 @@
 package net.loganford.nieEditor.ui.leftPane;
 
+import net.loganford.nieEditor.ui.dialog.EntityDialog;
+import net.loganford.nieEditor.ui.dialog.RoomDialog;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class EntitiesTab extends JPanel {
+public class EntitiesTab extends JPanel implements ActionListener {
     public EntitiesTab() {
         setLayout(new BorderLayout());
 
@@ -21,9 +26,22 @@ public class EntitiesTab extends JPanel {
         //Setup buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1, 3));
-        buttonPanel.add(new JButton("Add"));
+
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(this);
+        buttonPanel.add(addButton);
+
         buttonPanel.add(new JButton("Remove"));
         buttonPanel.add(new JButton("Edit"));
+
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Add")) {
+            EntityDialog ed = new EntityDialog(true);
+            ed.show();
+        }
     }
 }
