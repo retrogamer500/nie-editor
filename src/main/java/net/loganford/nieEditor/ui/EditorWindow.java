@@ -32,6 +32,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
     @Getter private File projectFile;
     @Getter private Project project;
 
+    @Getter private ToolPane toolPane;
     @Getter private RoomEditor roomPanel;
     @Getter private Room selectedRoom;
     @Getter @Setter EntityDefinition selectedEntity;
@@ -111,7 +112,8 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
             menuBar.add(menu);
         }
 
-        frame.add(new ToolPane(this), BorderLayout.NORTH);
+        toolPane = new ToolPane(this);
+        frame.add(toolPane, BorderLayout.NORTH);
         frame.add(new LeftPane(this), BorderLayout.WEST);
         frame.add(roomGrid(), BorderLayout.CENTER);
         frame.add(new RightPane(this), BorderLayout.EAST);

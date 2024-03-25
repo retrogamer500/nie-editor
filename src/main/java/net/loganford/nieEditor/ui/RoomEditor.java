@@ -3,12 +3,19 @@ package net.loganford.nieEditor.ui;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.tools.Pen;
+import net.loganford.nieEditor.tools.Rectangle;
+import net.loganford.nieEditor.tools.Tool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-public class RoomEditor extends JPanel implements ProjectListener {
+public class RoomEditor extends JPanel implements ProjectListener, MouseListener, MouseMotionListener {
 
+    private Tool tool;
     private EditorWindow editorWindow;
     private int width, height;
 
@@ -18,6 +25,8 @@ public class RoomEditor extends JPanel implements ProjectListener {
 
     public RoomEditor(EditorWindow editorWindow, int width, int height) {
         this.editorWindow = editorWindow;
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
         editorWindow.getListeners().add(this);
         setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
@@ -63,6 +72,87 @@ public class RoomEditor extends JPanel implements ProjectListener {
                     g.drawLine(0, j, width, j);
                 }
             }
+            if(tool != null) {
+                tool.render(g);
+            }
         }
+    }
+
+    private void startTool(int x, int y, boolean isLeftClick) {
+        if(editorWindow.getSelectedRoom() == null || editorWindow.getSelectedRoom().getSelectedLayer() == null) {
+            return;
+        }
+        if(editorWindow.getSelectedEntity() == null) {
+            return;
+        }
+
+        if(editorWindow.getToolPane().getPenTool().isSelected()) {
+            tool = new Pen(editorWindow, editorWindow.getSelectedRoom(), editorWindow.getSelectedRoom().getSelectedLayer(), editorWindow.getSelectedEntity(), true, isLeftClick);
+        }
+        else {
+            tool = new Rectangle(editorWindow, editorWindow.getSelectedRoom(), editorWindow.getSelectedRoom().getSelectedLayer(), editorWindow.getSelectedEntity(), true, isLeftClick);
+        }
+
+        tool.mousePressed(x, y);
+        repaint();
+    }
+
+    private void moveTool(int x, int y) {
+        tool.mouseMoved(x, y);
+        repaint();
+    }
+
+    private void endTool(int x, int y) {
+        tool.mouseReleased(x, y);
+        repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int x = e.getX()/editorWindow.getZoom();
+        int y = e.getY()/editorWindow.getZoom();
+
+        startTool(x, y, true);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if(tool != null) {
+            int x = e.getX() / editorWindow.getZoom();
+            int y = e.getY() / editorWindow.getZoom();
+
+            endTool(x, y);
+            tool = null;
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if(tool != null) {
+            int x = e.getX() / editorWindow.getZoom();
+            int y = e.getY() / editorWindow.getZoom();
+
+            moveTool(x, y);
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }

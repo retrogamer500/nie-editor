@@ -17,6 +17,8 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
     @Getter private JCheckBox showGrid;
     @Getter private JSpinner gridWidth;
     @Getter private JSpinner gridHeight;
+    @Getter private JRadioButton penTool;
+    @Getter private JRadioButton rectangleTool;
 
     @Getter private JComboBox<String> zoomBox;
 
@@ -70,8 +72,8 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
         separator.setPreferredSize(new Dimension(4, 24));
         add(separator);
 
-        JRadioButton penTool = new JRadioButton("Pen", true);
-        JRadioButton rectangleTool = new JRadioButton("Rectangle");
+        penTool = new JRadioButton("Pen", true);
+        rectangleTool = new JRadioButton("Rectangle");
         ButtonGroup toolButtonGroup = new ButtonGroup();
         toolButtonGroup.add(penTool);
         toolButtonGroup.add(rectangleTool);
