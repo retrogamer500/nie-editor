@@ -10,6 +10,7 @@ import net.loganford.nieEditor.ui.leftPane.LeftPane;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
 import org.apache.commons.io.FileUtils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -54,6 +55,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
         frame.setLayout(new BorderLayout());
         frame.addWindowListener(this);
         frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - frame.getSize().width) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - frame.getSize().height) / 2);
+        frame.setIconImage(ImageCache.getInstance().getImage("./data/sloth.png", 16, 16).getImage());
 
         JMenuBar menuBar = new JMenuBar();
         {

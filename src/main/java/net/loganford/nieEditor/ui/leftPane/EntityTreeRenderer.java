@@ -17,7 +17,7 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
         if(((DefaultMutableTreeNode) value).getUserObject() instanceof EntityDefinition) {
             EntityDefinition ed = (EntityDefinition)((DefaultMutableTreeNode) value).getUserObject();
             if(ed.getImagePath() != null) {
-                ImageIcon icon = ImageCache.getInstance().getImage(ed.getImagePath(), 16, 16);
+                ImageIcon icon = ImageCache.getInstance().getImage(ed.getImagePath(), 14, 14);
                 setIcon(icon);
             }
         }
