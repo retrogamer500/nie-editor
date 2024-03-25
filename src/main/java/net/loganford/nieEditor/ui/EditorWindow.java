@@ -1,7 +1,9 @@
 package net.loganford.nieEditor.ui;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
@@ -31,6 +33,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
 
     @Getter private RoomEditor roomPanel;
     @Getter private Room selectedRoom;
+    @Getter @Setter EntityDefinition selectedEntity;
     @Getter private int zoom = 1;
     private JFrame frame;
     private boolean projectDirty = false;

@@ -27,7 +27,7 @@ public class LayerDialog {
                 layerNameField
         };
 
-        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         this.layerName = layerNameField.getText();
         this.accepted = result == JOptionPane.YES_OPTION;

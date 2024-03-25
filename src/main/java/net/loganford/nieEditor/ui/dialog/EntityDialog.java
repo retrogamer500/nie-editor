@@ -2,26 +2,41 @@ package net.loganford.nieEditor.ui.dialog;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
-public class EntityDialog implements PropertyChangeListener {
+@Log4j2
+public class EntityDialog implements ActionListener {
+    public static final int IMG_WIDTH = 128;
+    public static final int IMG_HEIGHT = 128;
+
+
     private boolean newEntity;
-    private JLabel imageLabel;
 
     @Getter private boolean accepted = false;
 
     @Getter @Setter private String name = "New Entity";
-    @Getter @Setter private String className = "";
+    @Getter @Setter private String classPath = "";
     @Getter @Setter private String group = "Default";
 
-    @Getter @Setter private File imageFile;
     @Getter @Setter private int width = 32;
     @Getter @Setter private int height = 32;
+
+    @Getter @Setter private File imageFile;
+
+    private JLabel fileLocationLabel;
+    private JLabel imageLabel;
+    private JSpinner widthSpinner;
+    private JSpinner heightSpinner;
 
     public EntityDialog(boolean newEntity) {
         this.newEntity = newEntity;
@@ -31,18 +46,11 @@ public class EntityDialog implements PropertyChangeListener {
         String title = newEntity ? "Create Entity" : "Edit Entity";
 
         JTextField nameField = new JTextField(name);
-        JTextField classField = new JTextField(className);
+        JTextField classField = new JTextField(classPath);
         JTextField groupField = new JTextField(group);
 
-        imageLabel = new JLabel("Image: ");
-        JFileChooser imageChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "png");
-        imageChooser.setFileFilter(filter);
-        imageChooser.addPropertyChangeListener(this);
-        imageChooser.setControlButtonsAreShown(false);
-
-        JSpinner widthSpinner = new JSpinner(new SpinnerNumberModel(width, 1, 1000000, 1));
-        JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(height, 1, 1000000, 1));
+        widthSpinner = new JSpinner(new SpinnerNumberModel(width, 1, 1000000, 1));
+        heightSpinner = new JSpinner(new SpinnerNumberModel(height, 1, 1000000, 1));
 
         JComponent[] inputs = {
                 new JLabel("Name:"),
@@ -51,18 +59,17 @@ public class EntityDialog implements PropertyChangeListener {
                 classField,
                 new JLabel("Group:"),
                 groupField,
+                filePanel(),
                 new JLabel("Width:"),
                 widthSpinner,
                 new JLabel("Height:"),
-                heightSpinner,
-                imageLabel,
-                imageChooser
+                heightSpinner
         };
 
-        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         this.name = nameField.getText();
-        this.className = classField.getText();
+        this.classPath = classField.getText();
         this.group = groupField.getText();
         this.width = (Integer) widthSpinner.getValue();
         this.height = (Integer) heightSpinner.getValue();
@@ -70,14 +77,65 @@ public class EntityDialog implements PropertyChangeListener {
         this.accepted = result == JOptionPane.YES_OPTION;
     }
 
+    private JPanel filePanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        fileLocationLabel = new JLabel(imageFile == null ? "No image loaded" : imageFile.getAbsolutePath());
+        panel.add(fileLocationLabel);
+
+        ImageIcon imageIcon = imageFile != null ? getSizedImageIcon(imageFile) : new ImageIcon();
+        imageLabel = new JLabel(imageIcon);
+        imageLabel.setMaximumSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
+        imageLabel.setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
+        panel.add(imageLabel);
+
+        JButton button = new JButton("Load Image");
+        button.addActionListener(this);
+        panel.add(button);
+
+        return panel;
+    }
+
+    private ImageIcon getSizedImageIcon(File file) {
+        try {
+            BufferedImage image = ImageIO.read(file);
+
+            float w_ratio = (float) IMG_WIDTH / image.getWidth();
+            float h_ratio = (float) IMG_HEIGHT / image.getHeight();
+            float ratio = Math.min(w_ratio, h_ratio);
+
+            return new ImageIcon(image.getScaledInstance((int) (image.getWidth() * ratio), (int) (image.getHeight() * ratio), Image.SCALE_SMOOTH));
+        }
+        catch(IOException e) {
+            log.error(e);
+        }
+        return null;
+    }
+
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName() == JFileChooser.SELECTED_FILE_CHANGED_PROPERTY) {
-            if(evt.getNewValue() != null) {
-                imageLabel.setText("Image: " + evt.getNewValue());
-            }
-            else {
-                imageLabel.setText("Image: ");
+    public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Load Image")) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+            int returnVal = chooser.showOpenDialog(null);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    imageFile = chooser.getSelectedFile();
+                    fileLocationLabel.setText(imageFile.getAbsolutePath());
+
+                    //Display icon
+                    imageLabel.setIcon(getSizedImageIcon(imageFile));
+
+                    //Set width and height sliders on image load
+                    BufferedImage image = ImageIO.read(imageFile);
+                    widthSpinner.setValue(image.getWidth());
+                    heightSpinner.setValue(image.getHeight());
+                }
+                catch(IOException ioException) {
+                    log.error(ioException);
+                }
             }
         }
     }

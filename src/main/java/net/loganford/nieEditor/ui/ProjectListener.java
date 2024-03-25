@@ -9,4 +9,5 @@ public interface ProjectListener {
     default void roomListChanged() {}
     default void historyChanged(Room room) {}
     default void layersChanged(Room room) {}
+    default void entitiesChanged() {}
 }

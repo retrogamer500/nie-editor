@@ -33,7 +33,7 @@ public class RoomDialog {
                 roomHeightSpinner
         };
 
-        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         this.roomName = roomNameField.getText();
         this.roomWidth = (Integer) roomWidthSpinner.getValue();

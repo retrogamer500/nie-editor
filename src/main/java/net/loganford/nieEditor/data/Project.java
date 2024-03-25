@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Project {
     @Getter @Setter private String projectName;
+    @Getter @Setter private List<EntityDefinition> entityDefinitions = new ArrayList<>();
     @Getter @Setter private List<Room> rooms = new ArrayList<>();
 
     public static Project load(String json) {
