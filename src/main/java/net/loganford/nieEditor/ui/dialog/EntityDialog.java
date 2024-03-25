@@ -3,6 +3,7 @@ package net.loganford.nieEditor.ui.dialog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditor.ui.ImageCache;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -84,7 +85,7 @@ public class EntityDialog implements ActionListener {
         fileLocationLabel = new JLabel(imageFile == null ? "No image loaded" : imageFile.getAbsolutePath());
         panel.add(fileLocationLabel);
 
-        ImageIcon imageIcon = imageFile != null ? getSizedImageIcon(imageFile) : new ImageIcon();
+        ImageIcon imageIcon = imageFile != null ?  ImageCache.getInstance().getImage(imageFile, IMG_WIDTH, IMG_WIDTH) : new ImageIcon();
         imageLabel = new JLabel(imageIcon);
         imageLabel.setMaximumSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
         imageLabel.setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
@@ -95,22 +96,6 @@ public class EntityDialog implements ActionListener {
         panel.add(button);
 
         return panel;
-    }
-
-    private ImageIcon getSizedImageIcon(File file) {
-        try {
-            BufferedImage image = ImageIO.read(file);
-
-            float w_ratio = (float) IMG_WIDTH / image.getWidth();
-            float h_ratio = (float) IMG_HEIGHT / image.getHeight();
-            float ratio = Math.min(w_ratio, h_ratio);
-
-            return new ImageIcon(image.getScaledInstance((int) (image.getWidth() * ratio), (int) (image.getHeight() * ratio), Image.SCALE_SMOOTH));
-        }
-        catch(IOException e) {
-            log.error(e);
-        }
-        return null;
     }
 
     @Override
@@ -126,7 +111,7 @@ public class EntityDialog implements ActionListener {
                     fileLocationLabel.setText(imageFile.getAbsolutePath());
 
                     //Display icon
-                    imageLabel.setIcon(getSizedImageIcon(imageFile));
+                    imageLabel.setIcon(ImageCache.getInstance().getImage(imageFile, IMG_WIDTH, IMG_WIDTH));
 
                     //Set width and height sliders on image load
                     BufferedImage image = ImageIO.read(imageFile);

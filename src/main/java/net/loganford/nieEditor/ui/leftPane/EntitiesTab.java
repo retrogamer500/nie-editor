@@ -39,6 +39,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         root = new DefaultMutableTreeNode("Entities");
 
         tree = new JTree(root);
+        tree.setCellRenderer(new EntityTreeRenderer());
         tree.setRootVisible(false);
         tree.addTreeSelectionListener(this);
         scrollPane.add(tree);
