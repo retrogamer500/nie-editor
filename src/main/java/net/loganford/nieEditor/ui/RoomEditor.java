@@ -40,10 +40,14 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         this.width = width;
         this.height = height;
 
-        setPreferredSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
-        setMinimumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
-        setMaximumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
-        revalidate();
+        if(getSize().getWidth() != width * editorWindow.getZoom() || getSize().getHeight() != height * editorWindow.getZoom()) {
+            editorWindow.getRoomScrollPane().getVerticalScrollBar().setValue(0);
+            editorWindow.getRoomScrollPane().getHorizontalScrollBar().setValue(0);
+            setPreferredSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+            setMinimumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+            setMaximumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+            revalidate();
+        }
     }
 
     @Override
@@ -74,9 +78,17 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                     //Render entities
                     for(Entity entity : layer.getEntities()) {
                         EntityDefinition ed = editorWindow.getProject().getEntityInfo(entity);
-                        ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
 
-                        g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
+                        if(ed.getImagePath() != null) {
+                            ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
+                            g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
+                        }
+                        else {
+                            g.setColor(Color.CYAN);
+                            g.fillRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
+                            g.setColor(Color.BLUE);
+                            g.drawRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
+                        }
                     }
                 }
             }
@@ -104,8 +116,11 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         if(editorWindow.getSelectedRoom() == null || editorWindow.getSelectedRoom().getSelectedLayer() == null) {
             return;
         }
-        if(editorWindow.getSelectedEntity() == null) {
-            return;
+
+        if(isLeftClick) {
+            if (editorWindow.getSelectedEntity() == null) {
+                return;
+            }
         }
 
         if(editorWindow.getToolPane().getPenTool().isSelected()) {

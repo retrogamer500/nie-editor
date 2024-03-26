@@ -40,7 +40,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
     private JFrame frame;
     private boolean projectDirty = false;
 
-    JScrollPane roomScrollPane;
+    @Getter private JScrollPane roomScrollPane;
 
     public EditorWindow() {
         try
@@ -149,6 +149,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
         roomScrollPane = new JScrollPane();
         roomScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         roomScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        roomScrollPane.setWheelScrollingEnabled(true);
 
         roomPanel = new RoomEditor(this, 1000, 1000);
 
@@ -280,12 +281,6 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
     public void setSelectedRoom(Room room) {
         this.selectedRoom = room;
         getListeners().forEach(l -> l.selectedRoomChanged(room));
-    }
-
-    @Override
-    public void selectedRoomChanged(Room room) {
-        roomScrollPane.getVerticalScrollBar().setValue(0);
-        roomScrollPane.getHorizontalScrollBar().setValue(0);
     }
 
     public void askToClose() {

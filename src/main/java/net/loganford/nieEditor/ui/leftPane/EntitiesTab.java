@@ -1,5 +1,6 @@
 package net.loganford.nieEditor.ui.leftPane;
 
+import com.sun.source.tree.Tree;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.ui.EditorWindow;
@@ -10,16 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener {
 
@@ -143,6 +141,15 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
     }
 
     private void renderEntities() {
+        Set<String> expandedGroups = new HashSet<>();
+        Iterator<TreeNode> it = root.children().asIterator();
+        while(it.hasNext()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) it.next();
+            if(node.getAllowsChildren() && tree.isExpanded(new TreePath(node.getPath()))) {
+                expandedGroups.add(node.toString());
+            }
+        }
+
         root.removeAllChildren();
 
         HashMap<String, ArrayList<EntityDefinition>> edGroups = new HashMap<>();
@@ -170,8 +177,17 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         }
 
         ((DefaultTreeModel)tree.getModel()).reload(root);
+
+        //Expand the right nodes and make sure the correct node is selected
         for (int i = 0; i < tree.getRowCount(); i++) {
-            tree.expandRow(i);
+            if(expandedGroups.contains(tree.getPathForRow(i).getLastPathComponent().toString())) {
+                tree.expandRow(i);
+            }
+
+            DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tree.getPathForRow(i).getLastPathComponent();
+            if(dmtn.getUserObject().equals(editorWindow.getSelectedEntity())) {
+                tree.setSelectionPath(tree.getPathForRow(i));
+            }
         }
         repaint();
     }
@@ -187,6 +203,8 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
                 return;
             }
         }
-        editorWindow.setSelectedEntity(null);
+        else {
+            tree.setSelectionPath(e.getOldLeadSelectionPath());
+        }
     }
 }
