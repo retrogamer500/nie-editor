@@ -96,6 +96,9 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
                 if(ed.isAccepted()) {
                     updateEntity(def, ed);
                     editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
+                    if(editorWindow.getSelectedRoom() != null) {
+                        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
+                    }
                     editorWindow.setProjectDirty(true);
                 }
             }
@@ -124,7 +127,10 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
     }
 
     public void updateEntity(EntityDefinition def, EntityDialog ed) {
-        def.setUuid(UUID.randomUUID().toString());
+        if(def.getUuid() == null) {
+            //Entity definition is new, set new UUID
+            def.setUuid(UUID.randomUUID().toString());
+        }
         def.setName(ed.getName());
         def.setClassPath(ed.getClassPath());
         def.setGroup(ed.getGroup());

@@ -27,7 +27,7 @@ public class EntityDialog implements ActionListener {
 
     @Getter @Setter private String name = "New Entity";
     @Getter @Setter private String classPath = "";
-    @Getter @Setter private String group = "Default";
+    @Getter @Setter private String group = "";
 
     @Getter @Setter private int width = 32;
     @Getter @Setter private int height = 32;

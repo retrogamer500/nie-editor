@@ -2,6 +2,9 @@ package net.loganford.nieEditor.ui;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.nieEditor.data.Entity;
+import net.loganford.nieEditor.data.EntityDefinition;
+import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.tools.Pen;
 import net.loganford.nieEditor.tools.Rectangle;
@@ -59,9 +62,26 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         g2d.scale(editorWindow.getZoom(), editorWindow.getZoom());
 
         if(editorWindow.getSelectedRoom() != null) {
+            //Room background
             g.setColor(Color.lightGray);
             g.fillRect(0, 0, width, height);
 
+
+            //Render layers
+            for(int i = editorWindow.getSelectedRoom().getLayerList().size() - 1; i >= 0; i--) {
+                Layer layer = editorWindow.getSelectedRoom().getLayerList().get(i);
+                if(layer.isVisible()) {
+                    //Render entities
+                    for(Entity entity : layer.getEntities()) {
+                        EntityDefinition ed = editorWindow.getProject().getEntityInfo(entity);
+                        ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
+
+                        g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
+                    }
+                }
+            }
+
+            //Render grid
             if (showGrid) {
                 g.setColor(Color.black);
                 for (int i = gridWidth - 1; i < width; i += gridWidth) {
@@ -72,6 +92,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                     g.drawLine(0, j, width, j);
                 }
             }
+
+            //Render tool
             if(tool != null) {
                 tool.render(g);
             }
@@ -117,7 +139,13 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         int x = e.getX()/editorWindow.getZoom();
         int y = e.getY()/editorWindow.getZoom();
 
-        startTool(x, y, true);
+        if(e.getButton() == MouseEvent.BUTTON1) {
+            startTool(x, y, true);
+        }
+        if(e.getButton() == MouseEvent.BUTTON3) {
+            startTool(x, y, false);
+        }
+
     }
 
     @Override
