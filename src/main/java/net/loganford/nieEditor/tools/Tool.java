@@ -26,6 +26,8 @@ public abstract class Tool {
         this.isLeftClick = isLeftClick;
     }
 
+    public void cancelTool(int x, int y) {}
+
     public abstract void mousePressed(int x, int y);
     public abstract void mouseMoved(int x, int y);
     public abstract void mouseReleased(int x, int y);

@@ -88,6 +88,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                             g.fillRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
                             g.setColor(Color.BLUE);
                             g.drawRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
+                            g.setColor(Color.BLACK);
+                            g.drawString(ed.getName(), entity.getX(), entity.getY() - 4);
                         }
                     }
                 }
@@ -154,13 +156,19 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         int x = e.getX()/editorWindow.getZoom();
         int y = e.getY()/editorWindow.getZoom();
 
-        if(e.getButton() == MouseEvent.BUTTON1) {
-            startTool(x, y, true);
+        if(tool != null) {
+            tool.cancelTool(x, y);
+            tool = null;
+            repaint();
         }
-        if(e.getButton() == MouseEvent.BUTTON3) {
-            startTool(x, y, false);
+        else {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                startTool(x, y, true);
+            }
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                startTool(x, y, false);
+            }
         }
-
     }
 
     @Override

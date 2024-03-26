@@ -20,6 +20,11 @@ public class ActionPerformer {
         this.room = room;
     }
 
+    public void clearHistory() {
+        actionList = new ArrayList<>();
+        lastActionIndex = -1;
+    }
+
     public void perform(EditorWindow editorWindow, Action action) {
         actionList = actionList.subList(0, lastActionIndex + 1);
 

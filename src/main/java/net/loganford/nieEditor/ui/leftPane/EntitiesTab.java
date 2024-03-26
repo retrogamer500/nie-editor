@@ -2,7 +2,9 @@ package net.loganford.nieEditor.ui.leftPane;
 
 import com.sun.source.tree.Tree;
 import net.loganford.nieEditor.data.EntityDefinition;
+import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
+import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.EditorWindow;
 import net.loganford.nieEditor.ui.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.EntityDialog;
@@ -103,13 +105,25 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         }
         if(e.getActionCommand().equals("Remove")) {
             if(editorWindow.getSelectedEntity() != null) {
-                editorWindow.getProject().getEntityDefinitions().remove(editorWindow.getSelectedEntity());
+                int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this entity cannot be undone. This will delete this entity from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
+                if(dialogResult == JOptionPane.YES_OPTION){
+                    editorWindow.getProject().getEntityDefinitions().remove(editorWindow.getSelectedEntity());
 
-                //Todo: Remove entity from all rooms, and clear room histories after asking with dialog
+                    for(Room room: editorWindow.getProject().getRooms()) {
+                        for(Layer layer: room.getLayerList()) {
+                            layer.getEntities().removeIf(ent -> ent.getEntityDefinitionUUID().equals(editorWindow.getSelectedEntity().getUuid()));
+                        }
+                        room.getActionPerformer().clearHistory();
+                    }
 
-                editorWindow.setSelectedEntity(null);
-                editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
-                editorWindow.setProjectDirty(true);
+                    editorWindow.setSelectedEntity(null);
+                    editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
+                    editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
+                    editorWindow.setProjectDirty(true);
+                }
+
+
+
             }
         }
     }

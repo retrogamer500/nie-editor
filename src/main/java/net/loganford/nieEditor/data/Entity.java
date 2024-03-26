@@ -36,4 +36,21 @@ public class Entity {
 
         return true;
     }
+
+    public boolean collidesWith(EntityDefinition ed, int x, int y) {
+        if(x < this.x) {
+            return false;
+        }
+        if(y < this.y) {
+            return false;
+        }
+        if(x > this.x + ed.getWidth()) {
+            return false;
+        }
+        if(y > this.y + ed.getHeight()) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -52,6 +52,12 @@ public class Rectangle extends Tool {
             y1 = y2;
             y2 = ty;
         }
+        if(y2 == y1) {
+            y2+=1;
+        }
+        if(x2 == x1) {
+            x2+=1;
+        }
         if(isSnapped) {
             x1 = (int) (Math.floor(((double)x1)/snapX) * snapX);
             y1 = (int) (Math.floor(((double)y1)/snapY) * snapY);
