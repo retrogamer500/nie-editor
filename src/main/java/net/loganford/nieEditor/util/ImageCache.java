@@ -1,4 +1,4 @@
-package net.loganford.nieEditor.ui;
+package net.loganford.nieEditor.util;
 
 import lombok.extern.log4j.Log4j2;
 

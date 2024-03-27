@@ -8,9 +8,10 @@ import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
+import net.loganford.nieEditor.util.ImageCache;
+import net.loganford.nieEditor.util.ProjectListener;
 import org.apache.commons.io.FileUtils;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;

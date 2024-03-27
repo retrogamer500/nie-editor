@@ -3,7 +3,7 @@ package net.loganford.nieEditor.data;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.ui.EditorWindow;
-import net.loganford.nieEditor.ui.ImageCache;
+import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
 import java.awt.*;

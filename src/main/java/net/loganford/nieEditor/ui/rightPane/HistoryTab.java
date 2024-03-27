@@ -1,9 +1,8 @@
 package net.loganford.nieEditor.ui.rightPane;
 
-import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.EditorWindow;
-import net.loganford.nieEditor.ui.ProjectListener;
+import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
 import java.awt.*;

@@ -4,7 +4,7 @@ import net.loganford.nieEditor.actions.actionImpl.*;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.EditorWindow;
-import net.loganford.nieEditor.ui.ProjectListener;
+import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.LayerDialog;
 
 import javax.swing.*;

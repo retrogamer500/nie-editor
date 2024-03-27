@@ -1,7 +1,7 @@
 package net.loganford.nieEditor.ui.leftPane;
 
 import net.loganford.nieEditor.data.EntityDefinition;
-import net.loganford.nieEditor.ui.ImageCache;
+import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

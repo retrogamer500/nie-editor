@@ -2,7 +2,7 @@ package net.loganford.nieEditor.ui.leftPane;
 
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.ui.EditorWindow;
-import net.loganford.nieEditor.ui.ProjectListener;
+import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
 import java.awt.*;

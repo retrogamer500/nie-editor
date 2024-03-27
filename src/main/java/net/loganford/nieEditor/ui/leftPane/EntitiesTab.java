@@ -1,12 +1,11 @@
 package net.loganford.nieEditor.ui.leftPane;
 
-import com.sun.source.tree.Tree;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.EditorWindow;
-import net.loganford.nieEditor.ui.ProjectListener;
+import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.EntityDialog;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener {

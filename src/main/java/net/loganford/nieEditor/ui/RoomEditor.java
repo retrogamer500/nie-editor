@@ -3,12 +3,12 @@ package net.loganford.nieEditor.ui;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.data.Entity;
-import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.tools.Pen;
 import net.loganford.nieEditor.tools.Rectangle;
 import net.loganford.nieEditor.tools.Tool;
+import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package net.loganford.nieEditor.ui;
+package net.loganford.nieEditor.util;
 
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
