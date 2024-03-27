@@ -304,10 +304,10 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
         this.projectDirty = dirty;
 
         if(dirty) {
-            frame.setTitle("NIE Editor - " + projectFile.getName() + "*");
+            frame.setTitle("*" + projectFile.getName() + " - NIE Editor");
         }
         else {
-            frame.setTitle("NIE Editor - " + projectFile.getName());
+            frame.setTitle(projectFile.getName() + " - NIE Editor");
         }
     }
 
