@@ -12,7 +12,7 @@
 
 # Edit levels like it's 1995
 
-NIE Editor's goal is to be a simple 2D level editor that is pleasant to both create levels with, as well as import levels into existing game engines.
+NIE Editor's goal is to be a simple 2D level editor that is pleasant to both create with and use in your game engines.
 
 ## Features
 * Interface inspired by the GameMaker 8.x room editor
