@@ -5,6 +5,7 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 ## Features
 * Interface inspired by OG Gamemaker
 * JSON export
+* Burns your eyes because dark mode wasn't invented until the 2000s
 * Room-level history and undo/redo functionality
 * TODO: Tilemap features
 * TODO: External Java project to make importing levels easy
