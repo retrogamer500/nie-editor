@@ -3,7 +3,7 @@
 NIE Editor's goal is to be a simple 2D level editor that is pleasant to both create levels with, as well as import levels into existing game engines.
 
 ## Features
-* Interface inspired by OG Gamemaker
+* Interface inspired by the GameMaker 8.x room editor
 * JSON export
 * Burns your eyes because dark mode wasn't invented until the 2000s
 * Room-level history and undo/redo functionality
