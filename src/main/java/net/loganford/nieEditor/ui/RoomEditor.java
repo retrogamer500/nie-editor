@@ -40,7 +40,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         this.width = width;
         this.height = height;
 
-        if(getSize().getWidth() != width * editorWindow.getZoom() || getSize().getHeight() != height * editorWindow.getZoom()) {
+        if(getPreferredSize().getWidth() != width * editorWindow.getZoom() || getPreferredSize().getHeight() != height * editorWindow.getZoom()) {
             editorWindow.getRoomScrollPane().getVerticalScrollBar().setValue(0);
             editorWindow.getRoomScrollPane().getHorizontalScrollBar().setValue(0);
             setPreferredSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
@@ -95,17 +95,19 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                 }
             }
 
+            //g.setXORMode(Color.WHITE);
             //Render grid
             if (showGrid) {
-                g.setColor(Color.black);
+                g.setColor(new Color(0, 0, 0, 128));
                 for (int i = gridWidth - 1; i < width; i += gridWidth) {
-                    g.drawLine(i, 0, i, height);
+                    g.fillRect(i, 0, 1, height);
                 }
 
                 for (int j = gridHeight - 1; j < height; j += gridHeight) {
-                    g.drawLine(0, j, width, j);
+                    g.fillRect(0, j, width, 1);
                 }
             }
+            //g.setPaintMode();
 
             //Render tool
             if(tool != null) {
