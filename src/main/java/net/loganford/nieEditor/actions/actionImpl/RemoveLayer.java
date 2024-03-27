@@ -3,16 +3,16 @@ package net.loganford.nieEditor.actions.actionImpl;
 import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 public class RemoveLayer implements Action {
-    private EditorWindow editorWindow;
+    private Window window;
     private Room room;
     private Layer layer;
     private int layerPosition;
 
-    public RemoveLayer(EditorWindow editorWindow, Room room, Layer layer) {
-        this.editorWindow = editorWindow;
+    public RemoveLayer(Window window, Room room, Layer layer) {
+        this.window = window;
         this.room = room;
 
         this.layer = layer;
@@ -22,14 +22,14 @@ public class RemoveLayer implements Action {
     @Override
     public void perform() {
         room.getLayerList().remove(layerPosition);
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
-        editorWindow.getSelectedRoom().setSelectedLayer(null);
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
+        window.getSelectedRoom().setSelectedLayer(null);
     }
 
     @Override
     public void undo() {
         room.getLayerList().add(layerPosition, layer);
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override

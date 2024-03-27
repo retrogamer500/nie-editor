@@ -1,27 +1,26 @@
 package net.loganford.nieEditor.tools;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Tool {
-    @Getter private EditorWindow editorWindow;
+    @Getter private Window window;
     @Getter private Room room;
     @Getter private Layer layer;
     @Getter private EntityDefinition selectedEntity;
     @Getter private boolean isEntity;
     @Getter private boolean isLeftClick;
 
-    public Tool(EditorWindow editorWindow, Room room, Layer layer, EntityDefinition selectedEntity, boolean isEntity, boolean isLeftClick) {
-        this.editorWindow = editorWindow;
+    public Tool(Window window, Room room, Layer layer, EntityDefinition selectedEntity, boolean isEntity, boolean isLeftClick) {
+        this.window = window;
         this.room = room;
         this.layer = layer;
         this.selectedEntity = selectedEntity;
@@ -43,7 +42,7 @@ public abstract class Tool {
 
         for(Entity entity : getLayer().getEntities()) {
             if(!entity.isHidden()) {
-                EntityDefinition ed = getEditorWindow().getProject().getEntityInfo(entity);
+                EntityDefinition ed = getWindow().getProject().getEntityInfo(entity);
                 if (entity.collidesWith(ed, rectangle)) {
                     entities.add(entity);
                 }

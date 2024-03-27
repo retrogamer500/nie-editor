@@ -2,7 +2,7 @@ package net.loganford.nieEditor.actions;
 
 import lombok.Getter;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class ActionPerformer {
         lastActionIndex = -1;
     }
 
-    public void perform(EditorWindow editorWindow, Action action) {
+    public void perform(Window window, Action action) {
         actionList = actionList.subList(0, lastActionIndex + 1);
 
         action.perform();
@@ -38,11 +38,11 @@ public class ActionPerformer {
             lastActionIndex--;
         }
 
-        editorWindow.getListeners().forEach(l -> l.historyChanged(room));
-        editorWindow.setProjectDirty(true);
+        window.getListeners().forEach(l -> l.historyChanged(room));
+        window.setProjectDirty(true);
     }
 
-    public void undo(EditorWindow editorWindow) {
+    public void undo(Window window) {
         if(lastActionIndex < 0) {
             return;
         }
@@ -50,17 +50,17 @@ public class ActionPerformer {
         actionList.get(lastActionIndex).undo();
         lastActionIndex--;
 
-        editorWindow.getListeners().forEach(l -> l.historyChanged(room));
-        editorWindow.setProjectDirty(true);
+        window.getListeners().forEach(l -> l.historyChanged(room));
+        window.setProjectDirty(true);
     }
 
-    public void redo(EditorWindow editorWindow) {
+    public void redo(Window window) {
         if(lastActionIndex < actionList.size() - 1) {
             lastActionIndex++;
             actionList.get(lastActionIndex).perform();
 
-            editorWindow.getListeners().forEach(l -> l.historyChanged(room));
-            editorWindow.setProjectDirty(true);
+            window.getListeners().forEach(l -> l.historyChanged(room));
+            window.setProjectDirty(true);
         }
     }
 }

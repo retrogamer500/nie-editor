@@ -2,7 +2,7 @@ package net.loganford.nieEditor.data;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
@@ -58,8 +58,8 @@ public class Entity {
         return true;
     }
 
-    public void render(EditorWindow editorWindow, Graphics g) {
-        EntityDefinition ed = editorWindow.getProject().getEntityInfo(this);
+    public void render(Window window, Graphics g) {
+        EntityDefinition ed = window.getProject().getEntityInfo(this);
 
         if (ed.getImagePath() != null) {
             ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());

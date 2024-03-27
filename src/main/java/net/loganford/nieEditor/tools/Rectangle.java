@@ -6,7 +6,7 @@ import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ public class Rectangle extends Tool {
 
     private int x1, y1, x2, y2;
 
-    public Rectangle(EditorWindow editorWindow, Room room, Layer layer, EntityDefinition selectedEntity, boolean isEntity, boolean isLeftClick) {
-        super(editorWindow, room, layer, selectedEntity, isEntity, isLeftClick);
+    public Rectangle(Window window, Room room, Layer layer, EntityDefinition selectedEntity, boolean isEntity, boolean isLeftClick) {
+        super(window, room, layer, selectedEntity, isEntity, isLeftClick);
     }
 
     @Override
@@ -38,10 +38,10 @@ public class Rectangle extends Tool {
     public void mouseReleased(int x, int y) {
         x2 = x;
         y2 = y;
-        int snapX = (Integer)getEditorWindow().getToolPane().getGridWidth().getValue();
-        int snapY = (Integer)getEditorWindow().getToolPane().getGridHeight().getValue();
-        boolean isSnapped = getEditorWindow().getToolPane().getSnapEntities().isSelected();
-        boolean isOverwrite = getEditorWindow().getToolPane().getOverwriteEntities().isSelected();
+        int snapX = (Integer) getWindow().getToolPane().getGridWidth().getValue();
+        int snapY = (Integer) getWindow().getToolPane().getGridHeight().getValue();
+        boolean isSnapped = getWindow().getToolPane().getSnapEntities().isSelected();
+        boolean isOverwrite = getWindow().getToolPane().getOverwriteEntities().isSelected();
         if(x2 < x1) {
             int tx = x1;
             x1 = x2;
@@ -68,7 +68,7 @@ public class Rectangle extends Tool {
 
         if(isEntity()) {
             if (isLeftClick()) {
-                EntityDefinition def = getEditorWindow().getSelectedEntity();
+                EntityDefinition def = getWindow().getSelectedEntity();
                 List<Entity> entitiesToAdd = new ArrayList<Entity>();
                 List<Entity> entitiesToRemove = new ArrayList<>();
 
@@ -96,15 +96,15 @@ public class Rectangle extends Tool {
                     }
                 }
 
-                PlaceEntities placeEntities = new PlaceEntities(getEditorWindow(), getRoom(), getLayer(), entitiesToAdd, entitiesToRemove);
-                getRoom().getActionPerformer().perform(getEditorWindow(), placeEntities);
+                PlaceEntities placeEntities = new PlaceEntities(getWindow(), getRoom(), getLayer(), entitiesToAdd, entitiesToRemove);
+                getRoom().getActionPerformer().perform(getWindow(), placeEntities);
 
 
             } else {
                 //Delete all objects within the bounds
                 List<Entity> entitiesToRemove = getEntitiesWithinBounds(new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1));
-                RemoveEntities removeEntities = new RemoveEntities(getEditorWindow(), getRoom(), getLayer(), null, entitiesToRemove);
-                getRoom().getActionPerformer().perform(getEditorWindow(), removeEntities);
+                RemoveEntities removeEntities = new RemoveEntities(getWindow(), getRoom(), getLayer(), null, entitiesToRemove);
+                getRoom().getActionPerformer().perform(getWindow(), removeEntities);
             }
         }
     }

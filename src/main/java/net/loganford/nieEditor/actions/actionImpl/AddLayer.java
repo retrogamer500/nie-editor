@@ -3,17 +3,17 @@ package net.loganford.nieEditor.actions.actionImpl;
 import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 public class AddLayer implements Action {
 
-    private EditorWindow editorWindow;
+    private Window window;
     private Room room;
     private int position;
     private String layerName;
 
-    public AddLayer(EditorWindow editorWindow, Room room, String layerName, int position) {
-        this.editorWindow = editorWindow;
+    public AddLayer(Window window, Room room, String layerName, int position) {
+        this.window = window;
         this.room = room;
         this.layerName = layerName;
         this.position = position;
@@ -25,13 +25,13 @@ public class AddLayer implements Action {
         layer.setName(layerName);
         room.getLayerList().add(position, layer);
 
-        editorWindow.getListeners().forEach(l -> l.layersChanged(room));
+        window.getListeners().forEach(l -> l.layersChanged(room));
     }
 
     @Override
     public void undo() {
         room.getLayerList().remove(position);
-        editorWindow.getListeners().forEach(l -> l.layersChanged(room));
+        window.getListeners().forEach(l -> l.layersChanged(room));
     }
 
     @Override

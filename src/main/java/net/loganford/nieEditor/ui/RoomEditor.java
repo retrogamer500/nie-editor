@@ -19,7 +19,7 @@ import java.awt.event.MouseMotionListener;
 public class RoomEditor extends JPanel implements ProjectListener, MouseListener, MouseMotionListener {
 
     private Tool tool;
-    private EditorWindow editorWindow;
+    private Window window;
     private int width, height;
     private boolean middleMouseDown = false;
     private int dragMouseX, dragMouseY;
@@ -28,11 +28,11 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     @Getter @Setter private int gridHeight = 16;
     @Getter @Setter private boolean showGrid = true;
 
-    public RoomEditor(EditorWindow editorWindow, int width, int height) {
-        this.editorWindow = editorWindow;
+    public RoomEditor(Window window, int width, int height) {
+        this.window = window;
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        editorWindow.getListeners().add(this);
+        window.getListeners().add(this);
         setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         resizeRoom(width, height);
@@ -42,12 +42,12 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         this.width = width;
         this.height = height;
 
-        if(getPreferredSize().getWidth() != width * editorWindow.getZoom() || getPreferredSize().getHeight() != height * editorWindow.getZoom()) {
-            editorWindow.getRoomScrollPane().getVerticalScrollBar().setValue(0);
-            editorWindow.getRoomScrollPane().getHorizontalScrollBar().setValue(0);
-            setPreferredSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
-            setMinimumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
-            setMaximumSize(new Dimension(width * editorWindow.getZoom(), height * editorWindow.getZoom()));
+        if(getPreferredSize().getWidth() != width * window.getZoom() || getPreferredSize().getHeight() != height * window.getZoom()) {
+            window.getRoomScrollPane().getVerticalScrollBar().setValue(0);
+            window.getRoomScrollPane().getHorizontalScrollBar().setValue(0);
+            setPreferredSize(new Dimension(width * window.getZoom(), height * window.getZoom()));
+            setMinimumSize(new Dimension(width * window.getZoom(), height * window.getZoom()));
+            setMaximumSize(new Dimension(width * window.getZoom(), height * window.getZoom()));
             revalidate();
         }
     }
@@ -65,26 +65,26 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
         super.paintComponent(g);
 
         Graphics2D g2d = ((Graphics2D) g);
-        g2d.scale(editorWindow.getZoom(), editorWindow.getZoom());
+        g2d.scale(window.getZoom(), window.getZoom());
 
-        if(editorWindow.getSelectedRoom() != null) {
+        if(window.getSelectedRoom() != null) {
             //Room background
             g.setColor(Color.lightGray);
             g.fillRect(0, 0, width, height);
 
 
             //Render layers
-            for(int i = editorWindow.getSelectedRoom().getLayerList().size() - 1; i >= 0; i--) {
-                Layer layer = editorWindow.getSelectedRoom().getLayerList().get(i);
+            for(int i = window.getSelectedRoom().getLayerList().size() - 1; i >= 0; i--) {
+                Layer layer = window.getSelectedRoom().getLayerList().get(i);
                 if(layer.isVisible()) {
                     //Render entities
                     for(Entity entity : layer.getEntities()) {
                         if(!entity.isHidden()) {
-                            entity.render(editorWindow, g);
+                            entity.render(window, g);
                         }
                     }
 
-                    if(layer == editorWindow.getSelectedRoom().getSelectedLayer() && tool != null) {
+                    if(layer == window.getSelectedRoom().getSelectedLayer() && tool != null) {
                         tool.renderOnLayer(g);
                     }
                 }
@@ -110,21 +110,21 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     }
 
     private void startTool(int x, int y, boolean isLeftClick) {
-        if(editorWindow.getSelectedRoom() == null || editorWindow.getSelectedRoom().getSelectedLayer() == null) {
+        if(window.getSelectedRoom() == null || window.getSelectedRoom().getSelectedLayer() == null) {
             return;
         }
 
         if(isLeftClick) {
-            if (editorWindow.getSelectedEntity() == null) {
+            if (window.getSelectedEntity() == null) {
                 return;
             }
         }
 
-        if(editorWindow.getToolPane().getPenTool().isSelected()) {
-            tool = new Pen(editorWindow, editorWindow.getSelectedRoom(), editorWindow.getSelectedRoom().getSelectedLayer(), editorWindow.getSelectedEntity(), true, isLeftClick);
+        if(window.getToolPane().getPenTool().isSelected()) {
+            tool = new Pen(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), true, isLeftClick);
         }
         else {
-            tool = new Rectangle(editorWindow, editorWindow.getSelectedRoom(), editorWindow.getSelectedRoom().getSelectedLayer(), editorWindow.getSelectedEntity(), true, isLeftClick);
+            tool = new Rectangle(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), true, isLeftClick);
         }
 
         tool.mousePressed(x, y);
@@ -148,8 +148,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int x = e.getX()/editorWindow.getZoom();
-        int y = e.getY()/editorWindow.getZoom();
+        int x = e.getX()/ window.getZoom();
+        int y = e.getY()/ window.getZoom();
 
         if(tool != null) {
             tool.cancelTool(x, y);
@@ -175,8 +175,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     @Override
     public void mouseReleased(MouseEvent e) {
         if(tool != null) {
-            int x = e.getX() / editorWindow.getZoom();
-            int y = e.getY() / editorWindow.getZoom();
+            int x = e.getX() / window.getZoom();
+            int y = e.getY() / window.getZoom();
 
             endTool(x, y);
             tool = null;
@@ -201,8 +201,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     public void mouseDragged(MouseEvent e) {
 
         if(tool != null) {
-            int x = e.getX() / editorWindow.getZoom();
-            int y = e.getY() / editorWindow.getZoom();
+            int x = e.getX() / window.getZoom();
+            int y = e.getY() / window.getZoom();
 
             moveTool(x, y);
         }
@@ -212,10 +212,10 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
             int deltaY = e.getYOnScreen() - dragMouseY;
 
             if(deltaX != 0) {
-                editorWindow.getRoomScrollPane().getHorizontalScrollBar().setValue(editorWindow.getRoomScrollPane().getHorizontalScrollBar().getValue() - deltaX);
+                window.getRoomScrollPane().getHorizontalScrollBar().setValue(window.getRoomScrollPane().getHorizontalScrollBar().getValue() - deltaX);
             }
             if(deltaY != 0) {
-                editorWindow.getRoomScrollPane().getVerticalScrollBar().setValue(editorWindow.getRoomScrollPane().getVerticalScrollBar().getValue() - deltaY);
+                window.getRoomScrollPane().getVerticalScrollBar().setValue(window.getRoomScrollPane().getVerticalScrollBar().getValue() - deltaY);
             }
 
             dragMouseX = e.getXOnScreen();

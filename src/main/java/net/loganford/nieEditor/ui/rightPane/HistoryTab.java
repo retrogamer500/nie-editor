@@ -1,7 +1,7 @@
 package net.loganford.nieEditor.ui.rightPane;
 
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
@@ -13,11 +13,11 @@ import java.util.Collections;
 
 public class HistoryTab extends JPanel implements ProjectListener, ActionListener {
     private JList jList;
-    EditorWindow editorWindow;
+    Window window;
 
-    public HistoryTab(EditorWindow editorWindow) {
-        this.editorWindow = editorWindow;
-        editorWindow.getListeners().add(this);
+    public HistoryTab(Window window) {
+        this.window = window;
+        window.getListeners().add(this);
         setLayout(new BorderLayout());
 
         //Setup history list
@@ -66,13 +66,13 @@ public class HistoryTab extends JPanel implements ProjectListener, ActionListene
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Undo")) {
-            if(editorWindow.getSelectedRoom() != null) {
-                editorWindow.getSelectedRoom().getActionPerformer().undo(editorWindow);
+            if(window.getSelectedRoom() != null) {
+                window.getSelectedRoom().getActionPerformer().undo(window);
             }
         }
         if(e.getActionCommand().equals("Redo")) {
-            if(editorWindow.getSelectedRoom() != null) {
-                editorWindow.getSelectedRoom().getActionPerformer().redo(editorWindow);
+            if(window.getSelectedRoom() != null) {
+                window.getSelectedRoom().getActionPerformer().redo(window);
             }
         }
     }

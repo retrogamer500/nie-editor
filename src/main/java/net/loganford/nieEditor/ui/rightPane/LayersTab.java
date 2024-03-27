@@ -3,7 +3,7 @@ package net.loganford.nieEditor.ui.rightPane;
 import net.loganford.nieEditor.actions.actionImpl.*;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.LayerDialog;
 
@@ -17,11 +17,11 @@ import java.awt.event.ActionListener;
 public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
 
     private JList jList;
-    private EditorWindow editorWindow;
+    private Window window;
 
-    public LayersTab(EditorWindow editorWindow) {
-        this.editorWindow = editorWindow;
-        editorWindow.getListeners().add(this);
+    public LayersTab(Window window) {
+        this.window = window;
+        window.getListeners().add(this);
         setLayout(new BorderLayout());
 
         //Setup layer list
@@ -58,72 +58,72 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add Above")) {
             int insertPosition = 0;
-            if(editorWindow.getSelectedRoom().getSelectedLayer() != null) {
-                insertPosition = editorWindow.getSelectedRoom().getLayerList().indexOf(editorWindow.getSelectedRoom().getSelectedLayer());
+            if(window.getSelectedRoom().getSelectedLayer() != null) {
+                insertPosition = window.getSelectedRoom().getLayerList().indexOf(window.getSelectedRoom().getSelectedLayer());
             }
 
             addLayerAtIndex(insertPosition);
         }
         if(e.getActionCommand().equals("Add Below")) {
-            int insertPosition = editorWindow.getSelectedRoom().getLayerList().size();
-            if(editorWindow.getSelectedRoom().getSelectedLayer() != null) {
-                insertPosition = editorWindow.getSelectedRoom().getLayerList().indexOf(editorWindow.getSelectedRoom().getSelectedLayer()) + 1;
+            int insertPosition = window.getSelectedRoom().getLayerList().size();
+            if(window.getSelectedRoom().getSelectedLayer() != null) {
+                insertPosition = window.getSelectedRoom().getLayerList().indexOf(window.getSelectedRoom().getSelectedLayer()) + 1;
             }
 
             addLayerAtIndex(insertPosition);
         }
         if(e.getActionCommand().equals("Show")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
                 selectedLayer.setVisible(true);
-                editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
-                editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
+                window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
+                window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
             }
         }
         if(e.getActionCommand().equals("Hide")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
                 selectedLayer.setVisible(false);
-                editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
-                editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
+                window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
+                window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
             }
         }
         if(e.getActionCommand().equals("Remove")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
-                RemoveLayer removeLayer = new RemoveLayer(editorWindow, editorWindow.getSelectedRoom(), selectedLayer);
-                editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, removeLayer);
+                RemoveLayer removeLayer = new RemoveLayer(window, window.getSelectedRoom(), selectedLayer);
+                window.getSelectedRoom().getActionPerformer().perform(window, removeLayer);
             }
         }
         if(e.getActionCommand().equals("Edit")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
                 LayerDialog ld = new LayerDialog(false);
                 ld.setLayerName(selectedLayer.getName());
                 ld.show();
                 if(ld.isAccepted()) {
-                    EditLayer editLayer = new EditLayer(editorWindow, selectedLayer, ld.getLayerName());
-                    editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, editLayer);
+                    EditLayer editLayer = new EditLayer(window, selectedLayer, ld.getLayerName());
+                    window.getSelectedRoom().getActionPerformer().perform(window, editLayer);
                 }
             }
         }
         if(e.getActionCommand().equals("Move Up")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
-                int layerPosition = editorWindow.getSelectedRoom().getLayerList().indexOf(selectedLayer);
+                int layerPosition = window.getSelectedRoom().getLayerList().indexOf(selectedLayer);
                 if(layerPosition > 0) {
-                    MoveLayerUp moveLayerUp = new MoveLayerUp(editorWindow, editorWindow.getSelectedRoom(), selectedLayer);
-                    editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, moveLayerUp);
+                    MoveLayerUp moveLayerUp = new MoveLayerUp(window, window.getSelectedRoom(), selectedLayer);
+                    window.getSelectedRoom().getActionPerformer().perform(window, moveLayerUp);
                 }
             }
         }
         if(e.getActionCommand().equals("Move Down")) {
-            Layer selectedLayer = editorWindow.getSelectedRoom().getSelectedLayer();
+            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
-                int layerPosition = editorWindow.getSelectedRoom().getLayerList().indexOf(selectedLayer);
-                if(layerPosition < editorWindow.getSelectedRoom().getLayerList().size() - 1) {
-                    MoveLayerDown moveLayerDown = new MoveLayerDown(editorWindow, editorWindow.getSelectedRoom(), selectedLayer);
-                    editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, moveLayerDown);
+                int layerPosition = window.getSelectedRoom().getLayerList().indexOf(selectedLayer);
+                if(layerPosition < window.getSelectedRoom().getLayerList().size() - 1) {
+                    MoveLayerDown moveLayerDown = new MoveLayerDown(window, window.getSelectedRoom(), selectedLayer);
+                    window.getSelectedRoom().getActionPerformer().perform(window, moveLayerDown);
                 }
             }
         }
@@ -133,8 +133,8 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         LayerDialog ld = new LayerDialog(true);
         ld.show();
         if(ld.isAccepted()) {
-            AddLayer addLayer = new AddLayer(editorWindow, editorWindow.getSelectedRoom(), ld.getLayerName(), index);
-            editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, addLayer);
+            AddLayer addLayer = new AddLayer(window, window.getSelectedRoom(), ld.getLayerName(), index);
+            window.getSelectedRoom().getActionPerformer().perform(window, addLayer);
         }
     }
 
@@ -162,7 +162,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
     public void valueChanged(ListSelectionEvent e) {
         if(((JList)e.getSource()).getSelectedIndices().length > 0) {
             int selectedPos = ((JList) e.getSource()).getSelectedIndices()[0];
-            Room room = editorWindow.getSelectedRoom();
+            Room room = window.getSelectedRoom();
             Layer layer = room.getLayerList().get(selectedPos);
             room.setSelectedLayer(layer);
         }

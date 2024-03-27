@@ -2,7 +2,7 @@ package net.loganford.nieEditor.ui.leftPane;
 
 import net.loganford.nieEditor.actions.actionImpl.EditRoom;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.RoomDialog;
 
@@ -14,13 +14,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RoomsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
-    private EditorWindow editorWindow;
+    private Window window;
     private JList<Room> roomList;
 
-    public RoomsTab(EditorWindow editorWindow) {
-        this.editorWindow = editorWindow;
+    public RoomsTab(Window window) {
+        this.window = window;
 
-        editorWindow.getListeners().add(this);
+        window.getListeners().add(this);
 
         setLayout(new BorderLayout());
 
@@ -53,10 +53,10 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
 
     @Override
     public void roomListChanged() {
-        roomList.setListData(editorWindow.getProject().getRooms().toArray(new Room[]{}));
+        roomList.setListData(window.getProject().getRooms().toArray(new Room[]{}));
 
-        if(editorWindow.getSelectedRoom() != null) {
-            roomList.setSelectedIndex(editorWindow.getProject().getRooms().indexOf(editorWindow.getSelectedRoom()));
+        if(window.getSelectedRoom() != null) {
+            roomList.setSelectedIndex(window.getProject().getRooms().indexOf(window.getSelectedRoom()));
         }
     }
 
@@ -72,34 +72,34 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
                 room.setWidth(rd.getRoomWidth());
                 room.setHeight(rd.getRoomHeight());
 
-                editorWindow.getProject().getRooms().add(room);
-                editorWindow.getListeners().forEach(ProjectListener::roomListChanged);
-                editorWindow.setProjectDirty(true);
+                window.getProject().getRooms().add(room);
+                window.getListeners().forEach(ProjectListener::roomListChanged);
+                window.setProjectDirty(true);
             }
         }
 
         if(e.getActionCommand().equals("Edit")) {
-            if(editorWindow.getSelectedRoom() != null) {
+            if(window.getSelectedRoom() != null) {
                 RoomDialog rd = new RoomDialog(false);
-                rd.setRoomName(editorWindow.getSelectedRoom().getName());
-                rd.setRoomWidth(editorWindow.getSelectedRoom().getWidth());
-                rd.setRoomHeight(editorWindow.getSelectedRoom().getHeight());
+                rd.setRoomName(window.getSelectedRoom().getName());
+                rd.setRoomWidth(window.getSelectedRoom().getWidth());
+                rd.setRoomHeight(window.getSelectedRoom().getHeight());
                 rd.show();
 
                 if(rd.isAccepted()) {
-                    EditRoom action = new EditRoom(editorWindow, editorWindow.getSelectedRoom(), rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight());
-                    editorWindow.getSelectedRoom().getActionPerformer().perform(editorWindow, action);
+                    EditRoom action = new EditRoom(window, window.getSelectedRoom(), rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight());
+                    window.getSelectedRoom().getActionPerformer().perform(window, action);
                 }
             }
         }
 
-        if(e.getActionCommand().equals("Remove") &&  editorWindow.getSelectedRoom() != null) {
+        if(e.getActionCommand().equals("Remove") &&  window.getSelectedRoom() != null) {
             int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to delete this room? This cannot be undone.", "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editorWindow.getProject().getRooms().remove(editorWindow.getSelectedRoom());
-                editorWindow.setSelectedRoom(null);
-                editorWindow.getListeners().forEach(ProjectListener::roomListChanged);
-                editorWindow.setProjectDirty(true);
+                window.getProject().getRooms().remove(window.getSelectedRoom());
+                window.setSelectedRoom(null);
+                window.getListeners().forEach(ProjectListener::roomListChanged);
+                window.setProjectDirty(true);
             }
         }
     }
@@ -108,8 +108,8 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
     public void valueChanged(ListSelectionEvent e) {
         if(((JList)e.getSource()).getSelectedIndices().length > 0) {
             int selectedPos = ((JList) e.getSource()).getSelectedIndices()[0];
-            Room room = editorWindow.getProject().getRooms().get(selectedPos);
-            editorWindow.setSelectedRoom(room);
+            Room room = window.getProject().getRooms().get(selectedPos);
+            window.setSelectedRoom(room);
         }
     }
 }

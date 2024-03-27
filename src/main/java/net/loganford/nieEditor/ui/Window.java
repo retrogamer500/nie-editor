@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 @Log4j2
-public class EditorWindow implements ActionListener, ProjectListener, WindowListener {
+public class Window implements ActionListener, ProjectListener, WindowListener {
 
     public static final String LAST_FILE_LOCATION = "LastFileLocation";
 
@@ -43,7 +43,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
 
     @Getter private JScrollPane roomScrollPane;
 
-    public EditorWindow() {
+    public Window() {
         try
         {
             javax.swing.UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
@@ -298,7 +298,7 @@ public class EditorWindow implements ActionListener, ProjectListener, WindowList
     }
 
     public static void main(String[] args) {
-        EditorWindow window = new EditorWindow();
+        Window window = new Window();
     }
 
     public void setProjectDirty(boolean dirty) {

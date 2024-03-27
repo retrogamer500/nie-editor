@@ -4,21 +4,21 @@ import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 import java.util.List;
 
 public class PlaceEntities implements Action {
 
-    private EditorWindow editorWindow;
+    private Window window;
     private Room room;
     private Layer layer;
 
     private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToRemove;
 
-    public PlaceEntities(EditorWindow editorWindow, Room room, Layer layer, List<Entity> entitiesToAdd, List<Entity> entitiesToRemove) {
-        this.editorWindow = editorWindow;
+    public PlaceEntities(Window window, Room room, Layer layer, List<Entity> entitiesToAdd, List<Entity> entitiesToRemove) {
+        this.window = window;
         this.room = room;
         this.layer = layer;
         this.entitiesToAdd = entitiesToAdd;
@@ -35,7 +35,7 @@ public class PlaceEntities implements Action {
             layer.getEntities().addAll(entitiesToAdd);
         }
 
-        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(room));
+        window.getListeners().forEach(l -> l.selectedRoomChanged(room));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PlaceEntities implements Action {
             layer.getEntities().addAll(entitiesToRemove);
         }
 
-        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(room));
+        window.getListeners().forEach(l -> l.selectedRoomChanged(room));
     }
 
     @Override

@@ -2,18 +2,18 @@ package net.loganford.nieEditor.actions.actionImpl;
 
 import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Layer;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 public class EditLayer implements Action {
 
-    private EditorWindow editorWindow;
+    private Window window;
     private Layer layer;
 
     private String oldName;
     private String newName;
 
-    public EditLayer(EditorWindow editorWindow, Layer layer, String newName) {
-        this.editorWindow = editorWindow;
+    public EditLayer(Window window, Layer layer, String newName) {
+        this.window = window;
         this.layer = layer;
 
         this.oldName = layer.getName();
@@ -23,13 +23,13 @@ public class EditLayer implements Action {
     @Override
     public void perform() {
         layer.setName(newName);
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override
     public void undo() {
         layer.setName(oldName);
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override

@@ -4,7 +4,7 @@ import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.EntityDialog;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +21,13 @@ import java.util.*;
 
 public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener {
 
-    private EditorWindow editorWindow;
+    private Window window;
     private DefaultMutableTreeNode root;
     private JTree tree;
 
-    public EntitiesTab(EditorWindow editorWindow) {
-        this.editorWindow = editorWindow;
-        editorWindow.getListeners().add(this);
+    public EntitiesTab(Window window) {
+        this.window = window;
+        window.getListeners().add(this);
 
         setLayout(new BorderLayout());
 
@@ -70,13 +70,13 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
             if(ed.isAccepted()) {
                 EntityDefinition def = new EntityDefinition();
                 updateEntity(def, ed);
-                editorWindow.getProject().getEntityDefinitions().add(def);
-                editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
-                editorWindow.setProjectDirty(true);
+                window.getProject().getEntityDefinitions().add(def);
+                window.getListeners().forEach(ProjectListener::entitiesChanged);
+                window.setProjectDirty(true);
             }
         }
         if(e.getActionCommand().equals("Edit")) {
-            EntityDefinition def = editorWindow.getSelectedEntity();
+            EntityDefinition def = window.getSelectedEntity();
             if(def != null) {
                 EntityDialog ed = new EntityDialog(false);
 
@@ -93,31 +93,31 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
 
                 if(ed.isAccepted()) {
                     updateEntity(def, ed);
-                    editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
-                    if(editorWindow.getSelectedRoom() != null) {
-                        editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
+                    window.getListeners().forEach(ProjectListener::entitiesChanged);
+                    if(window.getSelectedRoom() != null) {
+                        window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
                     }
-                    editorWindow.setProjectDirty(true);
+                    window.setProjectDirty(true);
                 }
             }
         }
         if(e.getActionCommand().equals("Remove")) {
-            if(editorWindow.getSelectedEntity() != null) {
+            if(window.getSelectedEntity() != null) {
                 int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this entity cannot be undone. This will delete this entity from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
                 if(dialogResult == JOptionPane.YES_OPTION){
-                    editorWindow.getProject().getEntityDefinitions().remove(editorWindow.getSelectedEntity());
+                    window.getProject().getEntityDefinitions().remove(window.getSelectedEntity());
 
-                    for(Room room: editorWindow.getProject().getRooms()) {
+                    for(Room room: window.getProject().getRooms()) {
                         for(Layer layer: room.getLayerList()) {
-                            layer.getEntities().removeIf(ent -> ent.getEntityDefinitionUUID().equals(editorWindow.getSelectedEntity().getUuid()));
+                            layer.getEntities().removeIf(ent -> ent.getEntityDefinitionUUID().equals(window.getSelectedEntity().getUuid()));
                         }
                         room.getActionPerformer().clearHistory();
                     }
 
-                    editorWindow.setSelectedEntity(null);
-                    editorWindow.getListeners().forEach(ProjectListener::entitiesChanged);
-                    editorWindow.getListeners().forEach(l -> l.selectedRoomChanged(editorWindow.getSelectedRoom()));
-                    editorWindow.setProjectDirty(true);
+                    window.setSelectedEntity(null);
+                    window.getListeners().forEach(ProjectListener::entitiesChanged);
+                    window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
+                    window.setProjectDirty(true);
                 }
 
 
@@ -165,7 +165,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         root.removeAllChildren();
 
         HashMap<String, ArrayList<EntityDefinition>> edGroups = new HashMap<>();
-        for(EntityDefinition ed: editorWindow.getProject().getEntityDefinitions()) {
+        for(EntityDefinition ed: window.getProject().getEntityDefinitions()) {
             edGroups.computeIfAbsent(ed.getGroup(), v -> new ArrayList<>()).add(ed);
         }
 
@@ -197,7 +197,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
             }
 
             DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tree.getPathForRow(i).getLastPathComponent();
-            if(dmtn.getUserObject().equals(editorWindow.getSelectedEntity())) {
+            if(dmtn.getUserObject().equals(window.getSelectedEntity())) {
                 tree.setSelectionPath(tree.getPathForRow(i));
             }
         }
@@ -211,7 +211,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
             tree.setSelectionPath(e.getNewLeadSelectionPath());
             if (node.getUserObject() instanceof EntityDefinition) {
                 EntityDefinition ed = (EntityDefinition) node.getUserObject();
-                editorWindow.setSelectedEntity(ed);
+                window.setSelectedEntity(ed);
                 return;
             }
         }

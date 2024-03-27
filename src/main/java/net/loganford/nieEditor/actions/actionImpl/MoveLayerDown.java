@@ -3,15 +3,15 @@ package net.loganford.nieEditor.actions.actionImpl;
 import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.Window;
 
 public class MoveLayerDown implements Action {
-    private EditorWindow editorWindow;
+    private Window window;
     private Room room;
     private int layerPosition;
 
-    public MoveLayerDown(EditorWindow editorWindow, Room room, Layer layer) {
-        this.editorWindow = editorWindow;
+    public MoveLayerDown(Window window, Room room, Layer layer) {
+        this.window = window;
         this.room = room;
 
         this.layerPosition = room.getLayerList().indexOf(layer);
@@ -27,7 +27,7 @@ public class MoveLayerDown implements Action {
             room.getLayerList().set(layerPosition, otherLayer);
         }
 
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MoveLayerDown implements Action {
             room.getLayerList().set(layerPosition, otherLayer);
         }
 
-        editorWindow.getListeners().forEach(l -> l.layersChanged(editorWindow.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override
