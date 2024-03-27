@@ -21,6 +21,8 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     private Tool tool;
     private EditorWindow editorWindow;
     private int width, height;
+    private boolean middleMouseDown = false;
+    private int dragMouseX, dragMouseY;
 
     @Getter @Setter private int gridWidth = 16;
     @Getter @Setter private int gridHeight = 16;
@@ -162,6 +164,12 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                 startTool(x, y, false);
             }
         }
+
+        if(e.getButton() == MouseEvent.BUTTON2) {
+            dragMouseX = e.getXOnScreen();
+            dragMouseY = e.getYOnScreen();
+            middleMouseDown = true;
+        }
     }
 
     @Override
@@ -172,6 +180,10 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
             endTool(x, y);
             tool = null;
+        }
+
+        if(e.getButton() == MouseEvent.BUTTON2) {
+            middleMouseDown = false;
         }
     }
 
@@ -187,11 +199,27 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
         if(tool != null) {
             int x = e.getX() / editorWindow.getZoom();
             int y = e.getY() / editorWindow.getZoom();
 
             moveTool(x, y);
+        }
+
+        if(middleMouseDown) {
+            int deltaX = e.getXOnScreen() - dragMouseX;
+            int deltaY = e.getYOnScreen() - dragMouseY;
+
+            if(deltaX != 0) {
+                editorWindow.getRoomScrollPane().getHorizontalScrollBar().setValue(editorWindow.getRoomScrollPane().getHorizontalScrollBar().getValue() - deltaX);
+            }
+            if(deltaY != 0) {
+                editorWindow.getRoomScrollPane().getVerticalScrollBar().setValue(editorWindow.getRoomScrollPane().getVerticalScrollBar().getValue() - deltaY);
+            }
+
+            dragMouseX = e.getXOnScreen();
+            dragMouseY = e.getYOnScreen();
         }
     }
 
