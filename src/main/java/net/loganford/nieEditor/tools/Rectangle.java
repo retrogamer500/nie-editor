@@ -109,19 +109,6 @@ public class Rectangle extends Tool {
         }
     }
 
-    private List<Entity> getEntitiesWithinBounds(java.awt.Rectangle rectangle) {
-        List<Entity> entities = new ArrayList<Entity>();
-
-        for(Entity entity : getLayer().getEntities()) {
-            EntityDefinition ed = getEditorWindow().getProject().getEntityInfo(entity);
-            if(entity.collidesWith(ed, rectangle)) {
-                entities.add(entity);
-            }
-        }
-
-        return entities;
-    }
-
     @Override
     public void render(Graphics g) {
         g.setColor(new Color(Color.BLUE.getRed(), Color.BLUE.getGreen(), Color.BLUE.getBlue(), 64));

@@ -2,7 +2,10 @@ package net.loganford.nieEditor.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.nieEditor.ui.EditorWindow;
+import net.loganford.nieEditor.ui.ImageCache;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Entity {
@@ -53,5 +56,21 @@ public class Entity {
         }
 
         return true;
+    }
+
+    public void render(EditorWindow editorWindow, Graphics g) {
+        EntityDefinition ed = editorWindow.getProject().getEntityInfo(this);
+
+        if (ed.getImagePath() != null) {
+            ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
+            g.drawImage(ic.getImage(), getX(), getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
+        } else {
+            g.setColor(Color.CYAN);
+            g.fillRect(getX(), getY(), ed.getWidth(), ed.getHeight());
+            g.setColor(Color.BLUE);
+            g.drawRect(getX(), getY(), ed.getWidth(), ed.getHeight());
+            g.setColor(Color.BLACK);
+            g.drawString(ed.getName(), getX(), getY() - 3);
+        }
     }
 }

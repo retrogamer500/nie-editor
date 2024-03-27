@@ -1,5 +1,6 @@
 package net.loganford.nieEditor.tools;
 
+import net.loganford.nieEditor.actions.actionImpl.PlaceEntities;
 import net.loganford.nieEditor.actions.actionImpl.RemoveEntities;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.EntityDefinition;
@@ -8,6 +9,7 @@ import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.EditorWindow;
 
 import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +28,11 @@ public class Pen extends Tool{
 
     @Override
     public void mousePressed(int x, int y) {
+
+
         if(isEntity()) {
             if (isLeftClick()) {
-
+               addEntityAt(x, y);
             } else {
                 removeEntitiesAt(x, y);
             }
@@ -39,7 +43,7 @@ public class Pen extends Tool{
     public void mouseMoved(int x, int y) {
         if(isEntity()) {
             if (isLeftClick()) {
-
+                addEntityAt(x, y);
             } else {
                 removeEntitiesAt(x, y);
             }
@@ -50,12 +54,20 @@ public class Pen extends Tool{
     public void mouseReleased(int x, int y) {
         if(isEntity()) {
             if (isLeftClick()) {
-
+                PlaceEntities placeEntities = new PlaceEntities(getEditorWindow(), getRoom(), getLayer(), entitiesToAdd, entitiesToRemove);
+                getRoom().getActionPerformer().perform(getEditorWindow(), placeEntities);
             } else {
                 RemoveEntities removeEntities = new RemoveEntities(getEditorWindow(), getRoom(), getLayer(), null, entitiesToRemove);
                 getRoom().getActionPerformer().perform(getEditorWindow(), removeEntities);
-                entitiesToRemove.forEach(e -> e.setHidden(false));
             }
+            entitiesToRemove.forEach(e -> e.setHidden(false));
+        }
+    }
+
+    @Override
+    public void renderOnLayer(Graphics g) {
+        for(Entity e: entitiesToAdd) {
+            e.render(getEditorWindow(), g);
         }
     }
 
@@ -67,6 +79,38 @@ public class Pen extends Tool{
     @Override
     public void cancelTool(int x, int y) {
         entitiesToRemove.forEach(e -> e.setHidden(false));
+    }
+
+    private void addEntityAt(int x, int y) {
+        if(inactiveZone != null && inactiveZone.contains(new Point(x, y))) {
+            return;
+        }
+
+        int snapX = (Integer)getEditorWindow().getToolPane().getGridWidth().getValue();
+        int snapY = (Integer)getEditorWindow().getToolPane().getGridHeight().getValue();
+        boolean isSnapped = getEditorWindow().getToolPane().getSnapEntities().isSelected();
+        boolean isOverwrite = getEditorWindow().getToolPane().getOverwriteEntities().isSelected();
+
+        int px = x;
+        int py = y;
+        EntityDefinition def = getEditorWindow().getSelectedEntity();
+
+        if(isSnapped) {
+            px = (int) (Math.floor(((double)x)/snapX) * snapX);
+            py = (int) (Math.floor(((double)y)/snapY) * snapY);
+            inactiveZone = new Rectangle(px, py, def.getWidth(), def.getHeight());
+        }
+        else {
+            inactiveZone = new Rectangle(px - def.getWidth(), py - def.getHeight(), def.getWidth() * 2, def.getHeight() * 2);
+        }
+
+        if(isOverwrite) {
+            List<Entity> tempEntitiesToRemove = getEntitiesWithinBounds(new java.awt.Rectangle(px, py, def.getWidth(), def.getHeight()));
+            tempEntitiesToRemove.forEach(e -> e.setHidden(true));
+            entitiesToRemove.addAll(tempEntitiesToRemove);
+        }
+
+        entitiesToAdd.add(new Entity(def, px, py));
     }
 
     private void removeEntitiesAt(int x, int y) {

@@ -78,25 +78,16 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                     //Render entities
                     for(Entity entity : layer.getEntities()) {
                         if(!entity.isHidden()) {
-                            EntityDefinition ed = editorWindow.getProject().getEntityInfo(entity);
-
-                            if (ed.getImagePath() != null) {
-                                ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
-                                g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
-                            } else {
-                                g.setColor(Color.CYAN);
-                                g.fillRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
-                                g.setColor(Color.BLUE);
-                                g.drawRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
-                                g.setColor(Color.BLACK);
-                                g.drawString(ed.getName(), entity.getX(), entity.getY() - 3);
-                            }
+                            entity.render(editorWindow, g);
                         }
+                    }
+
+                    if(layer == editorWindow.getSelectedRoom().getSelectedLayer() && tool != null) {
+                        tool.renderOnLayer(g);
                     }
                 }
             }
 
-            //g.setXORMode(Color.WHITE);
             //Render grid
             if (showGrid) {
                 g.setColor(new Color(0, 0, 0, 128));
@@ -108,7 +99,6 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                     g.fillRect(0, j, width, 1);
                 }
             }
-            //g.setPaintMode();
 
             //Render tool
             if(tool != null) {
