@@ -77,19 +77,20 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                 if(layer.isVisible()) {
                     //Render entities
                     for(Entity entity : layer.getEntities()) {
-                        EntityDefinition ed = editorWindow.getProject().getEntityInfo(entity);
+                        if(!entity.isHidden()) {
+                            EntityDefinition ed = editorWindow.getProject().getEntityInfo(entity);
 
-                        if(ed.getImagePath() != null) {
-                            ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
-                            g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
-                        }
-                        else {
-                            g.setColor(Color.CYAN);
-                            g.fillRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
-                            g.setColor(Color.BLUE);
-                            g.drawRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
-                            g.setColor(Color.BLACK);
-                            g.drawString(ed.getName(), entity.getX(), entity.getY() - 4);
+                            if (ed.getImagePath() != null) {
+                                ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
+                                g.drawImage(ic.getImage(), entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
+                            } else {
+                                g.setColor(Color.CYAN);
+                                g.fillRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
+                                g.setColor(Color.BLUE);
+                                g.drawRect(entity.getX(), entity.getY(), ed.getWidth(), ed.getHeight());
+                                g.setColor(Color.BLACK);
+                                g.drawString(ed.getName(), entity.getX(), entity.getY() - 3);
+                            }
                         }
                     }
                 }

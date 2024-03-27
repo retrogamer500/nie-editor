@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.awt.*;
 
 public class Entity {
+    @Getter @Setter private transient boolean hidden = false;
     @Getter @Setter private int x;
     @Getter @Setter private int y;
     @Getter @Setter private String entityDefinitionUUID;
