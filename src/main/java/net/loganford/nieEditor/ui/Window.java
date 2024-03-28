@@ -48,16 +48,16 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Getter private JScrollPane roomScrollPane;
 
     public Window() {
-        if("1".equals(loadVal("darkMode"))) {
-            darkMode = true;
-            FlatDarculaLaf.setup();
-        }
-        else {
+        if("0".equals(loadVal("darkMode"))) {
             try
             {
                 javax.swing.UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
             }
             catch (Exception e) { }
+        }
+        else {
+            darkMode = true;
+            FlatDarculaLaf.setup();
         }
         JFrame.setDefaultLookAndFeelDecorated(true);
 
