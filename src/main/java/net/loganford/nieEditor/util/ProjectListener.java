@@ -12,4 +12,5 @@ public interface ProjectListener {
     default void tilesetsChanged() {}
     default void entitiesChanged() {}
     default void layerSelectionChanged() {}
+    default void tilePickerSettingsChanged(int zoom, boolean showGrid) {}
 }

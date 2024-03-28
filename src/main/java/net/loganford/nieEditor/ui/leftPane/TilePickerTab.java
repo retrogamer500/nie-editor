@@ -3,11 +3,18 @@ package net.loganford.nieEditor.ui.leftPane;
 import net.loganford.nieEditor.ui.Window;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class TilePickerTab extends JPanel {
+public class TilePickerTab extends JPanel implements ActionListener, ChangeListener {
     private JScrollPane scroller;
     private Window window;
+
+    private JComboBox zoomBox;
+    private JCheckBox showGrid;
 
     public TilePickerTab(Window window) {
         this.window = window;
@@ -20,6 +27,40 @@ public class TilePickerTab extends JPanel {
         scroller.setWheelScrollingEnabled(true);
 
         scroller.getViewport().add(new TilePicker(window));
+
         add(scroller, BorderLayout.CENTER);
+        add(tilePickerTools(), BorderLayout.SOUTH);
+    }
+
+    public JPanel tilePickerTools() {
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Zoom:"));
+        zoomBox = new JComboBox<>(new String[]{"1", "2", "4", "8"});
+        zoomBox.addActionListener(this);
+        panel.add(zoomBox);
+
+        JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+        separator.setPreferredSize(new Dimension(4, 24));
+        panel.add(separator);
+
+        showGrid = new JCheckBox("Show Grid", true);
+        showGrid.addChangeListener(this);
+        panel.add(showGrid);
+
+        return panel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(zoomBox)) {
+            window.getListeners().forEach(l -> l.tilePickerSettingsChanged(Integer.parseInt((String) zoomBox.getSelectedItem()), showGrid.isSelected()));
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if(e.getSource().equals(showGrid)) {
+            window.getListeners().forEach(l -> l.tilePickerSettingsChanged(Integer.parseInt((String) zoomBox.getSelectedItem()), showGrid.isSelected()));
+        }
     }
 }

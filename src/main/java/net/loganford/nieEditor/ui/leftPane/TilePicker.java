@@ -17,6 +17,9 @@ public class TilePicker extends JPanel implements ProjectListener {
     private Tileset tileset;
     private ImageIcon tileImage;
 
+    private int zoom = 1;
+    private boolean showGrid = true;
+
     @Getter private int tileSelectionX = 0;
     @Getter private int tileSelectionY = 0;
 
@@ -31,26 +34,31 @@ public class TilePicker extends JPanel implements ProjectListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Graphics2D g2d = ((Graphics2D) g);
 
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
         if(tileImage == null) {
             g.setColor(Color.WHITE);
             g.drawString("Select a layer with a tileset to view picker.", 16, 16);
         }
         else {
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g2d.scale(zoom, zoom);
 
+            //Draw tileset
             g.drawImage(tileImage.getImage(), 0, 0, null);
 
             //Draw Grid
-            g.setColor(new Color(0, 0, 0, 128));
-            for (int i = tileset.getTileWidth() - 1; i < tileImage.getIconWidth(); i += tileset.getTileWidth()) {
-                g.fillRect(i, 0, 1, tileImage.getIconHeight());
-            }
+            if(showGrid) {
+                g.setColor(new Color(0, 0, 0, 128));
+                for (int i = tileset.getTileWidth() - 1; i < tileImage.getIconWidth(); i += tileset.getTileWidth()) {
+                    g.fillRect(i, 0, 1, tileImage.getIconHeight());
+                }
 
-            for (int j = tileset.getTileHeight() - 1; j < tileImage.getIconHeight(); j += tileset.getTileHeight()) {
-                g.fillRect(0, j, tileImage.getIconWidth(), 1);
+                for (int j = tileset.getTileHeight() - 1; j < tileImage.getIconHeight(); j += tileset.getTileHeight()) {
+                    g.fillRect(0, j, tileImage.getIconWidth(), 1);
+                }
             }
 
             //Draw Selection
@@ -70,6 +78,7 @@ public class TilePicker extends JPanel implements ProjectListener {
         && window.getSelectedRoom().getSelectedLayer().getTilesetUuid() != null) {
             tileset = window.getProject().getTileset(window.getSelectedRoom().getSelectedLayer().getTilesetUuid());
             if(tileset.getImagePath() != null) {
+                //Todo: Fix scrollbars when zoomed or image changed
                 tileImage = ImageCache.getInstance().getImage(new File(tileset.getImagePath()));
                 setPreferredSize(new Dimension(tileImage.getIconWidth(), tileImage.getIconHeight()));
 
@@ -102,6 +111,13 @@ public class TilePicker extends JPanel implements ProjectListener {
 
     @Override
     public void layerSelectionChanged() {
+        updatePicker();
+    }
+
+    @Override
+    public void tilePickerSettingsChanged(int zoom, boolean showGrid) {
+        this.zoom = zoom;
+        this.showGrid = showGrid;
         updatePicker();
     }
 }

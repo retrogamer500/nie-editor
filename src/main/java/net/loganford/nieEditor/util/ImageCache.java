@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 @Log4j2
 public class ImageCache {
+    //Todo Refactor image cache and make it easy to invalidate loaded images when new ones are loaded again
     private static ImageCache INSTANCE;
 
     public static ImageCache getInstance() {
