@@ -1,6 +1,7 @@
 package net.loganford.nieEditor.ui.leftPane;
 
 import net.loganford.nieEditor.data.EntityDefinition;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
@@ -13,6 +14,18 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+
+        if(Window.darkMode) {
+            if (!leaf) {
+                if (expanded) {
+                    ImageIcon icon = ImageCache.getInstance().getImage("./data/minus.png", 14, 14);
+                    setIcon(icon);
+                } else {
+                    ImageIcon icon = ImageCache.getInstance().getImage("./data/plus.png", 14, 14);
+                    setIcon(icon);
+                }
+            }
+        }
 
         if(((DefaultMutableTreeNode) value).getUserObject() instanceof EntityDefinition) {
             EntityDefinition ed = (EntityDefinition)((DefaultMutableTreeNode) value).getUserObject();

@@ -1,5 +1,7 @@
 package net.loganford.nieEditor.ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +29,8 @@ import java.util.prefs.Preferences;
 public class Window implements ActionListener, ProjectListener, WindowListener {
 
     public static final String LAST_FILE_LOCATION = "LastFileLocation";
+    public static final String DARK_MODE = "darkMode";
+    public static boolean darkMode = false;
 
     @Getter List<ProjectListener> listeners = new ArrayList<ProjectListener>();
 
@@ -44,11 +48,17 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Getter private JScrollPane roomScrollPane;
 
     public Window() {
-        try
-        {
-            javax.swing.UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
+        if("1".equals(loadVal("darkMode"))) {
+            darkMode = true;
+            FlatDarculaLaf.setup();
         }
-        catch (Exception e) { }
+        else {
+            try
+            {
+                javax.swing.UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
+            }
+            catch (Exception e) { }
+        }
         JFrame.setDefaultLookAndFeelDecorated(true);
 
         frame = new JFrame("NIE Editor");
@@ -97,6 +107,12 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
             jmi = new JMenuItem("Redo");
             jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK ) );
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
+            menu.addSeparator();
+
+            jmi = new JMenuItem("Preferences");
             jmi.addActionListener(this);
             menu.add(jmi);
 
@@ -186,6 +202,9 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
             if(getSelectedRoom() != null) {
                 getSelectedRoom().getActionPerformer().redo(this);
             }
+        }
+        if(e.getActionCommand().equals("Preferences")) {
+            new net.loganford.nieEditor.ui.Preferences().show(this);;
         }
     }
 
@@ -318,11 +337,11 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         roomScrollPane.repaint();
     }
 
-    private void saveVal(String key, String val) {
+    public void saveVal(String key, String val) {
         Preferences.userRoot().node(this.getClass().getName()).put(key, val);
     }
 
-    private String loadVal(String key) {
+    public String loadVal(String key) {
         return Preferences.userRoot().node(this.getClass().getName()).get(key, null);
     }
 
