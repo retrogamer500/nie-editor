@@ -98,11 +98,12 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         if(e.getActionCommand().equals("Edit")) {
             Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
-                LayerDialog ld = new LayerDialog(false);
+                LayerDialog ld = new LayerDialog(window, false);
                 ld.setLayerName(selectedLayer.getName());
+                ld.setTilesetUuid(selectedLayer.getTilesetUuid());
                 ld.show();
                 if(ld.isAccepted()) {
-                    EditLayer editLayer = new EditLayer(window, selectedLayer, ld.getLayerName());
+                    EditLayer editLayer = new EditLayer(window, selectedLayer, ld.getLayerName(), ld.getTilesetUuid());
                     window.getSelectedRoom().getActionPerformer().perform(window, editLayer);
                 }
             }
@@ -130,10 +131,10 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
     }
 
     private void addLayerAtIndex(int index) {
-        LayerDialog ld = new LayerDialog(true);
+        LayerDialog ld = new LayerDialog(window, true);
         ld.show();
         if(ld.isAccepted()) {
-            AddLayer addLayer = new AddLayer(window, window.getSelectedRoom(), ld.getLayerName(), index);
+            AddLayer addLayer = new AddLayer(window, window.getSelectedRoom(), ld.getLayerName(), ld.getTilesetUuid(), index);
             window.getSelectedRoom().getActionPerformer().perform(window, addLayer);
         }
     }

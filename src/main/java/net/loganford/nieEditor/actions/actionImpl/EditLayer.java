@@ -12,23 +12,31 @@ public class EditLayer implements Action {
     private String oldName;
     private String newName;
 
-    public EditLayer(Window window, Layer layer, String newName) {
+    private String oldTilesetUuid;
+    private String newTilesetUuid;
+
+    public EditLayer(Window window, Layer layer, String newName, String newTilesetUuid) {
         this.window = window;
         this.layer = layer;
 
         this.oldName = layer.getName();
         this.newName = newName;
+
+        this.oldTilesetUuid = layer.getTilesetUuid();
+        this.newTilesetUuid = newTilesetUuid;
     }
 
     @Override
     public void perform() {
         layer.setName(newName);
+        layer.setTilesetUuid(newTilesetUuid);
         window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 
     @Override
     public void undo() {
         layer.setName(oldName);
+        layer.setTilesetUuid(oldTilesetUuid);
         window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
     }
 

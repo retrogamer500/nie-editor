@@ -1,6 +1,8 @@
 package net.loganford.nieEditor.ui.leftPane;
 
+import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
+import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.ui.dialog.TilesetDialog;
@@ -109,10 +111,18 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             if(window.getSelectedTileset() != null) {
                 int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this tileset cannot be undone. This will delete all usages of this tileset from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
 
-                window.getProject().getTilesets().remove(window.getSelectedTileset());
+                Tileset ts = window.getSelectedTileset();
+                window.getProject().getTilesets().remove(ts);
 
                 if(dialogResult == JOptionPane.YES_OPTION){
-                    //Todo: Delete all usages of tileset and delete room histories
+                    for(Room room: window.getProject().getRooms()) {
+                        for(Layer layer: room.getLayerList()) {
+                            if(ts.getUuid().equals(layer.getTilesetUuid())) {
+                                layer.setTilesetUuid(null);
+                            }
+                        }
+                        room.getActionPerformer().clearHistory();
+                    }
                 }
             }
             window.getListeners().forEach(ProjectListener::tilesetsChanged);

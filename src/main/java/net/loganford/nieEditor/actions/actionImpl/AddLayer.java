@@ -11,18 +11,21 @@ public class AddLayer implements Action {
     private Room room;
     private int position;
     private String layerName;
+    private String tilesetUuid;
 
-    public AddLayer(Window window, Room room, String layerName, int position) {
+    public AddLayer(Window window, Room room, String layerName, String tilesetUuid, int position) {
         this.window = window;
         this.room = room;
         this.layerName = layerName;
         this.position = position;
+        this.tilesetUuid = tilesetUuid;
     }
 
     @Override
     public void perform() {
         Layer layer = new Layer();
         layer.setName(layerName);
+        layer.setTilesetUuid(tilesetUuid);
         room.getLayerList().add(position, layer);
 
         window.getListeners().forEach(l -> l.layersChanged(room));
