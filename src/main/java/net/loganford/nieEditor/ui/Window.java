@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
 import net.loganford.nieEditor.util.ImageCache;
@@ -41,6 +42,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Getter private RoomEditor roomPanel;
     @Getter private Room selectedRoom;
     @Getter @Setter EntityDefinition selectedEntity;
+    @Getter @Setter Tileset selectedTileset;
     @Getter private int zoom = 1;
     private JFrame frame;
     private boolean projectDirty = false;

@@ -5,7 +5,7 @@ import javax.swing.*;
 public class Preferences {
     public void show(Window window) {
 
-        JCheckBox darkModeBox = new JCheckBox("Dark Mode (Requires Restart):", "1".equals(window.loadVal(Window.DARK_MODE)));
+        JCheckBox darkModeBox = new JCheckBox("Dark Mode (Requires Restart)", "1".equals(window.loadVal(Window.DARK_MODE)));
         JComponent[] inputs = {
                 darkModeBox
         };

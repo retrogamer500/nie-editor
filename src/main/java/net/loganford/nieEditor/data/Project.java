@@ -14,6 +14,7 @@ public class Project {
     @Getter private transient HashMap<String, EntityDefinition> entityInfo = new HashMap<>();
 
     @Getter @Setter private String projectName;
+    @Getter @Setter private List<Tileset> tilesets = new ArrayList<>();
     @Getter @Setter private List<EntityDefinition> entityDefinitions = new ArrayList<>();
     @Getter @Setter private List<Room> rooms = new ArrayList<>();
 

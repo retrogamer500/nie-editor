@@ -111,7 +111,7 @@ public class EntityDialog implements ActionListener {
                     fileLocationLabel.setText(imageFile.getAbsolutePath());
 
                     //Display icon
-                    imageLabel.setIcon(ImageCache.getInstance().getImage(imageFile, IMG_WIDTH, IMG_WIDTH));
+                    imageLabel.setIcon(ImageCache.getInstance().getImage(imageFile, IMG_WIDTH, IMG_HEIGHT));
 
                     //Set width and height sliders on image load
                     BufferedImage image = ImageIO.read(imageFile);
