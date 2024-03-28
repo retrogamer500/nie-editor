@@ -65,12 +65,10 @@ public class Entity {
             ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
             g.drawImage(ic.getImage(), getX(), getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
         } else {
-            g.setColor(Color.CYAN);
-            g.fillRect(getX(), getY(), ed.getWidth(), ed.getHeight());
             g.setColor(Color.BLUE);
             g.drawRect(getX(), getY(), ed.getWidth(), ed.getHeight());
             g.setColor(Color.BLACK);
-            g.drawString(ed.getName(), getX(), getY() - 3);
+            g.drawString(ed.getName(), getX(), getY() + 10);
         }
     }
 }
