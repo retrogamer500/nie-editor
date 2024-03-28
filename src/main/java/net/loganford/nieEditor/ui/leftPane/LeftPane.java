@@ -18,7 +18,7 @@ public class LeftPane extends JPanel implements ProjectListener {
 
         tabbedPane.addTab("Rooms", new RoomsTab(window));
         tabbedPane.addTab("Tilesets", new TilesetsTab(window));
-        tabbedPane.addTab("Tile Picker", new JPanel());
+        tabbedPane.addTab("Tile Picker", new TilePickerTab(window));
         tabbedPane.addTab("Entities", new EntitiesTab(window));
 
         add(tabbedPane, BorderLayout.CENTER);

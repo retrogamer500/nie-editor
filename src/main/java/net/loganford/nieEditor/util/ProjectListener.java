@@ -11,4 +11,5 @@ public interface ProjectListener {
     default void layersChanged(Room room) {}
     default void tilesetsChanged() {}
     default void entitiesChanged() {}
+    default void layerSelectionChanged() {}
 }

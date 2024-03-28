@@ -52,4 +52,20 @@ public class ImageCache {
 
         return result;
     }
+
+    public ImageIcon getImage(File file) {
+        String key = file.getAbsolutePath();
+        ImageIcon result = cache.get(key);
+        if(result == null) {
+            try {
+                BufferedImage image = ImageIO.read(file);
+                result = new ImageIcon(image);
+            }
+            catch(IOException e) {
+                log.error(e);
+            }
+            cache.put(key, result);
+        }
+        return result;
+    }
 }

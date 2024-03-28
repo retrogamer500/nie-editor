@@ -166,6 +166,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
             Room room = window.getSelectedRoom();
             Layer layer = room.getLayerList().get(selectedPos);
             room.setSelectedLayer(layer);
+            window.getListeners().forEach(ProjectListener::layerSelectionChanged);
         }
     }
 }
