@@ -22,7 +22,7 @@ public class TilesetDialog implements ActionListener {
 
     @Getter
     private boolean accepted = false;
-    @Getter @Setter private String tilesetName = "New Layer";
+    @Getter @Setter private String tilesetName = "New Tileset";
     @Getter @Setter private String engineResourceKey ="";
     @Getter @Setter private int tileWidth = 16;
     @Getter @Setter private int tileHeight = 16;

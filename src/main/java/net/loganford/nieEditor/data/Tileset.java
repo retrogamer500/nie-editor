@@ -11,6 +11,8 @@ public class Tileset {
     @Getter @Setter private int tileWidth;
     @Getter @Setter private int tileHeight;
 
+    @Getter @Setter private String uuid;
+
     @Override
     public String toString() {
         if(StringUtils.isNotBlank(engineResourceKey)) {

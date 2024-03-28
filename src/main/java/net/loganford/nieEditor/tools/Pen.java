@@ -117,7 +117,7 @@ public class Pen extends Tool{
         List<Entity> hitEntities = new ArrayList<>();
         for(Entity e: getLayer().getEntities()) {
             if(!e.isHidden()) {
-                EntityDefinition def = getWindow().getProject().getEntityInfo(e);
+                EntityDefinition def = getWindow().getProject().getEntityCache(e);
                 if (e.collidesWith(def, x, y)) {
                     hitEntities.add(e);
                     e.setHidden(true);

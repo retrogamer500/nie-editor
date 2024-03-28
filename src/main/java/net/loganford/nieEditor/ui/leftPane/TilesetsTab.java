@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.UUID;
 
 public class TilesetsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
     private JList<Object> jList;
@@ -64,6 +65,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 ts.setTileWidth(td.getTileWidth());
                 ts.setTileHeight(td.getTileHeight());
                 ts.setEngineResourceKey(td.getEngineResourceKey());
+                ts.setUuid(UUID.randomUUID().toString());
 
                 if(td.getImageFile() != null) {
                     ts.setImagePath(td.getImageFile().getAbsolutePath());

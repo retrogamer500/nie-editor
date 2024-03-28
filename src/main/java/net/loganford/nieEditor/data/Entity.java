@@ -59,7 +59,7 @@ public class Entity {
     }
 
     public void render(Window window, Graphics g) {
-        EntityDefinition ed = window.getProject().getEntityInfo(this);
+        EntityDefinition ed = window.getProject().getEntityCache(this);
 
         if (ed.getImagePath() != null) {
             ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
