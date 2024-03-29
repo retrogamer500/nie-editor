@@ -7,6 +7,7 @@ import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
+import net.loganford.nieEditor.util.TilesetCache;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,9 +26,12 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
     private JScrollPane container;
     private int dragMouseX, dragMouseY;
     private boolean middleMouseDown = false;
+    private boolean leftMouseDown = false;
 
     @Getter private int tileSelectionX = 0;
     @Getter private int tileSelectionY = 0;
+    @Getter private int tileSelectionX2 = 0;
+    @Getter private int tileSelectionY2 = 0;
 
     public TilePicker(Window window, JScrollPane container) {
         this.container = container;
@@ -36,10 +40,11 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         window.getListeners().add(this);
-        setPreferredSize(new Dimension(500, 500));
-        setSize(new Dimension(32, 32));
+        //setPreferredSize(new Dimension(500, 500));
+        //setSize(new Dimension(32, 32));
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -74,10 +79,10 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
             //Draw Selection
             g.setColor(new Color(255, 255 , 255, 96));
             g.fillRect(
-                    tileset.getTileWidth() * tileSelectionX,
-                    tileset.getTileHeight() * tileSelectionY,
-                    tileset.getTileWidth(),
-                    tileset.getTileHeight()
+                    tileset.getTileWidth() * Math.min(tileSelectionX, tileSelectionX2),
+                    tileset.getTileHeight() * Math.min(tileSelectionY, tileSelectionY2),
+                    tileset.getTileWidth() * (Math.max(tileSelectionX, tileSelectionX2) - Math.min(tileSelectionX, tileSelectionX2) + 1),
+                    tileset.getTileHeight() * (Math.max(tileSelectionY, tileSelectionY2) - Math.min(tileSelectionY, tileSelectionY2) + 1)
             );
         }
 
@@ -85,8 +90,9 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     private void updatePicker() {
         if(window.getProject() != null && window.getSelectedRoom() != null && window.getSelectedRoom().getSelectedLayer() != null
-        && window.getSelectedRoom().getSelectedLayer().getTilesetUuid() != null) {
-            tileset = window.getProject().getTileset(window.getSelectedRoom().getSelectedLayer().getTilesetUuid());
+                && window.getSelectedRoom().getSelectedLayer().getTileMap() != null
+                && window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() != null) {
+            tileset = TilesetCache.getInstance().getTileset(window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid());
             if(tileset.getImagePath() != null) {
                 ImageIcon newTileImage = ImageCache.getInstance().getImage(new File(tileset.getImagePath()));
 
@@ -156,7 +162,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        if(e.getButton() == MouseEvent.BUTTON1 && tileset != null) {
             if (e.getX() < 0) {
                 return;
             }
@@ -172,6 +178,9 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
             tileSelectionX = e.getX() / (tileset.getTileWidth() * zoom);
             tileSelectionY = e.getY() / (tileset.getTileHeight() * zoom);
+            tileSelectionX2 = tileSelectionX;
+            tileSelectionY2 = tileSelectionY;
+            leftMouseDown = true;
             repaint();
         }
 
@@ -184,6 +193,21 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(e.getButton() == MouseEvent.BUTTON1 && tileset != null) {
+            leftMouseDown = false;
+
+            if(tileSelectionX2 < tileSelectionX) {
+                int t = tileSelectionX2;
+                tileSelectionX2 = tileSelectionX;
+                tileSelectionX = t;
+            }
+            if(tileSelectionY2 < tileSelectionY) {
+                int t = tileSelectionY2;
+                tileSelectionY2 = tileSelectionY;
+                tileSelectionY = t;
+            }
+        }
+
         if(e.getButton() == MouseEvent.BUTTON2) {
             middleMouseDown = false;
         }
@@ -201,6 +225,15 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        if(leftMouseDown && tileset != null) {
+            tileSelectionX2 = e.getX() / (tileset.getTileWidth() * zoom);
+            tileSelectionY2 = e.getY() / (tileset.getTileHeight() * zoom);
+            tileSelectionX2 = Math.min(Math.max(0, tileSelectionX2), (tileImage.getIconWidth() / tileset.getTileWidth()) - 1);
+            tileSelectionY2 = Math.min(Math.max(0, tileSelectionY2), (tileImage.getIconHeight() / tileset.getTileHeight()) - 1);
+
+            repaint();
+        }
+
         if(middleMouseDown) {
             int deltaX = e.getXOnScreen() - dragMouseX;
             int deltaY = e.getYOnScreen() - dragMouseY;

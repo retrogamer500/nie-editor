@@ -1,9 +1,6 @@
 package net.loganford.nieEditor.ui.leftPane;
 
-import net.loganford.nieEditor.data.Layer;
-import net.loganford.nieEditor.data.Project;
-import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.data.Tileset;
+import net.loganford.nieEditor.data.*;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.ui.dialog.TilesetDialog;
 import net.loganford.nieEditor.util.ImageCache;
@@ -121,8 +118,8 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 if(dialogResult == JOptionPane.YES_OPTION){
                     for(Room room: window.getProject().getRooms()) {
                         for(Layer layer: room.getLayerList()) {
-                            if(ts.getUuid().equals(layer.getTilesetUuid())) {
-                                layer.setTilesetUuid(null);
+                            if(ts.getUuid().equals(layer.getTileMap().getTilesetUuid())) {
+                                layer.setTileMap(new TileMap());
                             }
                         }
                         room.getActionPerformer().clearHistory();

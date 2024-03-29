@@ -2,12 +2,8 @@ package net.loganford.nieEditor.util;
 
 import lombok.extern.log4j.Log4j2;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 @Log4j2

@@ -12,8 +12,10 @@ import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
 import net.loganford.nieEditor.ui.leftPane.TilePicker;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
+import net.loganford.nieEditor.util.EntityDefCache;
 import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
+import net.loganford.nieEditor.util.TilesetCache;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
@@ -382,5 +384,11 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Override
     public void windowDeactivated(WindowEvent e) {
 
+    }
+
+    @Override
+    public void projectChanged(Project project) {
+        EntityDefCache.getInstance().setProject(project);
+        TilesetCache.getInstance().setProject(project);
     }
 }

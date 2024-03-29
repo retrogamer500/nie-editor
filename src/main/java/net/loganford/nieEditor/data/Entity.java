@@ -3,6 +3,7 @@ package net.loganford.nieEditor.data;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.EntityDefCache;
 import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
@@ -23,6 +24,10 @@ public class Entity {
         entityDefinitionUUID = ed.getUuid();
         this.x = x;
         this.y = y;
+    }
+
+    public EntityDefinition getDefinition() {
+        return EntityDefCache.getInstance().getEntityDef(entityDefinitionUUID);
     }
 
     public boolean collidesWith(EntityDefinition ed, Rectangle rectangle) {
@@ -60,7 +65,7 @@ public class Entity {
     }
 
     public void render(Window window, Graphics g) {
-        EntityDefinition ed = window.getProject().getEntityCache(this);
+        EntityDefinition ed = getDefinition();
 
         if (ed.getImagePath() != null) {
             ImageIcon ic = ImageCache.getInstance().getImage(new File(ed.getImagePath()), ed.getWidth(), ed.getHeight());

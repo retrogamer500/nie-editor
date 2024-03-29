@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.TilesetCache;
 
 import javax.swing.*;
 
@@ -29,7 +30,7 @@ public class LayerDialog {
         tilesetCb.insertItemAt(null, 0);
 
         if(tilesetUuid != null) {
-            tilesetCb.setSelectedItem(window.getProject().getTileset(tilesetUuid));
+            tilesetCb.setSelectedItem(TilesetCache.getInstance().getTileset(tilesetUuid));
         }
 
         tilesetCb.setSelectedItem(tilesetUuid);

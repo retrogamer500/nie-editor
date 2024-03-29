@@ -3,6 +3,7 @@ package net.loganford.nieEditor.actions.actionImpl;
 import net.loganford.nieEditor.actions.Action;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.data.TileMap;
 import net.loganford.nieEditor.ui.Window;
 
 public class AddLayer implements Action {
@@ -25,7 +26,7 @@ public class AddLayer implements Action {
     public void perform() {
         Layer layer = new Layer();
         layer.setName(layerName);
-        layer.setTilesetUuid(tilesetUuid);
+        layer.setTileMap(new TileMap(tilesetUuid));
         room.getLayerList().add(position, layer);
 
         window.getListeners().forEach(l -> l.layersChanged(room));

@@ -100,7 +100,9 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
             if(selectedLayer != null) {
                 LayerDialog ld = new LayerDialog(window, false);
                 ld.setLayerName(selectedLayer.getName());
-                ld.setTilesetUuid(selectedLayer.getTilesetUuid());
+                if(selectedLayer.getTileMap() != null) {
+                    ld.setTilesetUuid(selectedLayer.getTileMap().getTilesetUuid());
+                }
                 ld.show();
                 if(ld.isAccepted()) {
                     EditLayer editLayer = new EditLayer(window, selectedLayer, ld.getLayerName(), ld.getTilesetUuid());

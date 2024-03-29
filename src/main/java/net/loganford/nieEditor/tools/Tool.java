@@ -42,7 +42,7 @@ public abstract class Tool {
 
         for(Entity entity : getLayer().getEntities()) {
             if(!entity.isHidden()) {
-                EntityDefinition ed = getWindow().getProject().getEntityCache(entity);
+                EntityDefinition ed = entity.getDefinition();
                 if (entity.collidesWith(ed, rectangle)) {
                     entities.add(entity);
                 }
