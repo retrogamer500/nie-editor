@@ -16,7 +16,7 @@ import java.io.File;
 
 public class TilePicker extends JPanel implements ProjectListener, MouseListener {
     private Window window;
-    private Tileset tileset;
+    @Getter private Tileset tileset;
     private ImageIcon tileImage;
 
     private int zoom = 1;
@@ -29,6 +29,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
     public TilePicker(Window window, JScrollPane container) {
         this.container = container;
         this.window = window;
+        window.setTilePicker(this);
 
         this.addMouseListener(this);
 

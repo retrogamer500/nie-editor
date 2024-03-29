@@ -10,6 +10,7 @@ import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
+import net.loganford.nieEditor.ui.leftPane.TilePicker;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
 import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
@@ -43,6 +44,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Getter private Room selectedRoom;
     @Getter @Setter EntityDefinition selectedEntity;
     @Getter @Setter Tileset selectedTileset;
+    @Getter @Setter TilePicker tilePicker;
     @Getter private int zoom = 1;
     private JFrame frame;
     private boolean projectDirty = false;
