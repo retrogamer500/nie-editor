@@ -1,12 +1,15 @@
 package net.loganford.nieEditor.tools;
 
 import net.loganford.nieEditor.actions.actionImpl.PlaceEntities;
+import net.loganford.nieEditor.actions.actionImpl.PlaceTiles;
 import net.loganford.nieEditor.actions.actionImpl.RemoveEntities;
+import net.loganford.nieEditor.actions.actionImpl.RemoveTiles;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.TilePlacement;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ public class Rectangle extends Tool {
         if(x2 == x1) {
             x2+=1;
         }
-        if(isSnapped) {
+        if(isSnapped && isEntity()) {
             x1 = (int) (Math.floor(((double)x1)/snapX) * snapX);
             y1 = (int) (Math.floor(((double)y1)/snapY) * snapY);
             x2 = (int) (Math.ceil(((double)x2)/snapX) * snapX);
@@ -105,6 +108,33 @@ public class Rectangle extends Tool {
                 List<Entity> entitiesToRemove = getEntitiesWithinBounds(new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1));
                 RemoveEntities removeEntities = new RemoveEntities(getWindow(), getRoom(), getLayer(), null, entitiesToRemove);
                 getRoom().getActionPerformer().perform(getWindow(), removeEntities);
+            }
+        }
+        else {
+
+            int tx1 = x1 / getWindow().getTilePicker().getTileset().getTileWidth();
+            int ty1 = y1 / getWindow().getTilePicker().getTileset().getTileHeight();
+
+            int tx2 = x2 / getWindow().getTilePicker().getTileset().getTileWidth();
+            int ty2 = y2 / getWindow().getTilePicker().getTileset().getTileHeight();
+
+            if(isLeftClick()) {
+
+            }
+            else {
+                ArrayList<TilePlacement> tilesToRemove = new ArrayList<>();
+
+                for(int i = tx1; i <= tx2; i++) {
+                    for(int j = ty1; j <= ty2; j++) {
+                        TilePlacement tp = getLayer().getTileMap().getTilePlacement(i, j);
+                        if(tp != null) {
+                            tilesToRemove.add(tp);
+                        }
+                    }
+                }
+
+                RemoveTiles removeTiles = new RemoveTiles(getWindow(), getRoom(), getLayer(), null, tilesToRemove);
+                getRoom().getActionPerformer().perform(getWindow(), removeTiles);
             }
         }
     }
