@@ -28,4 +28,6 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 
 ## Downloads
 
+See below for .JAR distributions. NIE Editor requires JRE >=17.
+
 * [1.0.0](https://github.com/retrogamer500/nie-editor/releases/download/1.0.0/nie-editor-1.0.0.zip) - Initial Release
