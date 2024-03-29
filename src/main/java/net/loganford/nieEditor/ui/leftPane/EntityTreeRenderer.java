@@ -18,10 +18,10 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
 
         if (!leaf) {
             if (expanded) {
-                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/minus.png"), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./editor-data/minus.png"), 14, 14);
                 setIcon(icon);
             } else {
-                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/plus.png"), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./editor-data/plus.png"), 14, 14);
                 setIcon(icon);
             }
         }
@@ -33,7 +33,7 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(icon);
             }
             else {
-                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/obj.png"), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./editor-data/obj.png"), 14, 14);
                 setIcon(icon);
             }
         }

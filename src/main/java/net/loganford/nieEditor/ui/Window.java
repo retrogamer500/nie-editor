@@ -71,7 +71,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         frame.setLayout(new BorderLayout());
         frame.addWindowListener(this);
         frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - frame.getSize().width) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - frame.getSize().height) / 2);
-        frame.setIconImage(ImageCache.getInstance().getImage(new File("./data/sloth.png"), 16, 16).getImage());
+        frame.setIconImage(ImageCache.getInstance().getImage(new File("./editor-data/sloth.png"), 16, 16).getImage());
 
         JMenuBar menuBar = new JMenuBar();
         {
