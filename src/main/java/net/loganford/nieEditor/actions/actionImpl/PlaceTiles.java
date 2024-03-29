@@ -51,7 +51,6 @@ public class PlaceTiles implements Action {
 
         if(tilesToRemove != null) {
             for(TilePlacement tp: tilesToRemove) {
-                System.out.println("Placing tile");
                 layer.getTileMap().placeTile(tp.getX(), tp.getY(), tp.getTileX(), tp.getTileY());
             }
         }

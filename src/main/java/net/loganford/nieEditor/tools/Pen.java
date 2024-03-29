@@ -126,7 +126,6 @@ public class Pen extends Tool{
             entitiesToRemove.forEach(e -> e.setHidden(false));
         }
         else {
-            System.out.println("Replacing tiles");
             for(TilePlacement tp: tilesToRemove) {
                 getLayer().getTileMap().placeTile(tp.getX(), tp.getY(), tp.getTileX(), tp.getTileY());
             }
@@ -171,6 +170,10 @@ public class Pen extends Tool{
     }
 
     private void removeTilesAt(int x, int y) {
+        if(x < 0 || y < 0) {
+            return;
+        }
+
         int tileWidth = getLayer().getTileMap().getTileset().getTileWidth();
         int tileHeight = getLayer().getTileMap().getTileset().getTileHeight();
         int px = x / tileWidth;
