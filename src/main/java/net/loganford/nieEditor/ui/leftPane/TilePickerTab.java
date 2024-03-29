@@ -8,8 +8,10 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-public class TilePickerTab extends JPanel implements ActionListener, ChangeListener {
+public class TilePickerTab extends JPanel implements ActionListener, ItemListener {
     private JScrollPane scroller;
     private Window window;
 
@@ -44,7 +46,7 @@ public class TilePickerTab extends JPanel implements ActionListener, ChangeListe
         panel.add(separator);
 
         showGrid = new JCheckBox("Show Grid", true);
-        showGrid.addChangeListener(this);
+        showGrid.addItemListener(this);
         panel.add(showGrid);
 
         return panel;
@@ -58,7 +60,7 @@ public class TilePickerTab extends JPanel implements ActionListener, ChangeListe
     }
 
     @Override
-    public void stateChanged(ChangeEvent e) {
+    public void itemStateChanged(ItemEvent e) {
         if(e.getSource().equals(showGrid)) {
             window.getListeners().forEach(l -> l.tilePickerSettingsChanged(Integer.parseInt((String) zoomBox.getSelectedItem()), showGrid.isSelected()));
         }

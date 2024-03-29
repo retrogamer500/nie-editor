@@ -139,6 +139,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
             setMaximumSize(new Dimension(tileImage.getIconWidth() * zoom, tileImage.getIconHeight() * zoom));
             container.getHorizontalScrollBar().setValue(0);
             container.getHorizontalScrollBar().setValue(0);
+            revalidate();
             container.revalidate();
         }
     }
