@@ -119,7 +119,27 @@ public class Rectangle extends Tool {
             int ty2 = y2 / getWindow().getTilePicker().getTileset().getTileHeight();
 
             if(isLeftClick()) {
+                ArrayList<TilePlacement> tilesToRemove = new ArrayList<>();
+                ArrayList<TilePlacement> tilesToAdd = new ArrayList<>();
 
+                for(int i = tx1; i <= tx2; i++) {
+                    for(int j = ty1; j <= ty2; j++) {
+                        TilePlacement removedTile = getLayer().getTileMap().getTilePlacement(i, j);
+                        if(removedTile != null) {
+                            tilesToRemove.add(removedTile);
+                        }
+
+                        int tileSelectionWidth = getWindow().getTilePicker().getTileSelectionX2() - getWindow().getTilePicker().getTileSelectionX() + 1;
+                        int tileSelectionHeight = getWindow().getTilePicker().getTileSelectionY2() - getWindow().getTilePicker().getTileSelectionY() + 1;
+                        int tileX = getWindow().getTilePicker().getTileSelectionX() + ((i - tx1) % tileSelectionWidth);
+                        int tileY = getWindow().getTilePicker().getTileSelectionY() + ((j - ty1) % tileSelectionHeight);
+                        TilePlacement addedTile = new TilePlacement(i, j, tileX, tileY);
+                        tilesToAdd.add(addedTile);
+                    }
+                }
+
+                PlaceTiles placeTiles = new PlaceTiles(getWindow(), getRoom(), getLayer(), tilesToAdd, tilesToRemove);
+                getRoom().getActionPerformer().perform(getWindow(), placeTiles);
             }
             else {
                 ArrayList<TilePlacement> tilesToRemove = new ArrayList<>();
