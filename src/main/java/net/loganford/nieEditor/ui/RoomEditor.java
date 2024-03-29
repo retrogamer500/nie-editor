@@ -61,6 +61,11 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
     }
 
     @Override
+    public void layersChanged(Room room) {
+        repaint();
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 

@@ -43,6 +43,7 @@ public class EditLayer implements Action {
             layer.setTileMap(new TileMap(newTilesetUuid));
         }
         window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
     }
 
     @Override
@@ -55,6 +56,7 @@ public class EditLayer implements Action {
             layer.setTileMap(new TileMap());
         }
         window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom()));
+        window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
     }
 
     @Override
