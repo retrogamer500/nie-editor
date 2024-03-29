@@ -3,6 +3,7 @@ package net.loganford.nieEditor.tools;
 import net.loganford.nieEditor.actions.actionImpl.PlaceEntities;
 import net.loganford.nieEditor.actions.actionImpl.PlaceTiles;
 import net.loganford.nieEditor.actions.actionImpl.RemoveEntities;
+import net.loganford.nieEditor.actions.actionImpl.RemoveTiles;
 import net.loganford.nieEditor.data.*;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.TilePlacement;
@@ -46,6 +47,9 @@ public class Pen extends Tool{
             if(isLeftClick()) {
                 placeTilesAt(x, y);
             }
+            else {
+                removeTilesAt(x, y);
+            }
         }
     }
 
@@ -61,6 +65,9 @@ public class Pen extends Tool{
         else {
             if(isLeftClick()) {
                 placeTilesAt(x, y);
+            }
+            else {
+                removeTilesAt(x, y);
             }
         }
     }
@@ -81,6 +88,10 @@ public class Pen extends Tool{
             if(isLeftClick()) {
                 PlaceTiles placeTiles = new PlaceTiles(getWindow(), getRoom(), getLayer(), tilesToAdd, tilesToRemove);
                 getRoom().getActionPerformer().perform(getWindow(), placeTiles);
+            }
+            else {
+                RemoveTiles removeTiles = new RemoveTiles(getWindow(), getRoom(), getLayer(), tilesToAdd, tilesToRemove);
+                getRoom().getActionPerformer().perform(getWindow(), removeTiles);
             }
         }
     }
@@ -115,6 +126,7 @@ public class Pen extends Tool{
             entitiesToRemove.forEach(e -> e.setHidden(false));
         }
         else {
+            System.out.println("Replacing tiles");
             for(TilePlacement tp: tilesToRemove) {
                 getLayer().getTileMap().placeTile(tp.getX(), tp.getY(), tp.getTileX(), tp.getTileY());
             }
@@ -122,7 +134,9 @@ public class Pen extends Tool{
     }
 
     private void placeTilesAt(int x, int y) {
-
+        if(x < 0 || y < 0) {
+            return;
+        }
 
         int tileWidth = getLayer().getTileMap().getTileset().getTileWidth();
         int tileHeight = getLayer().getTileMap().getTileset().getTileHeight();
@@ -153,6 +167,18 @@ public class Pen extends Tool{
                 }
                 tilesToAdd.add(new TilePlacement(px + i, py + j, getWindow().getTilePicker().getTileSelectionX() + i, getWindow().getTilePicker().getTileSelectionY() + j));
             }
+        }
+    }
+
+    private void removeTilesAt(int x, int y) {
+        int tileWidth = getLayer().getTileMap().getTileset().getTileWidth();
+        int tileHeight = getLayer().getTileMap().getTileset().getTileHeight();
+        int px = x / tileWidth;
+        int py = y / tileHeight;
+        TilePlacement existingTile = getLayer().getTileMap().getTilePlacement(px, py);
+        if(existingTile != null) {
+            getLayer().getTileMap().removeTile(px, py);
+            tilesToRemove.add(existingTile);
         }
     }
 

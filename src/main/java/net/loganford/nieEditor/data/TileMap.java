@@ -69,11 +69,15 @@ public class TileMap {
 
         int pos = (x + y * width) * 2;
 
+        if(tileData[pos] == 0 || tileData[pos+1] == 0) {
+            return null;
+        }
+
         return new TilePlacement(x, y, tileData[pos] - 1, tileData[pos+1] - 1);
     }
 
     public void placeTile(int x, int y, int tileX, int tileY) {
-        if(x >= width || y >= width) {
+        if(x >= width || y >= height) {
             resize(Math.max(width, x + 1), Math.max(height, y + 1));
         }
 
