@@ -56,11 +56,8 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
     public Window() {
         if("0".equals(loadVal("darkMode"))) {
-            try
-            {
-                javax.swing.UIManager.setLookAndFeel( javax.swing.UIManager.getSystemLookAndFeelClassName());
-            }
-            catch (Exception e) { }
+            darkMode = false;
+            FlatLightLaf.setup();
         }
         else {
             darkMode = true;

@@ -16,15 +16,13 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-        if(Window.darkMode) {
-            if (!leaf) {
-                if (expanded) {
-                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/minus.png"), 14, 14);
-                    setIcon(icon);
-                } else {
-                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/plus.png"), 14, 14);
-                    setIcon(icon);
-                }
+        if (!leaf) {
+            if (expanded) {
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/minus.png"), 14, 14);
+                setIcon(icon);
+            } else {
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/plus.png"), 14, 14);
+                setIcon(icon);
             }
         }
 
@@ -35,10 +33,8 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(icon);
             }
             else {
-                if(Window.darkMode) {
-                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/obj.png"), 14, 14);
-                    setIcon(icon);
-                }
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./da1ta/obj.png"), 14, 14);
+                setIcon(icon);
             }
         }
 
