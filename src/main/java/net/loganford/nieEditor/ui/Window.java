@@ -43,6 +43,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
     @Getter private ToolPane toolPane;
     @Getter private RoomEditor roomPanel;
+    @Getter private LeftPane leftPane;
     @Getter private Room selectedRoom;
     @Getter @Setter EntityDefinition selectedEntity;
     @Getter @Setter Tileset selectedTileset;
@@ -137,7 +138,8 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
         toolPane = new ToolPane(this);
         frame.add(toolPane, BorderLayout.NORTH);
-        frame.add(new LeftPane(this), BorderLayout.WEST);
+        leftPane = new LeftPane(this);
+        frame.add(leftPane, BorderLayout.WEST);
         frame.add(roomGrid(), BorderLayout.CENTER);
         frame.add(new RightPane(this), BorderLayout.EAST);
 

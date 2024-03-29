@@ -34,7 +34,8 @@ public abstract class Tool {
     public abstract void mouseMoved(int x, int y);
     public abstract void mouseReleased(int x, int y);
     public abstract void render(Graphics g);
-    public void renderOnLayer(Graphics g) {};
+    public void renderAboveEntities(Graphics g) {};
+    public void renderBelowEntities(Graphics g) {};
 
 
     protected java.util.List<Entity> getEntitiesWithinBounds(java.awt.Rectangle rectangle) {

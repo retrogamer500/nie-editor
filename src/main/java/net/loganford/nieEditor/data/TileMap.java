@@ -2,7 +2,10 @@ package net.loganford.nieEditor.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.nieEditor.util.TilePlacement;
 import net.loganford.nieEditor.util.TilesetCache;
+
+import java.awt.*;
 
 public class TileMap {
     @Getter @Setter private String tilesetUuid;
@@ -24,10 +27,26 @@ public class TileMap {
         return TilesetCache.getInstance().getTileset(tilesetUuid);
     }
 
-    public void renderTileMap() {
+    public void renderTileMap(Graphics g) {
+        Image image = getTileset().getImage().getImage();
+        Tileset ts = getTileset();
+        Color clearColor = new Color(0, 0, 0, 0);
+
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-
+                int pos = (x + y * width) * 2;
+                int tileX = tileData[pos] - 1;
+                int tileY = tileData[pos + 1] - 1;
+                if(tileX >= 0 && tileY >= 0) {
+                    g.drawImage(image,
+                            x * ts.getTileWidth(), y * ts.getTileHeight(),
+                            x * ts.getTileWidth() + ts.getTileWidth(), y * ts.getTileHeight() + ts.getTileHeight(),
+                            tileX * ts.getTileWidth(), tileY * ts.getTileHeight(),
+                            tileX * ts.getTileWidth() + ts.getTileWidth(), tileY * ts.getTileHeight() + ts.getTileHeight(),
+                            clearColor,
+                            null
+                    );
+                }
             }
         }
     }
@@ -43,6 +62,16 @@ public class TileMap {
         tileData[pos + 1] = 0;
     }
 
+    public TilePlacement getTilePlacement(int x, int y) {
+        if(x >= width || y >= height) {
+            return null;
+        }
+
+        int pos = (x + y * width) * 2;
+
+        return new TilePlacement(x, y, tileData[pos] - 1, tileData[pos+1] - 1);
+    }
+
     public void placeTile(int x, int y, int tileX, int tileY) {
         if(x >= width || y >= width) {
             resize(Math.max(width, x + 1), Math.max(height, y + 1));
@@ -55,7 +84,7 @@ public class TileMap {
     }
 
     private void resize(int newWidth, int newHeight) {
-        short[] newTileData = new short[2 * width * height];
+        short[] newTileData = new short[2 * newWidth * newHeight];
 
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {

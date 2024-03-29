@@ -77,6 +77,15 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
             for(int i = window.getSelectedRoom().getLayerList().size() - 1; i >= 0; i--) {
                 Layer layer = window.getSelectedRoom().getLayerList().get(i);
                 if(layer.isVisible()) {
+                    //Render layer
+                    if(layer.getTileMap() != null && layer.getTileMap().getTilesetUuid() != null) {
+                        layer.getTileMap().renderTileMap(g);
+                    }
+
+                    if(layer == window.getSelectedRoom().getSelectedLayer() && tool != null) {
+                        tool.renderBelowEntities(g);
+                    }
+
                     //Render entities
                     for(Entity entity : layer.getEntities()) {
                         if(!entity.isHidden()) {
@@ -85,7 +94,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                     }
 
                     if(layer == window.getSelectedRoom().getSelectedLayer() && tool != null) {
-                        tool.renderOnLayer(g);
+                        tool.renderAboveEntities(g);
                     }
                 }
             }
@@ -114,17 +123,27 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
             return;
         }
 
+        if(!window.getLeftPane().getSelectedTab().equals("Entities") &&
+                !window.getLeftPane().getSelectedTab().equals("Tile Picker")) {
+            return;
+        }
+
+        boolean isEntity = window.getLeftPane().getSelectedTab().equals("Entities");
+
         if(isLeftClick) {
-            if (window.getSelectedEntity() == null) {
+            if (isEntity && window.getSelectedEntity() == null) {
+                return;
+            }
+            if (!isEntity && (window.getSelectedRoom().getSelectedLayer().getTileMap() == null || window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() == null)) {
                 return;
             }
         }
 
         if(window.getToolPane().getPenTool().isSelected()) {
-            tool = new Pen(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), true, isLeftClick);
+            tool = new Pen(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), isEntity, isLeftClick);
         }
         else {
-            tool = new Rectangle(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), true, isLeftClick);
+            tool = new Rectangle(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), isEntity, isLeftClick);
         }
 
         tool.mousePressed(x, y);

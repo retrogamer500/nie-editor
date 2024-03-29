@@ -8,13 +8,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LeftPane extends JPanel implements ProjectListener {
+    JTabbedPane tabbedPane;
+
+
     public LeftPane(Window window) {
         window.getListeners().add(this);
         setLayout(new BorderLayout());
         setMinimumSize(new Dimension(400, 200));
         setPreferredSize(new Dimension(400, 200));
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
 
         tabbedPane.addTab("Rooms", new RoomsTab(window));
         tabbedPane.addTab("Tilesets", new TilesetsTab(window));
@@ -29,5 +32,9 @@ public class LeftPane extends JPanel implements ProjectListener {
     @Override
     public void projectChanged(Project project) {
         setVisible(project != null);
+    }
+
+    public String getSelectedTab() {
+        return tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
     }
 }
