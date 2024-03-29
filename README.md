@@ -19,9 +19,9 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 * JSON export
 * Light and dark modes
 * Room-level history and undo/redo functionality
-* TODO: Tilemap features
-* TODO: External Java library to make importing levels easy
+* Tilemap editor
+* TODO: External library to make importing levels easy
 
-![image](https://github.com/retrogamer500/nie-editor/assets/48998885/3e5156ac-7b87-49ae-9605-d671ec3b9b3a)
+![image](https://github.com/retrogamer500/nie-editor/assets/48998885/90bbf604-db6d-43c8-b47b-7c6fe6f476de)
 
-![image](https://github.com/retrogamer500/nie-editor/assets/48998885/7622afc2-5b02-414f-a950-83a1399515a2)
+![image](https://github.com/retrogamer500/nie-editor/assets/48998885/fc9c2991-1d01-4ee7-b950-85461038bf60)
