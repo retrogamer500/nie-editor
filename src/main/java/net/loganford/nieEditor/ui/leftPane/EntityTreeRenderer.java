@@ -33,7 +33,7 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(icon);
             }
             else {
-                ImageIcon icon = ImageCache.getInstance().getImage(new File("./da1ta/obj.png"), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/obj.png"), 14, 14);
                 setIcon(icon);
             }
         }

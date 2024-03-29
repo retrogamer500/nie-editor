@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.actions.ActionPerformer;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,22 @@ public class Room {
     @Getter @Setter private int width, height;
     @Getter @Setter private List<Layer> layerList = new ArrayList<>();
 
+    @Getter @Setter private int bgColorR = 128;
+    @Getter @Setter private int bgColorG = 128;
+    @Getter @Setter private int bgColorB = 128;
+
     @Override
     public String toString() {
         return name;
+    }
+
+    public Color getBackgroundColor() {
+        return new Color(bgColorR, bgColorG, bgColorB);
+    }
+
+    public void setBackgroundColor(Color color) {
+        bgColorR = color.getRed();
+        bgColorG = color.getGreen();
+        bgColorB = color.getBlue();
     }
 }

@@ -72,6 +72,8 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
                 room.setWidth(rd.getRoomWidth());
                 room.setHeight(rd.getRoomHeight());
 
+                room.setBackgroundColor(rd.getBackgroundColor());
+
                 window.getProject().getRooms().add(room);
                 window.getListeners().forEach(ProjectListener::roomListChanged);
                 window.setProjectDirty(true);
@@ -84,10 +86,11 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
                 rd.setRoomName(window.getSelectedRoom().getName());
                 rd.setRoomWidth(window.getSelectedRoom().getWidth());
                 rd.setRoomHeight(window.getSelectedRoom().getHeight());
+                rd.setBackgroundColor(window.getSelectedRoom().getBackgroundColor());
                 rd.show();
 
                 if(rd.isAccepted()) {
-                    EditRoom action = new EditRoom(window, window.getSelectedRoom(), rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight());
+                    EditRoom action = new EditRoom(window, window.getSelectedRoom(), rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight(), rd.getBackgroundColor());
                     window.getSelectedRoom().getActionPerformer().perform(window, action);
                 }
             }

@@ -74,7 +74,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
         if(window.getSelectedRoom() != null) {
             //Room background
-            g.setColor(Color.lightGray);
+            g.setColor(window.getSelectedRoom().getBackgroundColor());
             g.fillRect(0, 0, width, height);
 
 
