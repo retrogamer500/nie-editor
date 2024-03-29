@@ -26,7 +26,7 @@ public class TilePickerTab extends JPanel implements ActionListener, ChangeListe
         scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroller.setWheelScrollingEnabled(true);
 
-        scroller.getViewport().add(new TilePicker(window));
+        scroller.getViewport().add(new TilePicker(window, scroller));
 
         add(scroller, BorderLayout.CENTER);
         add(tilePickerTools(), BorderLayout.SOUTH);

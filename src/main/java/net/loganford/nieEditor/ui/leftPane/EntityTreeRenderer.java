@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
+import java.io.File;
 
 public class EntityTreeRenderer extends DefaultTreeCellRenderer {
 
@@ -18,10 +19,10 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
         if(Window.darkMode) {
             if (!leaf) {
                 if (expanded) {
-                    ImageIcon icon = ImageCache.getInstance().getImage("./data/minus.png", 14, 14);
+                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/minus.png"), 14, 14);
                     setIcon(icon);
                 } else {
-                    ImageIcon icon = ImageCache.getInstance().getImage("./data/plus.png", 14, 14);
+                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/plus.png"), 14, 14);
                     setIcon(icon);
                 }
             }
@@ -30,12 +31,12 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
         if(((DefaultMutableTreeNode) value).getUserObject() instanceof EntityDefinition) {
             EntityDefinition ed = (EntityDefinition)((DefaultMutableTreeNode) value).getUserObject();
             if(ed.getImagePath() != null) {
-                ImageIcon icon = ImageCache.getInstance().getImage(ed.getImagePath(), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(new File(ed.getImagePath()), 14, 14);
                 setIcon(icon);
             }
             else {
                 if(Window.darkMode) {
-                    ImageIcon icon = ImageCache.getInstance().getImage("./data/obj.png", 14, 14);
+                    ImageIcon icon = ImageCache.getInstance().getImage(new File("./data/obj.png"), 14, 14);
                     setIcon(icon);
                 }
             }

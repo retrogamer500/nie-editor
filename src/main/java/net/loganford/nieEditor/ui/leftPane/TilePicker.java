@@ -10,26 +10,31 @@ import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 
-public class TilePicker extends JPanel implements ProjectListener {
+public class TilePicker extends JPanel implements ProjectListener, MouseListener {
     private Window window;
     private Tileset tileset;
     private ImageIcon tileImage;
 
     private int zoom = 1;
     private boolean showGrid = true;
+    private JScrollPane container;
 
     @Getter private int tileSelectionX = 0;
     @Getter private int tileSelectionY = 0;
 
-    public TilePicker(Window window) {
+    public TilePicker(Window window, JScrollPane container) {
+        this.container = container;
         this.window = window;
+
+        this.addMouseListener(this);
+
         window.getListeners().add(this);
-
         setPreferredSize(new Dimension(500, 500));
-
-        setSize(new Dimension(500, 500));
+        setSize(new Dimension(32, 32));
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -66,8 +71,8 @@ public class TilePicker extends JPanel implements ProjectListener {
             g.fillRect(
                     tileset.getTileWidth() * tileSelectionX,
                     tileset.getTileHeight() * tileSelectionY,
-                    tileset.getTileWidth() * (tileSelectionX + 1) - 1,
-                    tileset.getTileHeight() * (tileSelectionY + 1) - 1
+                    tileset.getTileWidth(),
+                    tileset.getTileHeight()
             );
         }
 
@@ -78,10 +83,18 @@ public class TilePicker extends JPanel implements ProjectListener {
         && window.getSelectedRoom().getSelectedLayer().getTilesetUuid() != null) {
             tileset = window.getProject().getTileset(window.getSelectedRoom().getSelectedLayer().getTilesetUuid());
             if(tileset.getImagePath() != null) {
-                //Todo: Fix scrollbars when zoomed or image changed
-                tileImage = ImageCache.getInstance().getImage(new File(tileset.getImagePath()));
-                setPreferredSize(new Dimension(tileImage.getIconWidth(), tileImage.getIconHeight()));
+                ImageIcon newTileImage = ImageCache.getInstance().getImage(new File(tileset.getImagePath()));
 
+                if(tileImage == null || newTileImage.getIconWidth() != tileImage.getIconWidth() || newTileImage.getIconHeight() != tileImage.getIconHeight()) {
+                    setPreferredSize(new Dimension(newTileImage.getIconWidth() * zoom, newTileImage.getIconHeight() * zoom));
+                    setMinimumSize(new Dimension(newTileImage.getIconWidth() * zoom, newTileImage.getIconHeight() * zoom));
+                    setMaximumSize(new Dimension(newTileImage.getIconWidth() * zoom, newTileImage.getIconHeight() * zoom));
+                    container.getHorizontalScrollBar().setValue(0);
+                    container.getHorizontalScrollBar().setValue(0);
+                    container.revalidate();
+                }
+
+                tileImage = newTileImage;
             }
             else {
                 tileImage = null;
@@ -119,5 +132,54 @@ public class TilePicker extends JPanel implements ProjectListener {
         this.zoom = zoom;
         this.showGrid = showGrid;
         updatePicker();
+
+        if(tileImage != null) {
+            setPreferredSize(new Dimension(tileImage.getIconWidth() * zoom, tileImage.getIconHeight() * zoom));
+            setMinimumSize(new Dimension(tileImage.getIconWidth() * zoom, tileImage.getIconHeight() * zoom));
+            setMaximumSize(new Dimension(tileImage.getIconWidth() * zoom, tileImage.getIconHeight() * zoom));
+            container.getHorizontalScrollBar().setValue(0);
+            container.getHorizontalScrollBar().setValue(0);
+            container.revalidate();
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if(e.getX() < 0) {
+            return;
+        }
+        if(e.getY() < 0) {
+            return;
+        }
+        if(e.getX() > tileImage.getIconWidth() * zoom) {
+            return;
+        }
+        if(e.getY() > tileImage.getIconHeight() * zoom) {
+            return;
+        }
+
+        tileSelectionX = e.getX() / (tileset.getTileWidth() * zoom);
+        tileSelectionY = e.getY() / (tileset.getTileHeight() * zoom);
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

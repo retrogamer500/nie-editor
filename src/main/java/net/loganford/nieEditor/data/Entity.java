@@ -7,6 +7,7 @@ import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Entity {
     @Getter @Setter private transient boolean hidden = false;
@@ -62,7 +63,7 @@ public class Entity {
         EntityDefinition ed = window.getProject().getEntityCache(this);
 
         if (ed.getImagePath() != null) {
-            ImageIcon ic = ImageCache.getInstance().getImage(ed.getImagePath(), ed.getWidth(), ed.getHeight());
+            ImageIcon ic = ImageCache.getInstance().getImage(new File(ed.getImagePath()), ed.getWidth(), ed.getHeight());
             g.drawImage(ic.getImage(), getX(), getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
         } else {
             g.setColor(Color.BLUE);

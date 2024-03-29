@@ -6,6 +6,7 @@ import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.ui.dialog.TilesetDialog;
+import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
@@ -63,6 +64,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             td.show();
 
             if(td.isAccepted()) {
+                ImageCache.getInstance().clearCache(td.getImageFile());
                 Tileset ts = new Tileset();
                 ts.setName(td.getTilesetName());
                 ts.setTileWidth(td.getTileWidth());
@@ -94,6 +96,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             td.show();
 
             if(td.isAccepted()) {
+                ImageCache.getInstance().clearCache(td.getImageFile());
                 ts.setName(td.getTilesetName());
                 ts.setTileWidth(td.getTileWidth());
                 ts.setTileHeight(td.getTileHeight());

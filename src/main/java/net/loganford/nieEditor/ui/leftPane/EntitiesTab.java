@@ -5,6 +5,7 @@ import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.EntityDialog;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
             ed.show();
             if(ed.isAccepted()) {
                 EntityDefinition def = new EntityDefinition();
+                ImageCache.getInstance().clearCache(ed.getImageFile());
                 updateEntity(def, ed);
                 window.getProject().getEntityDefinitions().add(def);
                 window.getListeners().forEach(ProjectListener::entitiesChanged);
@@ -92,6 +94,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
                 ed.show();
 
                 if(ed.isAccepted()) {
+                    ImageCache.getInstance().clearCache(ed.getImageFile());
                     updateEntity(def, ed);
                     window.getListeners().forEach(ProjectListener::entitiesChanged);
                     if(window.getSelectedRoom() != null) {
