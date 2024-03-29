@@ -77,7 +77,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
                 window.setProjectDirty(true);
             }
         }
-        if(e.getActionCommand().equals("Edit")) {
+        if(e.getActionCommand().equals("Edit") && !((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getAllowsChildren()) {
             EntityDefinition def = window.getSelectedEntity();
             if(def != null) {
                 EntityDialog ed = new EntityDialog(false);
@@ -105,7 +105,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
             }
         }
         if(e.getActionCommand().equals("Remove")) {
-            if(window.getSelectedEntity() != null) {
+            if(window.getSelectedEntity() != null && !((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getAllowsChildren()) {
                 int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this entity cannot be undone. This will delete this entity from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
                 if(dialogResult == JOptionPane.YES_OPTION){
                     window.getProject().getEntityDefinitions().remove(window.getSelectedEntity());

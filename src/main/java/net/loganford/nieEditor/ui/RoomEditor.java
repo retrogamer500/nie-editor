@@ -125,11 +125,13 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
     private void startTool(int x, int y, boolean isLeftClick) {
         if(window.getSelectedRoom() == null || window.getSelectedRoom().getSelectedLayer() == null) {
+            JOptionPane.showMessageDialog(null, "Please select a room and a layer.");
             return;
         }
 
         if(!window.getLeftPane().getSelectedTab().equals("Entities") &&
                 !window.getLeftPane().getSelectedTab().equals("Tile Picker")) {
+            JOptionPane.showMessageDialog(null, "Please select either the Entities tab, or the Tile Picker tab on the left.");
             return;
         }
 
@@ -137,9 +139,11 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
         if(isLeftClick) {
             if (isEntity && window.getSelectedEntity() == null) {
+                JOptionPane.showMessageDialog(null, "Please select an entity from the list on the left.");
                 return;
             }
             if (!isEntity && (window.getSelectedRoom().getSelectedLayer().getTileMap() == null || window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() == null)) {
+                JOptionPane.showMessageDialog(null, "Please setup a tilemap by editing the current layer.");
                 return;
             }
         }
