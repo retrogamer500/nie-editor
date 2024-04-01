@@ -82,5 +82,10 @@ public class Entity {
             g.setColor(Color.BLACK);
             g.drawString(ed.getName(), getX(), getY() + 10);
         }
+
+        if(getProperties() != null && getProperties().size() > 0) {
+            g.setColor(Color.RED);
+            g.drawString("*", getX(), getY() + 2);
+        }
     }
 }
