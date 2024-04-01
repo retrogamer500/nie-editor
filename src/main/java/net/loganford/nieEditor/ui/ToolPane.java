@@ -19,6 +19,7 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
     @Getter private JSpinner gridHeight;
     @Getter private JRadioButton penTool;
     @Getter private JRadioButton rectangleTool;
+    @Getter private JRadioButton instanceEditorTool;
 
     @Getter private JComboBox<String> zoomBox;
 
@@ -74,13 +75,16 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
 
         penTool = new JRadioButton("Pen", true);
         rectangleTool = new JRadioButton("Rectangle");
+        instanceEditorTool = new JRadioButton("Instance Editor");
         ButtonGroup toolButtonGroup = new ButtonGroup();
         toolButtonGroup.add(penTool);
         toolButtonGroup.add(rectangleTool);
+        toolButtonGroup.add(instanceEditorTool);
         JLabel toolLabel = new JLabel("Tools:");
         add(toolLabel);
         add(penTool);
         add(rectangleTool);
+        add(instanceEditorTool);
 
 
 

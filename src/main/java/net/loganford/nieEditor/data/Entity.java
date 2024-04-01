@@ -30,7 +30,9 @@ public class Entity {
         return EntityDefCache.getInstance().getEntityDef(entityDefinitionUUID);
     }
 
-    public boolean collidesWith(EntityDefinition ed, Rectangle rectangle) {
+    public boolean collidesWith(Rectangle rectangle) {
+        EntityDefinition ed = getDefinition();
+
         if(this.x + ed.getWidth() <= rectangle.getX()) {
             return false;
         }
@@ -47,7 +49,9 @@ public class Entity {
         return true;
     }
 
-    public boolean collidesWith(EntityDefinition ed, int x, int y) {
+    public boolean collidesWith(int x, int y) {
+        EntityDefinition ed = getDefinition();
+
         if(x < this.x) {
             return false;
         }

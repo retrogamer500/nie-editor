@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.tools.InstanceEditor;
 import net.loganford.nieEditor.tools.Pen;
 import net.loganford.nieEditor.tools.Rectangle;
 import net.loganford.nieEditor.tools.Tool;
@@ -129,30 +130,35 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
             return;
         }
 
-        if(!window.getLeftPane().getSelectedTab().equals("Entities") &&
-                !window.getLeftPane().getSelectedTab().equals("Tile Picker")) {
-            JOptionPane.showMessageDialog(null, "Please select either the Entities tab, or the Tile Picker tab on the left.");
-            return;
-        }
-
         boolean isEntity = window.getLeftPane().getSelectedTab().equals("Entities");
 
-        if(isLeftClick) {
-            if (isEntity && window.getSelectedEntity() == null) {
-                JOptionPane.showMessageDialog(null, "Please select an entity from the list on the left.");
+        if(!window.getToolPane().getInstanceEditorTool().isSelected()) {
+            if (!window.getLeftPane().getSelectedTab().equals("Entities") &&
+                    !window.getLeftPane().getSelectedTab().equals("Tile Picker")) {
+                JOptionPane.showMessageDialog(null, "Please select either the Entities tab, or the Tile Picker tab on the left.");
                 return;
             }
-            if (!isEntity && (window.getSelectedRoom().getSelectedLayer().getTileMap() == null || window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() == null)) {
-                JOptionPane.showMessageDialog(null, "Please setup a tilemap by editing the current layer.");
-                return;
+
+            if (isLeftClick) {
+                if (isEntity && window.getSelectedEntity() == null) {
+                    JOptionPane.showMessageDialog(null, "Please select an entity from the list on the left.");
+                    return;
+                }
+                if (!isEntity && (window.getSelectedRoom().getSelectedLayer().getTileMap() == null || window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() == null)) {
+                    JOptionPane.showMessageDialog(null, "Please setup a tilemap by editing the current layer.");
+                    return;
+                }
             }
         }
 
         if(window.getToolPane().getPenTool().isSelected()) {
             tool = new Pen(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), isEntity, isLeftClick);
         }
-        else {
+        else if(window.getToolPane().getRectangleTool().isSelected()) {
             tool = new Rectangle(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), isEntity, isLeftClick);
+        }
+        else if(window.getToolPane().getInstanceEditorTool().isSelected()) {
+            tool = new InstanceEditor(window, window.getSelectedRoom(), window.getSelectedRoom().getSelectedLayer(), window.getSelectedEntity(), isEntity, isLeftClick);
         }
 
         tool.mousePressed(x, y);

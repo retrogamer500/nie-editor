@@ -43,8 +43,7 @@ public abstract class Tool {
 
         for(Entity entity : getLayer().getEntities()) {
             if(!entity.isHidden()) {
-                EntityDefinition ed = entity.getDefinition();
-                if (entity.collidesWith(ed, rectangle)) {
+                if (entity.collidesWith(rectangle)) {
                     entities.add(entity);
                 }
             }
