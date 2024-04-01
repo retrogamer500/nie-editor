@@ -40,7 +40,7 @@ public class InstanceEditor extends Tool {
             eed.show();
 
             if(eed.isAccepted()) {
-                EditInstance ee = new EditInstance(getWindow(), getRoom(), hit, eed.getX(), eed.getY());
+                EditInstance ee = new EditInstance(getWindow(), getRoom(), hit, eed.getX(), eed.getY(), eed.getProperties());
                 getRoom().getActionPerformer().perform(getWindow(), ee);
             }
         }

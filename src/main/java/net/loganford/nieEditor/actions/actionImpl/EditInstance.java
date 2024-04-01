@@ -5,6 +5,8 @@ import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
 
+import java.util.HashMap;
+
 public class EditInstance implements Action {
 
     private Window window;
@@ -17,7 +19,10 @@ public class EditInstance implements Action {
     private int oldY;
     private int newY;
 
-    public EditInstance(Window window, Room room, Entity entity, int newX, int newY) {
+    private HashMap<String, String> oldProperties;
+    private HashMap<String, String> newProperties;
+
+    public EditInstance(Window window, Room room, Entity entity, int newX, int newY, HashMap<String, String> newProperties) {
         this.window = window;
         this.room = room;
         this.entity = entity;
@@ -27,12 +32,16 @@ public class EditInstance implements Action {
 
         this.newX = newX;
         this.newY = newY;
+
+        this.oldProperties = entity.getProperties();
+        this.newProperties = newProperties;
     }
 
     @Override
     public void perform() {
         entity.setX(newX);
         entity.setY(newY);
+        entity.setProperties(newProperties);
 
         window.getListeners().forEach(l -> l.selectedRoomChanged(room));
     }
@@ -41,6 +50,7 @@ public class EditInstance implements Action {
     public void undo() {
         entity.setX(oldX);
         entity.setY(oldY);
+        entity.setProperties(oldProperties);
 
         window.getListeners().forEach(l -> l.selectedRoomChanged(room));
     }

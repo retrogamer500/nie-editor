@@ -9,12 +9,14 @@ import net.loganford.nieEditor.util.ImageCache;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.HashMap;
 
 public class Entity {
     @Getter @Setter private transient boolean hidden = false;
     @Getter @Setter private int x;
     @Getter @Setter private int y;
     @Getter @Setter private String entityDefinitionUUID;
+    @Getter @Setter private HashMap<String, String> properties = new HashMap<>();
 
     public Entity() {
 
