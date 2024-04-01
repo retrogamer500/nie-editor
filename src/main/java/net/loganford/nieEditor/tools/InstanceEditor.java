@@ -17,6 +17,16 @@ public class InstanceEditor extends Tool {
 
     @Override
     public void mousePressed(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseMoved(int x, int y) {
+
+    }
+
+    @Override
+    public void mouseReleased(int x, int y) {
         Entity hit = null;
 
         for(Entity e: getLayer().getEntities()) {
@@ -34,16 +44,6 @@ public class InstanceEditor extends Tool {
                 getRoom().getActionPerformer().perform(getWindow(), ee);
             }
         }
-    }
-
-    @Override
-    public void mouseMoved(int x, int y) {
-
-    }
-
-    @Override
-    public void mouseReleased(int x, int y) {
-
     }
 
     @Override
