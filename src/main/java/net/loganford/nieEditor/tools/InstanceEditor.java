@@ -6,7 +6,7 @@ import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
-import net.loganford.nieEditor.ui.dialog.EntityEditDialog;
+import net.loganford.nieEditor.ui.dialog.InstanceEditDialog;
 
 import java.awt.*;
 
@@ -36,7 +36,7 @@ public class InstanceEditor extends Tool {
         }
 
         if(hit != null) {
-            EntityEditDialog eed = new EntityEditDialog(hit);
+            InstanceEditDialog eed = new InstanceEditDialog(hit);
             eed.show();
 
             if(eed.isAccepted()) {
