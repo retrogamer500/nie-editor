@@ -1,6 +1,6 @@
 package net.loganford.nieEditor.tools;
 
-import net.loganford.nieEditor.actions.actionImpl.EditEntity;
+import net.loganford.nieEditor.actions.actionImpl.EditInstance;
 import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.data.Layer;
@@ -40,7 +40,7 @@ public class InstanceEditor extends Tool {
             eed.show();
 
             if(eed.isAccepted()) {
-                EditEntity ee = new EditEntity(getWindow(), getRoom(), hit, eed.getX(), eed.getY());
+                EditInstance ee = new EditInstance(getWindow(), getRoom(), hit, eed.getX(), eed.getY());
                 getRoom().getActionPerformer().perform(getWindow(), ee);
             }
         }

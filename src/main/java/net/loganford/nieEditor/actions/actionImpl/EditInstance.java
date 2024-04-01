@@ -5,7 +5,7 @@ import net.loganford.nieEditor.data.Entity;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
 
-public class EditEntity implements Action {
+public class EditInstance implements Action {
 
     private Window window;
     private Room room;
@@ -17,7 +17,7 @@ public class EditEntity implements Action {
     private int oldY;
     private int newY;
 
-    public EditEntity(Window window, Room room, Entity entity, int newX, int newY) {
+    public EditInstance(Window window, Room room, Entity entity, int newX, int newY) {
         this.window = window;
         this.room = room;
         this.entity = entity;
@@ -47,6 +47,6 @@ public class EditEntity implements Action {
 
     @Override
     public String toString() {
-        return "Entity Edited";
+        return "Instance Edited";
     }
 }
