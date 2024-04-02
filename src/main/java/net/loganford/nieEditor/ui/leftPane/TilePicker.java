@@ -66,6 +66,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
             //Draw Grid
             if(showGrid) {
+                g.setXORMode(new Color(48, 48, 48, 48));
                 g.setColor(new Color(0, 0, 0, 128));
                 for (int i = tileset.getTileWidth() - 1; i < tileImage.getIconWidth(); i += tileset.getTileWidth()) {
                     g.fillRect(i, 0, 1, tileImage.getIconHeight());
@@ -74,6 +75,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
                 for (int j = tileset.getTileHeight() - 1; j < tileImage.getIconHeight(); j += tileset.getTileHeight()) {
                     g.fillRect(0, j, tileImage.getIconWidth(), 1);
                 }
+                g.setPaintMode();
             }
 
             //Draw Selection
