@@ -91,6 +91,11 @@ public class TilesetDialog implements ActionListener {
         if(e.getActionCommand().equals("Load Image")) {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+
+            if(imageFile != null) {
+                chooser.setSelectedFile(imageFile);
+            }
+
             int returnVal = chooser.showOpenDialog(null);
 
             if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -98,6 +103,7 @@ public class TilesetDialog implements ActionListener {
                 fileLocationLabel.setText(imageFile.getAbsolutePath());
 
                 //Display icon
+                ImageCache.getInstance().clearCache(imageFile);
                 imageLabel.setIcon(ImageCache.getInstance().getImage(imageFile, IMG_WIDTH, IMG_HEIGHT));
             }
         }
