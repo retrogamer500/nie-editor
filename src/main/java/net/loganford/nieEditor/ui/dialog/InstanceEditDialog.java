@@ -29,8 +29,8 @@ public class InstanceEditDialog implements ActionListener {
     }
 
     public void show() {
-        JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(entity.getX(), 1, 1000000, 1));
-        JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(entity.getY(), 1, 1000000, 1));
+        JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(entity.getX(), 0, 1000000, 1));
+        JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(entity.getY(), 0, 1000000, 1));
 
 
         JButton addButton = new JButton("Add Property");
@@ -57,7 +57,7 @@ public class InstanceEditDialog implements ActionListener {
             }
         }
 
-        int result = JOptionPane.showConfirmDialog(null, inputs, "Editing " + entity.getDefinition().getName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(null, inputs, "Editing " + entity.getDefinition().getName() + " Instance", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         this.x = (Integer) xSpinner.getValue();
         this.y = (Integer) ySpinner.getValue();

@@ -107,6 +107,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
 
             //Render grid
             if (showGrid) {
+                g.setXORMode(new Color(48, 48, 48, 48));
                 g.setColor(new Color(0, 0, 0, 128));
                 for (int i = gridWidth - 1; i < width; i += gridWidth) {
                     g.fillRect(i, 0, 1, height);
@@ -115,6 +116,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                 for (int j = gridHeight - 1; j < height; j += gridHeight) {
                     g.fillRect(0, j, width, 1);
                 }
+                g.setPaintMode();
             }
 
             //Render tool
