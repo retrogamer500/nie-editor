@@ -231,6 +231,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
                 String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 project = Project.load(fileContents);
                 projectFile = file;
+                selectedRoom = null;
                 frame.setTitle("NIE Editor - " + file.getName());
                 setProjectDirty(false);
                 getListeners().forEach(l -> l.projectChanged(project));
