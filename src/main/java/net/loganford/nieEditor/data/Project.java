@@ -16,6 +16,7 @@ public class Project {
     @Getter @Setter private List<Tileset> tilesets = new ArrayList<>();
     @Getter @Setter private List<EntityDefinition> entityDefinitions = new ArrayList<>();
     @Getter @Setter private List<Room> rooms = new ArrayList<>();
+    @Getter @Setter private HashMap<String, String> properties = new HashMap<>();
 
     public static Project load(String json) {
         Gson gson = new Gson();
