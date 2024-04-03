@@ -101,6 +101,8 @@ public class ProjectProperties extends JPanel implements ActionListener, Project
                 window.getProject().getProperties().put(key, value);
             }
         }
+
+        window.setProjectDirty(true);
     }
 
     @Override
