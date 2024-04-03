@@ -13,4 +13,5 @@ public interface ProjectListener {
     default void entitiesChanged() {}
     default void layerSelectionChanged() {}
     default void tilePickerSettingsChanged(int zoom, boolean showGrid) {}
+    default void leftTabChanged() {}
 }
