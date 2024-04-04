@@ -35,7 +35,7 @@ public class TilesetDialog implements ActionListener {
 
     private Window window;
 
-    public TilesetDialog(boolean newTileset) {
+    public TilesetDialog(Window window, boolean newTileset) {
         this.newTileset = newTileset;
         this.window = window;
     }
