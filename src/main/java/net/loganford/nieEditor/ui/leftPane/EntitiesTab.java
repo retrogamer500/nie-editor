@@ -66,7 +66,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add")) {
-            EntityDialog ed = new EntityDialog(true);
+            EntityDialog ed = new EntityDialog(window, true);
             ed.show();
             if(ed.isAccepted()) {
                 EntityDefinition def = new EntityDefinition();
@@ -80,7 +80,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         if(e.getActionCommand().equals("Edit") && !((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getAllowsChildren()) {
             EntityDefinition def = window.getSelectedEntity();
             if(def != null) {
-                EntityDialog ed = new EntityDialog(false);
+                EntityDialog ed = new EntityDialog(window, false);
 
                 ed.setName(def.getName());
                 ed.setGroup(def.getGroup());
