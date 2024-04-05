@@ -52,7 +52,7 @@ public class TileMap {
     }
 
     public void removeTile(int x, int y) {
-        if(x >= width || y >= width) {
+        if(x >= width || y >= height) {
             return;
         }
 

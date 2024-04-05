@@ -164,7 +164,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1 && tileset != null) {
+        if(e.getButton() == MouseEvent.BUTTON1 && tileset != null && tileImage != null) {
             if (e.getX() < 0) {
                 return;
             }
