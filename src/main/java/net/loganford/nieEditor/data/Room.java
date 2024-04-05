@@ -34,4 +34,20 @@ public class Room {
         bgColorG = color.getGreen();
         bgColorB = color.getBlue();
     }
+
+    public Room duplicate(String name) {
+        Room room = new Room();
+        room.setName(name);
+        room.setWidth(this.width);
+        room.setHeight(this.height);
+        room.setBgColorR(this.getBgColorR());
+        room.setBgColorG(this.getBgColorG());
+        room.setBgColorB(this.getBgColorB());
+
+        for(Layer layer: this.getLayerList()) {
+            room.getLayerList().add(layer.duplicate());
+        }
+
+        return room;
+    }
 }

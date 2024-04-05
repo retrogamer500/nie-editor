@@ -17,6 +17,7 @@ import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.util.TilesetCache;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -116,6 +117,17 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
             menu.addSeparator();
 
+            jmi = new JMenuItem("Open Room");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK ) );
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
+            jmi = new JMenuItem("Clone Room");
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
+            menu.addSeparator();
+
             jmi = new JMenuItem("Preferences");
             jmi.addActionListener(this);
             menu.add(jmi);
@@ -210,6 +222,57 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         }
         if(e.getActionCommand().equals("Preferences")) {
             new net.loganford.nieEditor.ui.Preferences().show(this);;
+        }
+        if(e.getActionCommand().equals("Open Room")) {
+            openRoom();
+        }
+        if(e.getActionCommand().equals("Clone Room")) {
+            cloneRoom();
+        }
+    }
+
+    private void cloneRoom() {
+        if(project != null && getSelectedRoom() != null) {
+            JTextField textField = new JTextField();
+            JComponent[] inputs = {
+                    new JLabel("New Room Name:"),
+                    textField
+            };
+            int result = JOptionPane.showConfirmDialog(null, inputs, "Clone Room: " + getSelectedRoom().getName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if(result == JOptionPane.OK_OPTION && StringUtils.isNoneBlank(textField.getText())) {
+                Room room = getSelectedRoom().duplicate(textField.getText());
+                getProject().getRooms().add(room);
+
+                setSelectedRoom(room);
+                getListeners().forEach(ProjectListener::roomListChanged);
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Please select a room to clone.");
+        }
+    }
+
+    private void openRoom() {
+        if(project != null) {
+            JTextField textField = new JTextField();
+            JComponent[] inputs = {
+                    new JLabel("Room Name:"),
+                    textField
+            };
+            int result = JOptionPane.showConfirmDialog(null, inputs, "Open Room", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if(result == JOptionPane.OK_OPTION && StringUtils.isNoneBlank(textField.getText())) {
+                Room room = project.getRooms().stream().filter(r -> r.getName().equals(textField.getText())).findFirst().orElse(null);
+                if(room != null) {
+                    setSelectedRoom(room);
+                    getListeners().forEach(ProjectListener::roomListChanged);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Room does not exist.");
+                }
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "A project must be open.");
         }
     }
 
