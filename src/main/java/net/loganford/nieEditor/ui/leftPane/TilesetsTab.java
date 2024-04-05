@@ -57,7 +57,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add")) {
-            TilesetDialog td = new TilesetDialog(true);
+            TilesetDialog td = new TilesetDialog(window, true);
             td.show();
 
             if(td.isAccepted()) {
@@ -81,7 +81,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         if(e.getActionCommand().equals("Edit")) {
             Tileset ts = window.getSelectedTileset();
 
-            TilesetDialog td = new TilesetDialog(false);
+            TilesetDialog td = new TilesetDialog(window, false);
             td.setTilesetName(ts.getName());
             td.setTileWidth(ts.getTileWidth());
             td.setTileHeight(ts.getTileHeight());

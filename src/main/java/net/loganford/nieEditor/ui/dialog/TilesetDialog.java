@@ -3,6 +3,7 @@ package net.loganford.nieEditor.ui.dialog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 
 import javax.swing.*;
@@ -32,8 +33,11 @@ public class TilesetDialog implements ActionListener {
     private JLabel fileLocationLabel;
     private JLabel imageLabel;
 
-    public TilesetDialog(boolean newTileset) {
+    private Window window;
+
+    public TilesetDialog(Window window, boolean newTileset) {
         this.newTileset = newTileset;
+        this.window = window;
     }
 
     public void show() {
@@ -90,6 +94,7 @@ public class TilesetDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Load Image")) {
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(window.getProjectFile());
             chooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
 
             if(imageFile != null) {

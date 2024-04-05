@@ -88,6 +88,8 @@ public class ProjectProperties extends JPanel implements ActionListener, Project
             model.addRow(new String[] {entry.getKey(), entry.getValue()});
         }
         model.addTableModelListener(this);
+        table.repaint();
+        repaint();
     }
 
     @Override

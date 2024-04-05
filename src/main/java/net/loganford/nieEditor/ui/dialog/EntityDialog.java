@@ -3,6 +3,7 @@ package net.loganford.nieEditor.ui.dialog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 
 import javax.imageio.ImageIO;
@@ -39,7 +40,10 @@ public class EntityDialog implements ActionListener {
     private JSpinner widthSpinner;
     private JSpinner heightSpinner;
 
-    public EntityDialog(boolean newEntity) {
+    private Window window;
+
+    public EntityDialog(Window window, boolean newEntity) {
+        this.window = window;
         this.newEntity = newEntity;
     }
 
@@ -102,6 +106,7 @@ public class EntityDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Load Image")) {
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(window.getProjectFile());
             chooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
 
             if(imageFile != null) {
