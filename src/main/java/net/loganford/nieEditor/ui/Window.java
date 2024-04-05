@@ -235,10 +235,10 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         if(project != null && getSelectedRoom() != null) {
             JTextField textField = new JTextField();
             JComponent[] inputs = {
-                    new JLabel("Room Name:"),
+                    new JLabel("New Room Name:"),
                     textField
             };
-            int result = JOptionPane.showConfirmDialog(null, inputs, "Clone Room", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int result = JOptionPane.showConfirmDialog(null, inputs, "Clone Room: " + getSelectedRoom().getName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if(result == JOptionPane.OK_OPTION && StringUtils.isNoneBlank(textField.getText())) {
                 Room room = getSelectedRoom().duplicate(textField.getText());
                 getProject().getRooms().add(room);
