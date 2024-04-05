@@ -22,4 +22,11 @@ public class Layer {
             return name + " (HIDDEN)";
         }
     }
+
+    public Layer duplicate() {
+        Layer layer = new Layer();
+        layer.setName(this.name);
+        layer.getTileMap().setTilesetUuid(this.getTileMap().getTilesetUuid());
+        return layer;
+    }
 }
