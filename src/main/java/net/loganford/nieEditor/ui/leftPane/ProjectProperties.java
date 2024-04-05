@@ -87,6 +87,7 @@ public class ProjectProperties extends JPanel implements ActionListener, Project
         for(Map.Entry<String, String> entry : project.getProperties().entrySet()) {
             model.addRow(new String[] {entry.getKey(), entry.getValue()});
         }
+        model.fireTableDataChanged();
         model.addTableModelListener(this);
         table.repaint();
         repaint();
