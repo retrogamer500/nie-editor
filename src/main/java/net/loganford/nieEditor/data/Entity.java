@@ -74,7 +74,7 @@ public class Entity {
         EntityDefinition ed = getDefinition();
 
         if (ed.getImagePath() != null) {
-            ImageIcon ic = ImageCache.getInstance().getImage(new File(ed.getImagePath()), ed.getWidth(), ed.getHeight());
+            ImageIcon ic = ImageCache.getInstance().getImage(window.getRelativeFile(ed.getImagePath()), ed.getWidth(), ed.getHeight());
             g.drawImage(ic.getImage(), getX(), getY(), ed.getWidth(), ed.getHeight(), new Color(0, 0, 0, 0), null);
         } else {
             g.setColor(Color.BLUE);

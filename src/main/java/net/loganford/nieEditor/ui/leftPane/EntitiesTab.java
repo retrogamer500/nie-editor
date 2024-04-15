@@ -38,7 +38,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         root = new DefaultMutableTreeNode("Entities");
 
         tree = new JTree(root);
-        tree.setCellRenderer(new EntityTreeRenderer());
+        tree.setCellRenderer(new EntityTreeRenderer(window));
         tree.setRootVisible(false);
         tree.addTreeSelectionListener(this);
         scrollPane.add(tree);
@@ -89,7 +89,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
                 ed.setClassPath(def.getClassPath());
 
                 if(def.getImagePath() != null) {
-                    ed.setImageFile(new File(def.getImagePath()));
+                    ed.setImageFile(window.getRelativeFile(def.getImagePath()));
                 }
                 ed.show();
 
@@ -151,7 +151,8 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         def.setHeight(ed.getHeight());
 
         if(ed.getImageFile() != null) {
-            def.setImagePath(ed.getImageFile().getAbsolutePath());
+            ImageCache.getInstance().clearCache(ed.getImageFile());
+            def.setImagePath(window.getRelativeFilePath(ed.getImageFile()));
         }
     }
 

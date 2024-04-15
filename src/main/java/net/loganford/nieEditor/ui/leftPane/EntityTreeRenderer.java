@@ -12,6 +12,14 @@ import java.io.File;
 
 public class EntityTreeRenderer extends DefaultTreeCellRenderer {
 
+    private Window window;
+
+    public EntityTreeRenderer(Window window) {
+        super();
+
+        this.window = window;
+    }
+
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
@@ -29,7 +37,7 @@ public class EntityTreeRenderer extends DefaultTreeCellRenderer {
         if(((DefaultMutableTreeNode) value).getUserObject() instanceof EntityDefinition) {
             EntityDefinition ed = (EntityDefinition)((DefaultMutableTreeNode) value).getUserObject();
             if(ed.getImagePath() != null) {
-                ImageIcon icon = ImageCache.getInstance().getImage(new File(ed.getImagePath()), 14, 14);
+                ImageIcon icon = ImageCache.getInstance().getImage(window.getRelativeFile(ed.getImagePath()), 14, 14);
                 setIcon(icon);
             }
             else {
