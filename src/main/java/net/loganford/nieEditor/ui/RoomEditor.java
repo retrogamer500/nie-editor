@@ -85,7 +85,7 @@ public class RoomEditor extends JPanel implements ProjectListener, MouseListener
                 if(layer.isVisible()) {
                     //Render layer
                     if(layer.getTileMap() != null && layer.getTileMap().getTilesetUuid() != null) {
-                        layer.getTileMap().renderTileMap(g);
+                        layer.getTileMap().renderTileMap(window, g);
                     }
 
                     if(layer == window.getSelectedRoom().getSelectedLayer() && tool != null) {

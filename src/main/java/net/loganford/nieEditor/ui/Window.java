@@ -26,6 +26,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -412,6 +414,21 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
     public String loadVal(String key) {
         return Preferences.userRoot().node(this.getClass().getName()).get(key, null);
+    }
+
+    public String getRelativeFilePath(File file) {
+        Path filePath = Paths.get(file.getAbsolutePath());
+        Path projectPath = Paths.get(projectFile.getParentFile().getAbsolutePath());
+
+        return projectPath.relativize(filePath).toString();
+    }
+
+    public File getRelativeFile(String path) {
+        File file = new File(path);
+        if(file.isAbsolute()) {
+            return file;
+        }
+        return new File(projectFile.getParent() + "/" + path);
     }
 
     @Override

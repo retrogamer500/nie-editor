@@ -2,10 +2,12 @@ package net.loganford.nieEditor.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.TilePlacement;
 import net.loganford.nieEditor.util.TilesetCache;
 
 import java.awt.*;
+
 
 public class TileMap {
     @Getter @Setter private String tilesetUuid;
@@ -27,8 +29,8 @@ public class TileMap {
         return TilesetCache.getInstance().getTileset(tilesetUuid);
     }
 
-    public void renderTileMap(Graphics g) {
-        Image image = getTileset().getImage().getImage();
+    public void renderTileMap(Window window, Graphics g) {
+        Image image = getTileset().getImage(window).getImage();
         Tileset ts = getTileset();
         Color clearColor = new Color(0, 0, 0, 0);
 

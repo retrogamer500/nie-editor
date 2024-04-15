@@ -70,7 +70,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 ts.setUuid(UUID.randomUUID().toString());
 
                 if(td.getImageFile() != null) {
-                    ts.setImagePath(td.getImageFile().getAbsolutePath());
+                    ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
                 }
 
                 window.getProject().getTilesets().add(ts);
@@ -87,7 +87,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             td.setTileHeight(ts.getTileHeight());
             td.setEngineResourceKey(ts.getEngineResourceKey());
             if(ts.getImagePath() != null) {
-                td.setImageFile(new File(ts.getImagePath()));
+                td.setImageFile(window.getRelativeFile(ts.getImagePath()));
             }
 
             td.show();
@@ -100,7 +100,8 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 ts.setEngineResourceKey(td.getEngineResourceKey());
 
                 if(td.getImageFile() != null) {
-                    ts.setImagePath(td.getImageFile().getAbsolutePath());
+                    ImageCache.getInstance().clearCache(td.getImageFile());
+                    ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
                 }
 
                 window.getListeners().forEach(ProjectListener::tilesetsChanged);

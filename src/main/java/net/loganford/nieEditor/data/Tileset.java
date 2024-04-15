@@ -2,6 +2,7 @@ package net.loganford.nieEditor.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ImageCache;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +26,7 @@ public class Tileset {
         return name;
     }
 
-    public ImageIcon getImage() {
-        return ImageCache.getInstance().getImage(new File(imagePath));
+    public ImageIcon getImage(Window window) {
+        return ImageCache.getInstance().getImage(window.getRelativeFile(imagePath));
     }
 }

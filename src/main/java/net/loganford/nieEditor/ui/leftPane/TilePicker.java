@@ -96,7 +96,7 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
                 && window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid() != null) {
             tileset = TilesetCache.getInstance().getTileset(window.getSelectedRoom().getSelectedLayer().getTileMap().getTilesetUuid());
             if(tileset.getImagePath() != null) {
-                ImageIcon newTileImage = ImageCache.getInstance().getImage(new File(tileset.getImagePath()));
+                ImageIcon newTileImage = ImageCache.getInstance().getImage(window.getRelativeFile(tileset.getImagePath()));
 
                 if(tileImage == null || newTileImage.getIconWidth() != tileImage.getIconWidth() || newTileImage.getIconHeight() != tileImage.getIconHeight()) {
                     setPreferredSize(new Dimension(newTileImage.getIconWidth() * zoom, newTileImage.getIconHeight() * zoom));

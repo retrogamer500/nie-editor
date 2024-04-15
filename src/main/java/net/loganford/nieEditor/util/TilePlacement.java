@@ -3,8 +3,10 @@ package net.loganford.nieEditor.util;
 import lombok.Getter;
 import lombok.Setter;
 import net.loganford.nieEditor.data.Tileset;
+import net.loganford.nieEditor.ui.Window;
 
 import java.awt.*;
+
 
 public class TilePlacement {
     @Getter @Setter private int x;
@@ -20,10 +22,10 @@ public class TilePlacement {
         this.tileY = tileY;
     }
 
-    public void render(Graphics g, Tileset ts) {
+    public void render(Window window, Graphics g, Tileset ts) {
         Color clearColor = new Color(0, 0, 0, 0);
 
-        g.drawImage(ts.getImage().getImage(),
+        g.drawImage(ts.getImage(window).getImage(),
                 x * ts.getTileWidth(), y * ts.getTileHeight(),
                 x * ts.getTileWidth() + ts.getTileWidth(), y * ts.getTileHeight() + ts.getTileHeight(),
                 tileX * ts.getTileWidth(), tileY * ts.getTileHeight(),

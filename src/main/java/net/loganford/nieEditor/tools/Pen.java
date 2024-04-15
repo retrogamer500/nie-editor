@@ -114,7 +114,7 @@ public class Pen extends Tool{
             Tileset ts = getLayer().getTileMap().getTileset();
             if(tilesToAdd != null) {
                 for(TilePlacement tp : tilesToAdd) {
-                    tp.render(g, ts);
+                    tp.render(getWindow(), g, ts);
                 }
             }
         }
