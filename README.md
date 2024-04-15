@@ -31,6 +31,7 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 
 See below for .JAR distributions. NIE Editor requires JRE >=17.
 
+* [1.3.0](https://github.com/retrogamer500/nie-editor/releases/download/1.3.0/nie-editor-1.3.0.zip) - Now storing relative paths in project file to allow multiple people to work on the same project via version control
 * [1.2.1](https://github.com/retrogamer500/nie-editor/releases/download/1.2.1/nie-editor-1.2.1.zip) - Fixed bug where deleting a tile would fail in some cases
 * [1.2.0](https://github.com/retrogamer500/nie-editor/releases/download/1.2.0/nie-editor-1.2.0.zip) - Adding a few contextual menu items
 * [1.1.2](https://github.com/retrogamer500/nie-editor/releases/download/1.1.2/nie-editor-1.1.2.zip) - Minor bug fixes and changes to file dialogs
