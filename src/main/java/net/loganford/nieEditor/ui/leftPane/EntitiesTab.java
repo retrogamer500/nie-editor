@@ -17,10 +17,12 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.*;
 
-public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener {
+public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener, MouseListener {
 
     private Window window;
     private DefaultMutableTreeNode root;
@@ -41,6 +43,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         tree.setCellRenderer(new EntityTreeRenderer(window));
         tree.setRootVisible(false);
         tree.addTreeSelectionListener(this);
+        tree.addMouseListener(this);
         scrollPane.add(tree);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -80,28 +83,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         if(e.getActionCommand().equals("Edit") && !((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getAllowsChildren()) {
             EntityDefinition def = window.getSelectedEntity();
             if(def != null) {
-                EntityDialog ed = new EntityDialog(window, false);
-
-                ed.setName(def.getName());
-                ed.setGroup(def.getGroup());
-                ed.setWidth(def.getWidth());
-                ed.setHeight(def.getHeight());
-                ed.setClassPath(def.getClassPath());
-
-                if(def.getImagePath() != null) {
-                    ed.setImageFile(window.getRelativeFile(def.getImagePath()));
-                }
-                ed.show();
-
-                if(ed.isAccepted()) {
-                    ImageCache.getInstance().clearCache(ed.getImageFile());
-                    updateEntity(def, ed);
-                    window.getListeners().forEach(ProjectListener::entitiesChanged);
-                    if(window.getSelectedRoom() != null) {
-                        window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
-                    }
-                    window.setProjectDirty(true);
-                }
+                editEntity(def);
             }
         }
         if(e.getActionCommand().equals("Remove")) {
@@ -126,6 +108,31 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
 
 
             }
+        }
+    }
+
+    public void editEntity(EntityDefinition def) {
+        EntityDialog ed = new EntityDialog(window, false);
+
+        ed.setName(def.getName());
+        ed.setGroup(def.getGroup());
+        ed.setWidth(def.getWidth());
+        ed.setHeight(def.getHeight());
+        ed.setClassPath(def.getClassPath());
+
+        if(def.getImagePath() != null) {
+            ed.setImageFile(window.getRelativeFile(def.getImagePath()));
+        }
+        ed.show();
+
+        if(ed.isAccepted()) {
+            ImageCache.getInstance().clearCache(ed.getImageFile());
+            updateEntity(def, ed);
+            window.getListeners().forEach(ProjectListener::entitiesChanged);
+            if(window.getSelectedRoom() != null) {
+                window.getListeners().forEach(l -> l.selectedRoomChanged(window.getSelectedRoom()));
+            }
+            window.setProjectDirty(true);
         }
     }
 
@@ -222,5 +229,38 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         else {
             tree.setSelectionPath(e.getOldLeadSelectionPath());
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            if(node != null && node.getUserObject() instanceof EntityDefinition) {
+                EntityDefinition def = (EntityDefinition) node.getUserObject();
+                if (def != null) {
+                    editEntity(def);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
