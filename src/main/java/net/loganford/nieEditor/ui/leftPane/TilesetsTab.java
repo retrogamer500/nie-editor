@@ -12,10 +12,12 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.UUID;
 
-public class TilesetsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
+public class TilesetsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
     private JList<Object> jList;
 
     private Window window;
@@ -31,6 +33,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         jList = new JList<>();
         jList.addListSelectionListener(this);
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jList.addMouseListener(this);
         scrollPane.add(jList);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -80,33 +83,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         }
         if(e.getActionCommand().equals("Edit")) {
             Tileset ts = window.getSelectedTileset();
-
-            TilesetDialog td = new TilesetDialog(window, false);
-            td.setTilesetName(ts.getName());
-            td.setTileWidth(ts.getTileWidth());
-            td.setTileHeight(ts.getTileHeight());
-            td.setEngineResourceKey(ts.getEngineResourceKey());
-            if(ts.getImagePath() != null) {
-                td.setImageFile(window.getRelativeFile(ts.getImagePath()));
-            }
-
-            td.show();
-
-            if(td.isAccepted()) {
-                ImageCache.getInstance().clearCache(td.getImageFile());
-                ts.setName(td.getTilesetName());
-                ts.setTileWidth(td.getTileWidth());
-                ts.setTileHeight(td.getTileHeight());
-                ts.setEngineResourceKey(td.getEngineResourceKey());
-
-                if(td.getImageFile() != null) {
-                    ImageCache.getInstance().clearCache(td.getImageFile());
-                    ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
-                }
-
-                window.getListeners().forEach(ProjectListener::tilesetsChanged);
-                window.setProjectDirty(true);
-            }
+            editTileset(ts);
         }
         if(e.getActionCommand().equals("Remove")) {
 
@@ -128,6 +105,35 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 }
             }
             window.getListeners().forEach(ProjectListener::tilesetsChanged);
+        }
+    }
+
+    private void editTileset(Tileset ts) {
+        TilesetDialog td = new TilesetDialog(window, false);
+        td.setTilesetName(ts.getName());
+        td.setTileWidth(ts.getTileWidth());
+        td.setTileHeight(ts.getTileHeight());
+        td.setEngineResourceKey(ts.getEngineResourceKey());
+        if(ts.getImagePath() != null) {
+            td.setImageFile(window.getRelativeFile(ts.getImagePath()));
+        }
+
+        td.show();
+
+        if(td.isAccepted()) {
+            ImageCache.getInstance().clearCache(td.getImageFile());
+            ts.setName(td.getTilesetName());
+            ts.setTileWidth(td.getTileWidth());
+            ts.setTileHeight(td.getTileHeight());
+            ts.setEngineResourceKey(td.getEngineResourceKey());
+
+            if(td.getImageFile() != null) {
+                ImageCache.getInstance().clearCache(td.getImageFile());
+                ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
+            }
+
+            window.getListeners().forEach(ProjectListener::tilesetsChanged);
+            window.setProjectDirty(true);
         }
     }
 
@@ -161,5 +167,33 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             Tileset tileset = window.getProject().getTilesets().get(selectedPos);
             window.setSelectedTileset(tileset);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            Tileset ts = window.getSelectedTileset();
+            editTileset(ts);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

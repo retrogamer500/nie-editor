@@ -29,11 +29,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 @Log4j2
-public class Window implements ActionListener, ProjectListener, WindowListener {
+public class Window implements ActionListener, ProjectListener, WindowListener, WindowFocusListener {
 
     public static final String LAST_FILE_LOCATION = "LastFileLocation";
     public static final String DARK_MODE = "darkMode";
@@ -54,6 +55,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     @Getter private int zoom = 1;
     private JFrame frame;
     private boolean projectDirty = false;
+    private long projectLastModified;
 
     @Getter private JScrollPane roomScrollPane;
 
@@ -75,6 +77,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         frame.addWindowListener(this);
         frame.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width  - frame.getSize().width) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - frame.getSize().height) / 2);
         frame.setIconImage(ImageCache.getInstance().getImage(new File("./editor-data/sloth.png"), 16, 16).getImage());
+        frame.addWindowFocusListener(this);
 
         JMenuBar menuBar = new JMenuBar();
         {
@@ -163,20 +166,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         if(loadVal(LAST_FILE_LOCATION) != null) {
             File lastFile = new File(loadVal(LAST_FILE_LOCATION));
             if(lastFile.exists()) {
-                try {
-                    String fileContents = FileUtils.readFileToString(lastFile, StandardCharsets.UTF_8);
-                    project = Project.load(fileContents);
-                    projectFile = lastFile;
-                    frame.setTitle("NIE Editor - " + lastFile.getName());
-                    setProjectDirty(false);
-                    getListeners().forEach(l -> l.projectChanged(project));
-                    getListeners().forEach(ProjectListener::roomListChanged);
-                    getListeners().forEach(l -> l.selectedRoomChanged(null));
-                }
-                catch(IOException ioException) {
-                    log.error("Unable to load file", ioException);
-                    JOptionPane.showMessageDialog(null, "Unable to load file!");
-                }
+               openProject(lastFile);
             }
         }
     }
@@ -292,22 +282,26 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
 
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
-            try {
-                String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-                project = Project.load(fileContents);
-                projectFile = file;
-                selectedRoom = null;
-                frame.setTitle("NIE Editor - " + file.getName());
-                setProjectDirty(false);
-                getListeners().forEach(l -> l.projectChanged(project));
-                getListeners().forEach(ProjectListener::roomListChanged);
-                getListeners().forEach(l -> l.selectedRoomChanged(null));
+            openProject(file);
+        }
+    }
 
-            } catch (IOException ioException) {
-                log.error("Unable to load file", ioException);
-                JOptionPane.showMessageDialog(null, "Unable to load file!");
-            }
+    private void openProject(File file) {
+        try {
+            String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            project = Project.load(fileContents);
+            projectFile = file;
+            projectLastModified = new File(projectFile.getAbsolutePath()).lastModified();
+            selectedRoom = null;
+            frame.setTitle("NIE Editor - " + file.getName());
+            setProjectDirty(false);
+            getListeners().forEach(l -> l.projectChanged(project));
+            getListeners().forEach(ProjectListener::roomListChanged);
+            getListeners().forEach(l -> l.selectedRoomChanged(null));
 
+        } catch (IOException ioException) {
+            log.error("Unable to load file", ioException);
+            JOptionPane.showMessageDialog(null, "Unable to load file!");
         }
     }
 
@@ -338,6 +332,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
             try {
                 project = new Project();
                 projectFile = file;
+                projectLastModified = projectFile.lastModified();
                 selectedRoom = null;
                 FileUtils.writeStringToFile(file, project.save(), StandardCharsets.UTF_8);
                 setProjectDirty(false);
@@ -357,6 +352,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
         if(project != null && projectFile != null) {
             try {
                 FileUtils.writeStringToFile(projectFile, project.save(), StandardCharsets.UTF_8);
+                projectLastModified = projectFile.lastModified();
                 setProjectDirty(false);
                 saveVal(LAST_FILE_LOCATION, projectFile.getAbsolutePath());
             } catch (IOException ioException) {
@@ -470,5 +466,27 @@ public class Window implements ActionListener, ProjectListener, WindowListener {
     public void projectChanged(Project project) {
         EntityDefCache.getInstance().setProject(project);
         TilesetCache.getInstance().setProject(project);
+    }
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        Room oldSelectedRoom = selectedRoom;
+        if(projectFile != null) {
+            File testFile = new File(projectFile.getAbsolutePath());
+            if (testFile.lastModified() != projectLastModified) {
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Project has been modified externally. Reload? This will undo any unsaved changes.", "Modified Project", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    openProject(projectFile);
+                    selectedRoom = oldSelectedRoom;
+                    getListeners().forEach(ProjectListener::roomListChanged);
+                    getListeners().forEach(l -> l.selectedRoomChanged(selectedRoom));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+
     }
 }

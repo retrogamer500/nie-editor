@@ -75,6 +75,8 @@ public class ProjectProperties extends JPanel implements ActionListener, Project
 
     @Override
     public void projectChanged(Project project) {
+        model.removeTableModelListener(this);
+
         if (table.isEditing()) {
             table.getCellEditor().stopCellEditing();
         }
@@ -83,7 +85,6 @@ public class ProjectProperties extends JPanel implements ActionListener, Project
             model.removeRow(0);
         }
 
-        model.removeTableModelListener(this);
         for(Map.Entry<String, String> entry : project.getProperties().entrySet()) {
             model.addRow(new String[] {entry.getKey(), entry.getValue()});
         }
