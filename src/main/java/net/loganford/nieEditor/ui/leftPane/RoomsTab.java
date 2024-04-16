@@ -2,6 +2,7 @@ package net.loganford.nieEditor.ui.leftPane;
 
 import net.loganford.nieEditor.actions.actionImpl.EditRoom;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.RoomDialog;
@@ -12,8 +13,10 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class RoomsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
+public class RoomsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
     private Window window;
     private JList<Room> roomList;
 
@@ -29,6 +32,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
         roomList = new JList<>();
         roomList.addListSelectionListener(this);
         roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        roomList.addMouseListener(this);
         scrollPane.add(roomList);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -82,17 +86,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
 
         if(e.getActionCommand().equals("Edit")) {
             if(window.getSelectedRoom() != null) {
-                RoomDialog rd = new RoomDialog(false);
-                rd.setRoomName(window.getSelectedRoom().getName());
-                rd.setRoomWidth(window.getSelectedRoom().getWidth());
-                rd.setRoomHeight(window.getSelectedRoom().getHeight());
-                rd.setBackgroundColor(window.getSelectedRoom().getBackgroundColor());
-                rd.show();
-
-                if(rd.isAccepted()) {
-                    EditRoom action = new EditRoom(window, window.getSelectedRoom(), rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight(), rd.getBackgroundColor());
-                    window.getSelectedRoom().getActionPerformer().perform(window, action);
-                }
+                editRoom(window.getSelectedRoom());
             }
         }
 
@@ -107,6 +101,20 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
         }
     }
 
+    private void editRoom(Room room) {
+        RoomDialog rd = new RoomDialog(false);
+        rd.setRoomName(room.getName());
+        rd.setRoomWidth(room.getWidth());
+        rd.setRoomHeight(room.getHeight());
+        rd.setBackgroundColor(room.getBackgroundColor());
+        rd.show();
+
+        if(rd.isAccepted()) {
+            EditRoom action = new EditRoom(window, room, rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight(), rd.getBackgroundColor());
+            room.getActionPerformer().perform(window, action);
+        }
+    }
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if(((JList)e.getSource()).getSelectedIndices().length > 0) {
@@ -114,5 +122,34 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
             Room room = window.getProject().getRooms().get(selectedPos);
             window.setSelectedRoom(room);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            if(window.getSelectedRoom() != null) {
+                editRoom(window.getSelectedRoom());
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
