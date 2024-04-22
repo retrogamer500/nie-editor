@@ -271,61 +271,77 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
         @Override
         public void drop(DropTargetDropEvent dtde) {
             TreePath path = getPathForLocation((int) dtde.getLocation().getX(), (int) dtde.getLocation().getY()); // Destination
-            if( path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
-                DefaultMutableTreeNode destNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            DefaultMutableTreeNode destNode = path != null && path.getLastPathComponent() != null ? (DefaultMutableTreeNode) path.getLastPathComponent() : null;
 
-                List<T> obtainedBackingList = backingList.get();
-                if(sourceNode.getUserObject() instanceof String) {
-                    T tSource = (T) sourceNode.getUserObject();
-                    if(destNode.getUserObject() instanceof String) {
-                        //Dragging a folder onto a folder
-                        String sourceFolderPath = Arrays.stream(sourceNode.getPath())
-                                .skip(1)
-                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
-                                .collect(Collectors.joining("."));
-
-                        String destFolderPath = Arrays.stream(destNode.getPath())
-                                .skip(1)
-                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
-                                .collect(Collectors.joining("."));
-                        destFolderPath += "." + sourceNode.getUserObject();
-
-                        for(T t : obtainedBackingList) {
-                            if(pathFunction.apply(t).equals(sourceFolderPath)) {
-                                pathSetter.setPath(t, destFolderPath);
-                            }
-                        }
-
-                        window.setProjectDirty(true);
-                        render(obtainedBackingList);
+            List<T> obtainedBackingList = backingList.get();
+            if(sourceNode.getUserObject() instanceof String) {
+                //Drag folder
+                T tSource = (T) sourceNode.getUserObject();
+                if(destNode != null && !(destNode.getUserObject() instanceof  String)) {
+                    destNode = (DefaultMutableTreeNode) destNode.getParent();
+                    if(destNode.isRoot()) {
+                        destNode = null;
                     }
                 }
-                else {
-                    T tSource = (T) sourceNode.getUserObject();
 
-                    if(destNode.getUserObject() instanceof String) {
-                        //Dragging a file onto a folder
-                        String folderPath = Arrays.stream(destNode.getPath())
+                if(destNode == null || destNode.getUserObject() instanceof String) {
+                    //Dragging a folder onto a folder
+                    String sourceFolderPath = Arrays.stream(sourceNode.getPath())
+                            .skip(1)
+                            .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                            .collect(Collectors.joining("."));
+
+                    String destFolderPath;
+                    if(destNode != null) {
+                        destFolderPath = Arrays.stream(destNode.getPath())
                                 .skip(1)
-                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
                                 .collect(Collectors.joining("."));
-                        obtainedBackingList.remove(tSource);
-                        obtainedBackingList.add(0, tSource);
-                        pathSetter.setPath(tSource, folderPath);
-                        window.setProjectDirty(true);
-                        render(obtainedBackingList);
+                        destFolderPath += "." + sourceNode.getUserObject();
                     }
                     else {
-                        //Dragging a file onto a file
-                        T tDest = (T) destNode.getUserObject();
-
-                        Rectangle destRectangle = getPathBounds(new TreePath(destNode.getPath()));
-                        boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
-                        obtainedBackingList.remove(tSource);
-                        obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
-                        window.setProjectDirty(true);
-                        render(obtainedBackingList);
+                        destFolderPath = (String) sourceNode.getUserObject();
                     }
+
+                    for(T t : obtainedBackingList) {
+                        if(pathFunction.apply(t).equals(sourceFolderPath)) {
+                            pathSetter.setPath(t, destFolderPath);
+                        }
+                    }
+
+                    window.setProjectDirty(true);
+                    render(obtainedBackingList);
+                }
+            }
+            else {
+                if(destNode == null) {
+                    return;
+                }
+
+                T tSource = (T) sourceNode.getUserObject();
+
+                if(destNode.getUserObject() instanceof String) {
+                    //Dragging a file onto a folder
+                    String folderPath = Arrays.stream(destNode.getPath())
+                            .skip(1)
+                            .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                            .collect(Collectors.joining("."));
+                    obtainedBackingList.remove(tSource);
+                    obtainedBackingList.add(0, tSource);
+                    pathSetter.setPath(tSource, folderPath);
+                    window.setProjectDirty(true);
+                    render(obtainedBackingList);
+                }
+                else {
+                    //Dragging a file onto a file
+                    T tDest = (T) destNode.getUserObject();
+
+                    Rectangle destRectangle = getPathBounds(new TreePath(destNode.getPath()));
+                    boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
+                    obtainedBackingList.remove(tSource);
+                    obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
+                    window.setProjectDirty(true);
+                    render(obtainedBackingList);
                 }
             }
         }
