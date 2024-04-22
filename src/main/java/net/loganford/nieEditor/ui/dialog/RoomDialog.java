@@ -17,6 +17,7 @@ public class RoomDialog implements ActionListener {
     @Getter @Setter private int roomWidth = 640;
     @Getter @Setter private int roomHeight = 480;
     @Getter @Setter private Color backgroundColor = new Color(128, 128, 128);
+    @Getter @Setter private String group = "";
 
     private ColorPanel colorPanel;
 
@@ -28,6 +29,7 @@ public class RoomDialog implements ActionListener {
         String title = newRoom ? "Create Room" : "Edit Room";
 
         JTextField roomNameField = new JTextField(roomName);
+        JTextField groupField = new JTextField(group);
         JSpinner roomWidthSpinner = new JSpinner(new SpinnerNumberModel(roomWidth, 1, 1000000, 1));
         JSpinner roomHeightSpinner = new JSpinner(new SpinnerNumberModel(roomHeight, 1, 1000000, 1));
         JButton colorButton = new JButton("Background Color");
@@ -38,6 +40,8 @@ public class RoomDialog implements ActionListener {
         JComponent[] inputs = {
                 new JLabel("Room Name:"),
                 roomNameField,
+                new JLabel("Group:"),
+                groupField,
                 new JLabel("Room Width:"),
                 roomWidthSpinner,
                 new JLabel("Room Height:"),
@@ -49,6 +53,7 @@ public class RoomDialog implements ActionListener {
         int result = JOptionPane.showConfirmDialog(null, inputs, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         this.roomName = roomNameField.getText();
+        this.group = groupField.getText();
         this.roomWidth = (Integer) roomWidthSpinner.getValue();
         this.roomHeight = (Integer) roomHeightSpinner.getValue();
         this.accepted = result == JOptionPane.YES_OPTION;

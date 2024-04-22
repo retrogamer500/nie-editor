@@ -13,6 +13,7 @@ public class Room {
     @Getter @Setter private transient Layer selectedLayer;
 
     @Getter @Setter private String name;
+    @Getter @Setter private String group;
     @Getter @Setter private int width, height;
     @Getter @Setter private List<Layer> layerList = new ArrayList<>();
 

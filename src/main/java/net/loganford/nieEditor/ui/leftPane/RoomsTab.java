@@ -4,6 +4,8 @@ import net.loganford.nieEditor.actions.actionImpl.EditRoom;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.FolderTree;
+import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.RoomDialog;
 
@@ -15,10 +17,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.ArrayList;
 
-public class RoomsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
+public class RoomsTab extends JPanel implements ActionListener, ProjectListener {
     private Window window;
-    private JList<Room> roomList;
+    private FolderTree<Room> roomTree;
 
     public RoomsTab(Window window) {
         this.window = window;
@@ -29,11 +33,17 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
 
         //Setup history list
         ScrollPane scrollPane = new ScrollPane();
-        roomList = new JList<>();
-        roomList.addListSelectionListener(this);
-        roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        roomList.addMouseListener(this);
-        scrollPane.add(roomList);
+
+        roomTree = new FolderTree<>(
+                window,
+                Room.class,
+                Room::getGroup,
+                (e) -> ImageCache.getInstance().getImage(new File("./editor-data/rm.png"), 14, 14),
+                window::setSelectedRoom
+        );
+        roomTree.setOnClickAction(this::editRoom);
+        scrollPane.add(roomTree);
+
         add(scrollPane, BorderLayout.CENTER);
 
         //Setup buttons
@@ -57,11 +67,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
 
     @Override
     public void roomListChanged() {
-        roomList.setListData(window.getProject().getRooms().toArray(new Room[]{}));
-
-        if(window.getSelectedRoom() != null) {
-            roomList.setSelectedIndex(window.getProject().getRooms().indexOf(window.getSelectedRoom()));
-        }
+        roomTree.render(window.getProject() != null ? window.getProject().getRooms() : new ArrayList<>());
     }
 
     @Override
@@ -73,6 +79,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
             if(rd.isAccepted()) {
                 Room room = new Room();
                 room.setName(rd.getRoomName());
+                room.setGroup(rd.getGroup());
                 room.setWidth(rd.getRoomWidth());
                 room.setHeight(rd.getRoomHeight());
 
@@ -104,52 +111,17 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener,
     private void editRoom(Room room) {
         RoomDialog rd = new RoomDialog(false);
         rd.setRoomName(room.getName());
+        rd.setGroup(room.getGroup());
         rd.setRoomWidth(room.getWidth());
         rd.setRoomHeight(room.getHeight());
         rd.setBackgroundColor(room.getBackgroundColor());
         rd.show();
 
         if(rd.isAccepted()) {
+            room.setGroup(rd.getGroup());
+
             EditRoom action = new EditRoom(window, room, rd.getRoomName(), rd.getRoomWidth(), rd.getRoomHeight(), rd.getBackgroundColor());
             room.getActionPerformer().perform(window, action);
         }
-    }
-
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        if(((JList)e.getSource()).getSelectedIndices().length > 0) {
-            int selectedPos = ((JList) e.getSource()).getSelectedIndices()[0];
-            Room room = window.getProject().getRooms().get(selectedPos);
-            window.setSelectedRoom(room);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            if(window.getSelectedRoom() != null) {
-                editRoom(window.getSelectedRoom());
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 }
