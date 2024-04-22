@@ -345,6 +345,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
                         boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
                         obtainedBackingList.remove(tSource);
                         obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
+                        pathSetter.setPath(tSource, pathFunction.apply(tDest));
                         window.setProjectDirty(true);
                         render(obtainedBackingList);
                     }
