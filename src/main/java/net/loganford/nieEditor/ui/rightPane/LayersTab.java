@@ -3,6 +3,7 @@ package net.loganford.nieEditor.ui.rightPane;
 import net.loganford.nieEditor.actions.actionImpl.*;
 import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
+import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.LayerDialog;
@@ -13,8 +14,10 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener {
+public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
 
     private JList jList;
     private Window window;
@@ -29,6 +32,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         jList = new JList<>();
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList.addListSelectionListener(this);
+        jList.addMouseListener(this);
         scrollPane.add(jList);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -98,16 +102,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         if(e.getActionCommand().equals("Edit")) {
             Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
             if(selectedLayer != null) {
-                LayerDialog ld = new LayerDialog(window, false);
-                ld.setLayerName(selectedLayer.getName());
-                if(selectedLayer.getTileMap() != null) {
-                    ld.setTilesetUuid(selectedLayer.getTileMap().getTilesetUuid());
-                }
-                ld.show();
-                if(ld.isAccepted()) {
-                    EditLayer editLayer = new EditLayer(window, selectedLayer, ld.getLayerName(), ld.getTilesetUuid());
-                    window.getSelectedRoom().getActionPerformer().perform(window, editLayer);
-                }
+                editLayer(selectedLayer);
             }
         }
         if(e.getActionCommand().equals("Move Up")) {
@@ -129,6 +124,19 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
                     window.getSelectedRoom().getActionPerformer().perform(window, moveLayerDown);
                 }
             }
+        }
+    }
+
+    private void editLayer(Layer layer) {
+        LayerDialog ld = new LayerDialog(window, false);
+        ld.setLayerName(layer.getName());
+        if(layer.getTileMap() != null) {
+            ld.setTilesetUuid(layer.getTileMap().getTilesetUuid());
+        }
+        ld.show();
+        if(ld.isAccepted()) {
+            EditLayer editLayer = new EditLayer(window, layer, ld.getLayerName(), ld.getTilesetUuid());
+            window.getSelectedRoom().getActionPerformer().perform(window, editLayer);
         }
     }
 
@@ -170,5 +178,33 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
             room.setSelectedLayer(layer);
             window.getListeners().forEach(ProjectListener::layerSelectionChanged);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            Layer layer = window.getSelectedRoom().getSelectedLayer();
+            editLayer(layer);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

@@ -69,6 +69,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             FlatDarculaLaf.setup();
         }
         JFrame.setDefaultLookAndFeelDecorated(true);
+        UIManager.put("Tree.rendererFillBackground", true);
 
         frame = new JFrame("NIE Editor");
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

@@ -13,6 +13,7 @@ public class Room {
     @Getter @Setter private transient Layer selectedLayer;
 
     @Getter @Setter private String name;
+    @Getter @Setter private String group;
     @Getter @Setter private int width, height;
     @Getter @Setter private List<Layer> layerList = new ArrayList<>();
 
@@ -38,6 +39,7 @@ public class Room {
     public Room duplicate(String name) {
         Room room = new Room();
         room.setName(name);
+        room.setGroup(this.getGroup());
         room.setWidth(this.width);
         room.setHeight(this.height);
         room.setBgColorR(this.getBgColorR());

@@ -5,28 +5,24 @@ import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.FolderTree;
 import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.EntityDialog;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.*;
 
-public class EntitiesTab extends JPanel implements ActionListener, ProjectListener, TreeSelectionListener, MouseListener {
+public class EntitiesTab extends JPanel implements ActionListener, ProjectListener {
 
     private Window window;
     private DefaultMutableTreeNode root;
-    private JTree tree;
+    private FolderTree<EntityDefinition> tree;
 
     public EntitiesTab(Window window) {
         this.window = window;
@@ -34,16 +30,24 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
 
         setLayout(new BorderLayout());
 
-        //Setup history list
+        //Setup entities list
         ScrollPane scrollPane = new ScrollPane();
 
         root = new DefaultMutableTreeNode("Entities");
 
-        tree = new JTree(root);
-        tree.setCellRenderer(new EntityTreeRenderer(window));
-        tree.setRootVisible(false);
-        tree.addTreeSelectionListener(this);
-        tree.addMouseListener(this);
+        tree = new FolderTree<>(
+                window,
+                EntityDefinition.class,
+                () -> window.getProject() != null ? window.getProject().getEntityDefinitions() : new ArrayList<>(),
+                EntityDefinition::getGroup,
+                EntityDefinition::setGroup,
+                (e) -> e.getImagePath() != null ? ImageCache.getInstance().getImage(window.getRelativeFile(e.getImagePath()), 14, 14) : ImageCache.getInstance().getImage(new File("./editor-data/obj.png"), 14, 14),
+                window::setSelectedEntity
+        );
+
+        tree.setOnClickAction(this::editEntity);
+
+
         scrollPane.add(tree);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -164,103 +168,7 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
     }
 
     private void renderEntities() {
-        Set<String> expandedGroups = new HashSet<>();
-        Iterator<TreeNode> it = root.children().asIterator();
-        while(it.hasNext()) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) it.next();
-            if(node.getAllowsChildren() && tree.isExpanded(new TreePath(node.getPath()))) {
-                expandedGroups.add(node.toString());
-            }
-        }
-
-        root.removeAllChildren();
-
-        HashMap<String, ArrayList<EntityDefinition>> edGroups = new HashMap<>();
-        for(EntityDefinition ed: window.getProject().getEntityDefinitions()) {
-            edGroups.computeIfAbsent(ed.getGroup(), v -> new ArrayList<>()).add(ed);
-        }
-
-        for(Map.Entry<String, ArrayList<EntityDefinition>> entry : edGroups.entrySet()) {
-            String groupName = entry.getKey();
-            ArrayList<EntityDefinition> eds = entry.getValue();
-
-            DefaultMutableTreeNode folder;
-            if(StringUtils.isBlank(groupName)) {
-                folder = root;
-            }
-            else {
-                folder = new DefaultMutableTreeNode(groupName, true);
-                root.add(folder);
-            }
-
-            for(EntityDefinition ed: eds) {
-                DefaultMutableTreeNode entityNode = new DefaultMutableTreeNode(ed, false);
-                folder.add(entityNode);
-            }
-        }
-
-        ((DefaultTreeModel)tree.getModel()).reload(root);
-
-        //Expand the right nodes and make sure the correct node is selected
-        for (int i = 0; i < tree.getRowCount(); i++) {
-            if(expandedGroups.contains(tree.getPathForRow(i).getLastPathComponent().toString())) {
-                tree.expandRow(i);
-            }
-
-            DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) tree.getPathForRow(i).getLastPathComponent();
-            if(dmtn.getUserObject().equals(window.getSelectedEntity())) {
-                tree.setSelectionPath(tree.getPathForRow(i));
-            }
-        }
+        tree.render(window.getProject() != null ? window.getProject().getEntityDefinitions() : new ArrayList<>());
         repaint();
-    }
-
-    @Override
-    public void valueChanged(TreeSelectionEvent e) {
-        if(e.getNewLeadSelectionPath() != null) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
-            tree.setSelectionPath(e.getNewLeadSelectionPath());
-            if (node.getUserObject() instanceof EntityDefinition) {
-                EntityDefinition ed = (EntityDefinition) node.getUserObject();
-                window.setSelectedEntity(ed);
-                return;
-            }
-        }
-        else {
-            tree.setSelectionPath(e.getOldLeadSelectionPath());
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-            if(node != null && node.getUserObject() instanceof EntityDefinition) {
-                EntityDefinition def = (EntityDefinition) node.getUserObject();
-                if (def != null) {
-                    editEntity(def);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 }
