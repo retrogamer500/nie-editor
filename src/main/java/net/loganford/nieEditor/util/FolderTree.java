@@ -65,6 +65,8 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
     }
 
     public void render(List<T> backingList) {
+        backingList.sort(Comparator.comparing(o -> pathFunction.apply(o)));
+
         // Save a list of expanded groups
         //TreePath currentSelectionPath = getSelectionPath().getLastPathComponent();
         Set<String> expandedFolders = getExpandedFolders("Root.", root);
@@ -322,26 +324,30 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
                 if(destNode.getUserObject() instanceof String) {
                     //Dragging a file onto a folder
-                    String folderPath = Arrays.stream(destNode.getPath())
-                            .skip(1)
-                            .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
-                            .collect(Collectors.joining("."));
-                    obtainedBackingList.remove(tSource);
-                    obtainedBackingList.add(0, tSource);
-                    pathSetter.setPath(tSource, folderPath);
-                    window.setProjectDirty(true);
-                    render(obtainedBackingList);
+                    if(destNode != sourceNode.getParent()) {
+                        String folderPath = Arrays.stream(destNode.getPath())
+                                .skip(1)
+                                .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+                        obtainedBackingList.remove(tSource);
+                        obtainedBackingList.add(0, tSource);
+                        pathSetter.setPath(tSource, folderPath);
+                        window.setProjectDirty(true);
+                        render(obtainedBackingList);
+                    }
                 }
                 else {
                     //Dragging a file onto a file
                     T tDest = (T) destNode.getUserObject();
 
-                    Rectangle destRectangle = getPathBounds(new TreePath(destNode.getPath()));
-                    boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
-                    obtainedBackingList.remove(tSource);
-                    obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
-                    window.setProjectDirty(true);
-                    render(obtainedBackingList);
+                    if(tDest != tSource) {
+                        Rectangle destRectangle = getPathBounds(new TreePath(destNode.getPath()));
+                        boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
+                        obtainedBackingList.remove(tSource);
+                        obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
+                        window.setProjectDirty(true);
+                        render(obtainedBackingList);
+                    }
                 }
             }
         }
