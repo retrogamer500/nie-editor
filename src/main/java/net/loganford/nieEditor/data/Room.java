@@ -39,6 +39,7 @@ public class Room {
     public Room duplicate(String name) {
         Room room = new Room();
         room.setName(name);
+        room.setGroup(this.getGroup());
         room.setWidth(this.width);
         room.setHeight(this.height);
         room.setBgColorR(this.getBgColorR());

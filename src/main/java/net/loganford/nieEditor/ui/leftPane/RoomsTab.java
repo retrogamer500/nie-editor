@@ -10,13 +10,9 @@ import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.RoomDialog;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -37,7 +33,9 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
         roomTree = new FolderTree<>(
                 window,
                 Room.class,
+                () -> window.getProject() != null ? window.getProject().getRooms() : new ArrayList<>(),
                 Room::getGroup,
+                Room::setGroup,
                 (e) -> ImageCache.getInstance().getImage(new File("./editor-data/rm.png"), 14, 14),
                 window::setSelectedRoom
         );

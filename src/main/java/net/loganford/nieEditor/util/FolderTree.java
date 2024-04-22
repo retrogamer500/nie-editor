@@ -1,8 +1,6 @@
 package net.loganford.nieEditor.util;
 
-import com.sun.source.tree.Tree;
 import lombok.Setter;
-import net.loganford.nieEditor.data.EntityDefinition;
 import net.loganford.nieEditor.ui.Window;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,6 +10,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -19,24 +21,30 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class FolderTree<T> extends JTree implements TreeSelectionListener, MouseListener {
     private Window window;
     private Class<T> backingClass;
+    Supplier<List<T>> backingList;
     private Function<T, String> pathFunction;
+    private PathSetter<T> pathSetter;
     private Function<T, ImageIcon> imageFunction;
     private Consumer<T> onChangeAction;
     @Setter private Consumer<T> onClickAction = null;
 
     private DefaultMutableTreeNode root;
+    private DefaultMutableTreeNode sourceNode;
 
-    public FolderTree(Window window, Class<T> backingClass, Function<T, String> pathFunction, Function<T, ImageIcon> imageFunction, Consumer<T> onChangeAction) {
+    public FolderTree(Window window, Class<T> backingClass, Supplier<List<T>> backingList, Function<T, String> pathFunction, PathSetter<T> pathSetter, Function<T, ImageIcon> imageFunction, Consumer<T> onChangeAction) {
         super(new DefaultMutableTreeNode("Root"));
 
         this.window = window;
         this.backingClass = backingClass;
+        this.backingList = backingList;
         this.pathFunction = pathFunction;
+        this.pathSetter = pathSetter;
         this.imageFunction = imageFunction;
         this.onChangeAction = onChangeAction;
         this.root = ((DefaultMutableTreeNode) getModel().getRoot());
@@ -49,6 +57,11 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
         addTreeSelectionListener(this);
         addMouseListener(this);
+
+        setDragEnabled(true);
+        setDropMode(DropMode.INSERT);
+
+        setDropTarget(new DropTarget(this, TransferHandler.COPY, new FolderDropTargetAdapter()));
     }
 
     public void render(List<T> backingList) {
@@ -244,5 +257,81 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             super.shouldPaintExpandControl(path, row, isExpanded, hasBeenExpanded, isLeaf);
             return false;
         }
+    }
+
+    class FolderDropTargetAdapter extends DropTargetAdapter {
+        @Override
+        public void dragEnter(DropTargetDragEvent dtde) {
+            TreePath path = getPathForLocation((int) dtde.getLocation().getX(), (int) dtde.getLocation().getY()); // Source
+            if(path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+                sourceNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            }
+        }
+
+        @Override
+        public void drop(DropTargetDropEvent dtde) {
+            TreePath path = getPathForLocation((int) dtde.getLocation().getX(), (int) dtde.getLocation().getY()); // Destination
+            if( path != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+                DefaultMutableTreeNode destNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+                List<T> obtainedBackingList = backingList.get();
+                if(sourceNode.getUserObject() instanceof String) {
+                    T tSource = (T) sourceNode.getUserObject();
+                    if(destNode.getUserObject() instanceof String) {
+                        //Dragging a folder onto a folder
+                        String sourceFolderPath = Arrays.stream(sourceNode.getPath())
+                                .skip(1)
+                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+
+                        String destFolderPath = Arrays.stream(destNode.getPath())
+                                .skip(1)
+                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+                        destFolderPath += "." + sourceNode.getUserObject();
+
+                        for(T t : obtainedBackingList) {
+                            if(pathFunction.apply(t).equals(sourceFolderPath)) {
+                                pathSetter.setPath(t, destFolderPath);
+                            }
+                        }
+
+                        window.setProjectDirty(true);
+                        render(obtainedBackingList);
+                    }
+                }
+                else {
+                    T tSource = (T) sourceNode.getUserObject();
+
+                    if(destNode.getUserObject() instanceof String) {
+                        //Dragging a file onto a folder
+                        String folderPath = Arrays.stream(destNode.getPath())
+                                .skip(1)
+                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+                        obtainedBackingList.remove(tSource);
+                        obtainedBackingList.add(0, tSource);
+                        pathSetter.setPath(tSource, folderPath);
+                        window.setProjectDirty(true);
+                        render(obtainedBackingList);
+                    }
+                    else {
+                        //Dragging a file onto a file
+                        T tDest = (T) destNode.getUserObject();
+
+                        Rectangle destRectangle = getPathBounds(new TreePath(destNode.getPath()));
+                        boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
+                        obtainedBackingList.remove(tSource);
+                        obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
+                        window.setProjectDirty(true);
+                        render(obtainedBackingList);
+                    }
+                }
+            }
+        }
+    }
+
+    public interface PathSetter<T> {
+        public void setPath(T t, String path);
     }
 }

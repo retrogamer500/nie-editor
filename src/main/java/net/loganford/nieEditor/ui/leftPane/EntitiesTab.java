@@ -38,7 +38,9 @@ public class EntitiesTab extends JPanel implements ActionListener, ProjectListen
         tree = new FolderTree<>(
                 window,
                 EntityDefinition.class,
+                () -> window.getProject() != null ? window.getProject().getEntityDefinitions() : new ArrayList<>(),
                 EntityDefinition::getGroup,
+                EntityDefinition::setGroup,
                 (e) -> e.getImagePath() != null ? ImageCache.getInstance().getImage(window.getRelativeFile(e.getImagePath()), 14, 14) : ImageCache.getInstance().getImage(new File("./editor-data/obj.png"), 14, 14),
                 window::setSelectedEntity
         );
