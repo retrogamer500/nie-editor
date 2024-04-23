@@ -295,6 +295,9 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
                     String destFolderPath;
                     if(destNode != null) {
+                        if(destNode == sourceNode) {
+                            return;
+                        }
                         destFolderPath = Arrays.stream(destNode.getPath())
                                 .skip(1)
                                 .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
@@ -317,7 +320,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             }
             else {
                 if(destNode == null) {
-                    return;
+                    destNode = root;
                 }
 
                 T tSource = (T) sourceNode.getUserObject();
