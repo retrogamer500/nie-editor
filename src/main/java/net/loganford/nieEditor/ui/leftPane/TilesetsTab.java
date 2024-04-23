@@ -29,12 +29,12 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         setLayout(new BorderLayout());
 
         //Setup list of tilesets
-        ScrollPane scrollPane = new ScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         jList = new JList<>();
         jList.addListSelectionListener(this);
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList.addMouseListener(this);
-        scrollPane.add(jList);
+        scrollPane.getViewport().add(jList);
         add(scrollPane, BorderLayout.CENTER);
 
 

@@ -28,12 +28,12 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         setLayout(new BorderLayout());
 
         //Setup layer list
-        ScrollPane scrollPane = new ScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         jList = new JList<>();
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList.addListSelectionListener(this);
         jList.addMouseListener(this);
-        scrollPane.add(jList);
+        scrollPane.getViewport().add(jList);
         add(scrollPane, BorderLayout.CENTER);
 
         //Setup buttons
