@@ -28,7 +28,10 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
         setLayout(new BorderLayout());
 
         //Setup history list
-        ScrollPane scrollPane = new ScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setWheelScrollingEnabled(true);
 
         roomTree = new FolderTree<>(
                 window,
@@ -40,7 +43,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
                 window::setSelectedRoom
         );
         roomTree.setOnClickAction(this::editRoom);
-        scrollPane.add(roomTree);
+        scrollPane.getViewport().add(roomTree);
 
         add(scrollPane, BorderLayout.CENTER);
 
