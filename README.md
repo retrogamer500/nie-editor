@@ -24,7 +24,7 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 
 ![image](https://github.com/retrogamer500/nie-editor/assets/48998885/90bbf604-db6d-43c8-b47b-7c6fe6f476de)
 
-![image](https://github.com/retrogamer500/nie-editor/assets/48998885/742aa168-92b0-46d3-861b-7f5d9744edbd)
+![image](https://github.com/retrogamer500/nie-editor/assets/48998885/5541ad39-1690-45c5-b452-aaa65f6a83f7)
 
 
 ## Downloads
