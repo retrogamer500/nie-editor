@@ -22,10 +22,9 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 * Tilemap editor
 * [External library](https://github.com/retrogamer500/nie-editor-importer) to make importing levels easy in your own engines
 
-![image](https://github.com/retrogamer500/nie-editor/assets/48998885/90bbf604-db6d-43c8-b47b-7c6fe6f476de)
+![image](https://github.com/retrogamer500/nie-editor/assets/48998885/6bb7bf04-5621-4f5c-bb35-0da73a4472d5)
 
-![image](https://github.com/retrogamer500/nie-editor/assets/48998885/5541ad39-1690-45c5-b452-aaa65f6a83f7)
-
+![image](https://github.com/retrogamer500/nie-editor/assets/48998885/42050352-d83a-42be-aaf6-9f37df901aaa)
 
 ## Downloads
 
