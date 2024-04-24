@@ -40,7 +40,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
                 () -> window.getSelectedRoom() != null && window.getSelectedRoom().getLayerList() != null ? window.getSelectedRoom().getLayerList() : new ArrayList<>(),
                 (l) -> "",
                 (l, g) -> {},
-                (l) -> ImageCache.getInstance().getImage(new File("./editor-data/layer.png")),
+                (l) -> l.isVisible() ? ImageCache.getInstance().getImage(new File("./editor-data/layer.png")) : ImageCache.getInstance().getImage(new File("./editor-data/layer_hidden.png")),
                 (l) -> { if(window.getSelectedRoom() != null) { window.getSelectedRoom().setSelectedLayer(l); }}
         );
 
