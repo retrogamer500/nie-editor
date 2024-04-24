@@ -33,7 +33,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
     private Function<T, ImageIcon> imageFunction;
     private Consumer<T> onChangeAction;
     @Setter private Consumer<T> onClickAction = null;
-    @Setter private Runnable onReorderAction = null;
+    @Setter private ReorderAction onReorderAction = null;
 
     private DefaultMutableTreeNode root;
     private DefaultMutableTreeNode sourceNode;
@@ -273,6 +273,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
         @Override
         public void drop(DropTargetDropEvent dtde) {
+            ArrayList<T> previousOrder = new ArrayList<>(backingList.get());
             TreePath path = getPathForLocation((int) dtde.getLocation().getX(), (int) dtde.getLocation().getY()); // Destination
             DefaultMutableTreeNode destNode = path != null && path.getLastPathComponent() != null ? (DefaultMutableTreeNode) path.getLastPathComponent() : null;
 
@@ -366,12 +367,16 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             }
 
             if(onReorderAction != null) {
-                onReorderAction.run();
+                onReorderAction.reordered(previousOrder, backingList.get());
             }
         }
     }
 
     public interface PathSetter<T> {
         public void setPath(T t, String path);
+    }
+
+    public interface ReorderAction<T> {
+        public void reordered(List<T> before, List<T> after);
     }
 }

@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
 
@@ -45,7 +46,13 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         );
 
         tree.setOnClickAction(this::editLayer);
-        tree.setOnReorderAction(() -> window.getListeners().forEach(l -> l.layersChanged(window.getSelectedRoom())));
+        tree.setOnReorderAction(new FolderTree.ReorderAction() {
+            @Override
+            public void reordered(List before, List after) {
+                LayerMoved lm = new LayerMoved(window, window.getSelectedRoom(), before, after);
+                window.getSelectedRoom().getActionPerformer().perform(window, lm);
+            }
+        });
 
         scrollPane.getViewport().add(tree);
 
