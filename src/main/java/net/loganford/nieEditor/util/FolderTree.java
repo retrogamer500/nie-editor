@@ -309,8 +309,12 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
                     }
 
                     for(T t : obtainedBackingList) {
-                        if(pathFunction.apply(t).equals(sourceFolderPath)) {
+                        String tPath = pathFunction.apply(t);
+                        if(tPath.equals(sourceFolderPath)) {
                             pathSetter.setPath(t, destFolderPath);
+                        }
+                        else if(tPath.startsWith(sourceFolderPath + ".")) {
+                            pathSetter.setPath(t, destFolderPath + (tPath.substring(sourceFolderPath.length())));
                         }
                     }
 
