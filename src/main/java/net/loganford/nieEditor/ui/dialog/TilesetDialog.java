@@ -24,6 +24,7 @@ public class TilesetDialog implements ActionListener {
     @Getter
     private boolean accepted = false;
     @Getter @Setter private String tilesetName = "New Tileset";
+    @Getter @Setter private String group;
     @Getter @Setter private String engineResourceKey ="";
     @Getter @Setter private int tileWidth = 16;
     @Getter @Setter private int tileHeight = 16;
@@ -45,6 +46,7 @@ public class TilesetDialog implements ActionListener {
 
         JTextField layerNameField = new JTextField(tilesetName);
         JTextField engineResourceNameField = new JTextField(engineResourceKey);
+        JTextField groupField = new JTextField(group);
 
         JSpinner tileWidthSpinner = new JSpinner(new SpinnerNumberModel(tileWidth, 1, 1000000, 1));
         JSpinner tileHeightSpinner = new JSpinner(new SpinnerNumberModel(tileHeight, 1, 1000000, 1));
@@ -55,6 +57,8 @@ public class TilesetDialog implements ActionListener {
                 layerNameField,
                 new JLabel("Engine Resource Key:"),
                 engineResourceNameField,
+                new JLabel("Group"),
+                groupField,
                 new JLabel("Tile Width:"),
                 tileWidthSpinner,
                 new JLabel("Tile Height:"),
@@ -66,6 +70,7 @@ public class TilesetDialog implements ActionListener {
 
         this.tilesetName = layerNameField.getText();
         this.engineResourceKey = engineResourceNameField.getText();
+        this.group = groupField.getText();
 
         this.accepted = result == JOptionPane.YES_OPTION;
     }

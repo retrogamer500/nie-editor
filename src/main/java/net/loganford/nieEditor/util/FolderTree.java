@@ -33,6 +33,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
     private Function<T, ImageIcon> imageFunction;
     private Consumer<T> onChangeAction;
     @Setter private Consumer<T> onClickAction = null;
+    @Setter private Runnable onReorderAction = null;
 
     private DefaultMutableTreeNode root;
     private DefaultMutableTreeNode sourceNode;
@@ -276,6 +277,11 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             DefaultMutableTreeNode destNode = path != null && path.getLastPathComponent() != null ? (DefaultMutableTreeNode) path.getLastPathComponent() : null;
 
             List<T> obtainedBackingList = backingList.get();
+
+            if(sourceNode == null) {
+                return;
+            }
+
             if(sourceNode.getUserObject() instanceof String) {
                 //Drag folder
                 T tSource = (T) sourceNode.getUserObject();
@@ -357,6 +363,10 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
                         render(obtainedBackingList);
                     }
                 }
+            }
+
+            if(onReorderAction != null) {
+                onReorderAction.run();
             }
         }
     }
