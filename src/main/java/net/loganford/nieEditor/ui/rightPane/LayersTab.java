@@ -22,7 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
+public class LayersTab extends JPanel implements ActionListener, ProjectListener, MouseListener {
 
     private FolderTree<Layer> tree;
     private Window window;
@@ -186,17 +186,6 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         }
         else {
             tree.render(new ArrayList<>());
-        }
-    }
-
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        if(((JList)e.getSource()).getSelectedIndices().length > 0) {
-            int selectedPos = ((JList) e.getSource()).getSelectedIndices()[0];
-            Room room = window.getSelectedRoom();
-            Layer layer = room.getLayerList().get(selectedPos);
-            room.setSelectedLayer(layer);
-            window.getListeners().forEach(ProjectListener::layerSelectionChanged);
         }
     }
 

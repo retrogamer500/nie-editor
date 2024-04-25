@@ -22,6 +22,16 @@ public class Entity {
 
     }
 
+    public Entity duplicate() {
+        Entity dupe = new Entity();
+
+        dupe.setX(this.getX());
+        dupe.setY(this.getY());
+        dupe.setEntityDefinitionUUID(this.getEntityDefinitionUUID());
+        dupe.setProperties(new HashMap<>(this.getProperties()));
+        return dupe;
+    }
+
     public Entity(EntityDefinition ed, int x, int y) {
         entityDefinitionUUID = ed.getUuid();
         this.x = x;
