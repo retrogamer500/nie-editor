@@ -30,12 +30,4 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 
 See below for .JAR distributions. NIE Editor requires JRE >=17.
 
-* [1.4.1](https://github.com/retrogamer500/nie-editor/releases/download/1.4.1/nie-editor-1.4.1.zip) - Can reorder rooms and entities
-* [1.3.2](https://github.com/retrogamer500/nie-editor/releases/download/1.3.2/nie-editor-1.3.2.zip) - Can now double click on room in room tab
-* [1.3.1](https://github.com/retrogamer500/nie-editor/releases/download/1.3.1/nie-editor-1.3.1.zip) - Usability improvements
-* [1.3.0](https://github.com/retrogamer500/nie-editor/releases/download/1.3.0/nie-editor-1.3.0.zip) - Now storing relative paths in project file to allow multiple people to work on the same project via version control
-* [1.2.1](https://github.com/retrogamer500/nie-editor/releases/download/1.2.1/nie-editor-1.2.1.zip) - Fixed bug where deleting a tile would fail in some cases
-* [1.2.0](https://github.com/retrogamer500/nie-editor/releases/download/1.2.0/nie-editor-1.2.0.zip) - Adding a few contextual menu items
-* [1.1.2](https://github.com/retrogamer500/nie-editor/releases/download/1.1.2/nie-editor-1.1.2.zip) - Minor bug fixes and changes to file dialogs
-* [1.1.0](https://github.com/retrogamer500/nie-editor/releases/download/1.1.0/nie-editor-1.1.0.zip) - Adding project properties tab and minor bug fixes
-* [1.0.0](https://github.com/retrogamer500/nie-editor/releases/download/1.0.0/nie-editor-1.0.0.zip) - Initial release
+* [1.5.0](https://github.com/retrogamer500/nie-editor/releases/download/1.5.0/nie-editor-1.5.0.zip) - NIE Editor is essentially feature-complete. Small enhancements or bug fixes might be made in the future but the editor is in a great shape to use for full games! 1.5.0 contains multiple large changes to how the project folder structure behaves, and allows right clicking to create, delete, or rename folders. Several icons are updated to look better as well.
