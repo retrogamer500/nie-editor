@@ -36,7 +36,7 @@ public class Room {
         bgColorB = color.getBlue();
     }
 
-    public Room duplicate(String name) {
+    public Room duplicate(String name, boolean cloneTiles, boolean cloneEntities) {
         Room room = new Room();
         room.setName(name);
         room.setGroup(this.getGroup());
@@ -47,7 +47,7 @@ public class Room {
         room.setBgColorB(this.getBgColorB());
 
         for(Layer layer: this.getLayerList()) {
-            room.getLayerList().add(layer.duplicate());
+            room.getLayerList().add(layer.duplicate(cloneTiles, cloneEntities));
         }
 
         return room;

@@ -42,7 +42,7 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
                 (l) -> "",
                 (l, g) -> {},
                 (l) -> l.isVisible() ? ImageCache.getInstance().getImage(new File("./editor-data/layer.png")) : ImageCache.getInstance().getImage(new File("./editor-data/layer_hidden.png")),
-                (l) -> { if(window.getSelectedRoom() != null) { window.getSelectedRoom().setSelectedLayer(l); }}
+                (l) -> { if(window.getSelectedRoom() != null) { window.getSelectedRoom().setSelectedLayer(l); window.getListeners().forEach(ProjectListener::layerSelectionChanged); }}
         );
 
         tree.setOnClickAction(this::editLayer);

@@ -14,6 +14,8 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -173,13 +175,60 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-            if(backingClass.isInstance(node.getUserObject())) {
-                T t = (T) node.getUserObject();
-                if(onClickAction != null) {
-                    onClickAction.accept(t);
+        if(e.getButton() == MouseEvent.BUTTON1) {
+            if (e.getClickCount() == 2) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                if (backingClass.isInstance(node.getUserObject())) {
+                    T t = (T) node.getUserObject();
+                    if (onClickAction != null) {
+                        onClickAction.accept(t);
+                    }
                 }
+            }
+        }
+        if(e.getButton() == MouseEvent.BUTTON3) {
+            TreePath path = getPathForLocation((int) e.getX(), (int) e.getY());
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+            if(node.getUserObject() instanceof String) {
+                JPopupMenu popup = new JPopupMenu();
+                JMenuItem jmi = new JMenuItem("Rename");
+                jmi.addActionListener(e1 -> {
+                    JTextField nameField = new JTextField((String)node.getUserObject());
+                    JComponent[] inputs = {
+                            new JLabel("Folder name:"),
+                            nameField,
+                    };
+                    int result = JOptionPane.showConfirmDialog(null, inputs, "Rename Folder", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    if(result == JOptionPane.YES_OPTION) {
+                        String rightClickPath = Arrays.stream(node.getPath())
+                                .skip(1)
+                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+
+                        String[] newPathList = Arrays.stream(node.getPath())
+                                .skip(1)
+                                .map(r -> (String)(((DefaultMutableTreeNode) r).getUserObject()))
+                                .toArray(String[]::new);
+                        newPathList[newPathList.length - 1] = nameField.getText();
+                        String newPath = Arrays.stream(newPathList).collect(Collectors.joining("."));
+
+                        for(T t : backingList.get()) {
+                            String tPath = pathFunction.apply(t);
+                            if(tPath.equals(rightClickPath)) {
+                                pathSetter.setPath(t, newPath);
+                            }
+                            else if(tPath.startsWith(rightClickPath + ".")) {
+                                pathSetter.setPath(t, newPath + (tPath.substring(rightClickPath.length())));
+                            }
+                        }
+
+                        window.setProjectDirty(true);
+                        render(backingList.get());
+                    }
+                });
+                popup.add(jmi);
+                popup.show(this, e.getX(), e.getY());
             }
         }
     }
