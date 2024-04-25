@@ -62,7 +62,7 @@ public class EntityDialog implements ActionListener {
                 nameField,
                 new JLabel("Classpath:"),
                 classField,
-                new JLabel("Editor Folder (Deliminated By Periods):"),
+                new JLabel("Editor Folder (Separated By \".\"):"),
                 groupField,
                 filePanel(),
                 new JLabel("Width:"),
