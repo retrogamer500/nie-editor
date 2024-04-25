@@ -46,11 +46,22 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         );
 
         tree.setOnClickAction(this::editLayer);
-        tree.setOnReorderAction(new FolderTree.ReorderAction() {
-            @Override
-            public void reordered(List before, List after) {
-                LayerMoved lm = new LayerMoved(window, window.getSelectedRoom(), before, after);
-                window.getSelectedRoom().getActionPerformer().perform(window, lm);
+        tree.setOnReorderAction((before, after) -> {
+            LayerMoved lm = new LayerMoved(window, window.getSelectedRoom(), before, after);
+            window.getSelectedRoom().getActionPerformer().perform(window, lm);
+        });
+        tree.setOnCreateAction(g -> {
+            int insertPosition = 0;
+            if(window.getSelectedRoom().getSelectedLayer() != null) {
+                insertPosition = window.getSelectedRoom().getLayerList().indexOf(window.getSelectedRoom().getSelectedLayer());
+            }
+
+            addLayerAtIndex(insertPosition);
+        });
+        tree.setOnDeleteAction(selectedLayer -> {
+            if(selectedLayer != null) {
+                RemoveLayer removeLayer = new RemoveLayer(window, window.getSelectedRoom(), selectedLayer);
+                window.getSelectedRoom().getActionPerformer().perform(window, removeLayer);
             }
         });
 

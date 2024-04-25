@@ -44,6 +44,8 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
                 window::setSelectedTileset
         );
         tree.setOnClickAction(this::editTileset);
+        tree.setOnCreateAction(this::createTileset);
+        tree.setOnDeleteAction(this::deleteTileset);
 
         scrollPane.getViewport().add(tree);
         add(scrollPane, BorderLayout.CENTER);
@@ -71,27 +73,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add")) {
-            TilesetDialog td = new TilesetDialog(window, true);
-            td.show();
-
-            if(td.isAccepted()) {
-                ImageCache.getInstance().clearCache(td.getImageFile());
-                Tileset ts = new Tileset();
-                ts.setName(td.getTilesetName());
-                ts.setGroup(td.getGroup());
-                ts.setTileWidth(td.getTileWidth());
-                ts.setTileHeight(td.getTileHeight());
-                ts.setEngineResourceKey(td.getEngineResourceKey());
-                ts.setUuid(UUID.randomUUID().toString());
-
-                if(td.getImageFile() != null) {
-                    ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
-                }
-
-                window.getProject().getTilesets().add(ts);
-                window.getListeners().forEach(ProjectListener::tilesetsChanged);
-                window.setProjectDirty(true);
-            }
+            createTileset("");
         }
         if(e.getActionCommand().equals("Edit")) {
             Tileset ts = window.getSelectedTileset();
@@ -100,26 +82,53 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
             }
         }
         if(e.getActionCommand().equals("Remove")) {
-
             if(window.getSelectedTileset() != null) {
-                int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this tileset cannot be undone. This will delete all usages of this tileset from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
+                deleteTileset(window.getSelectedTileset());
+            }
+        }
+    }
 
-                Tileset ts = window.getSelectedTileset();
-                window.getProject().getTilesets().remove(ts);
+    private void createTileset(String group) {
+        TilesetDialog td = new TilesetDialog(window, true);
+        td.setGroup(group);
+        td.show();
 
-                if(dialogResult == JOptionPane.YES_OPTION){
-                    for(Room room: window.getProject().getRooms()) {
-                        for(Layer layer: room.getLayerList()) {
-                            if(ts.getUuid().equals(layer.getTileMap().getTilesetUuid())) {
-                                layer.setTileMap(new TileMap());
-                            }
-                        }
-                        room.getActionPerformer().clearHistory();
+        if(td.isAccepted()) {
+            ImageCache.getInstance().clearCache(td.getImageFile());
+            Tileset ts = new Tileset();
+            ts.setName(td.getTilesetName());
+            ts.setGroup(td.getGroup());
+            ts.setTileWidth(td.getTileWidth());
+            ts.setTileHeight(td.getTileHeight());
+            ts.setEngineResourceKey(td.getEngineResourceKey());
+            ts.setUuid(UUID.randomUUID().toString());
+
+            if(td.getImageFile() != null) {
+                ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
+            }
+
+            window.getProject().getTilesets().add(ts);
+            window.getListeners().forEach(ProjectListener::tilesetsChanged);
+            window.setProjectDirty(true);
+        }
+    }
+
+    private void deleteTileset(Tileset ts) {
+        int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this tileset cannot be undone. This will delete all usages of this tileset from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
+
+        window.getProject().getTilesets().remove(ts);
+
+        if(dialogResult == JOptionPane.YES_OPTION){
+            for(Room room: window.getProject().getRooms()) {
+                for(Layer layer: room.getLayerList()) {
+                    if(ts.getUuid().equals(layer.getTileMap().getTilesetUuid())) {
+                        layer.setTileMap(new TileMap());
                     }
                 }
+                room.getActionPerformer().clearHistory();
             }
-            window.getListeners().forEach(ProjectListener::tilesetsChanged);
         }
+        window.getListeners().forEach(ProjectListener::tilesetsChanged);
     }
 
     private void editTileset(Tileset ts) {
