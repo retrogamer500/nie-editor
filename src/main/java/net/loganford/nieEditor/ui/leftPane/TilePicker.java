@@ -51,11 +51,21 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
         super.paintComponent(g);
         Graphics2D g2d = ((Graphics2D) g);
 
-        g.setColor(Color.BLACK);
+        if(Window.darkMode) {
+            g.setColor(Color.BLACK);
+        }
+        else {
+            g.setColor(Color.WHITE);
+        }
         g.fillRect(0, 0, getWidth(), getHeight());
 
         if(tileImage == null) {
-            g.setColor(Color.WHITE);
+            if(Window.darkMode) {
+                g.setColor(Color.WHITE);
+            }
+            else {
+                g.setColor(Color.DARK_GRAY);
+            }
             g.drawString("Select a layer with a tileset to view picker.", 16, 16);
         }
         else {
@@ -79,7 +89,12 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
             }
 
             //Draw Selection
-            g.setColor(new Color(255, 255 , 255, 96));
+            if(Window.darkMode) {
+                g.setColor(new Color(255, 255, 255, 96));
+            }
+            else {
+                g.setColor(new Color(0, 0, 0, 96));
+            }
             g.fillRect(
                     tileset.getTileWidth() * Math.min(tileSelectionX, tileSelectionX2),
                     tileset.getTileHeight() * Math.min(tileSelectionY, tileSelectionY2),

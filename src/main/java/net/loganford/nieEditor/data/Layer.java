@@ -23,10 +23,19 @@ public class Layer {
         }
     }
 
-    public Layer duplicate() {
+    public Layer duplicate(boolean cloneTiles, boolean cloneEntities) {
         Layer layer = new Layer();
         layer.setName(this.name);
         layer.getTileMap().setTilesetUuid(this.getTileMap().getTilesetUuid());
+
+        if(cloneTiles) {
+            layer.getTileMap().setWidth(this.getTileMap().getWidth());
+            layer.getTileMap().setHeight(this.getTileMap().getHeight());
+            layer.getTileMap().setTileData(this.getTileMap().getTileData().clone());
+        }
+        if(cloneEntities) {
+            layer.setEntities(new ArrayList<>(this.getEntities()));
+        }
         return layer;
     }
 }

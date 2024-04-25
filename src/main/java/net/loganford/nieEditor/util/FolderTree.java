@@ -32,7 +32,11 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
     private PathSetter<T> pathSetter;
     private Function<T, ImageIcon> imageFunction;
     private Consumer<T> onChangeAction;
+
+    @Setter private Consumer<String> onCreateAction = null;
+    @Setter private Consumer<T> onDeleteAction = null;
     @Setter private Consumer<T> onClickAction = null;
+    @Setter private ReorderAction onReorderAction = null;
 
     private DefaultMutableTreeNode root;
     private DefaultMutableTreeNode sourceNode;
@@ -171,20 +175,33 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-            if(backingClass.isInstance(node.getUserObject())) {
-                T t = (T) node.getUserObject();
-                if(onClickAction != null) {
-                    onClickAction.accept(t);
+    public void mousePressed(MouseEvent e) {
+        if(e.getButton() == MouseEvent.BUTTON1) {
+            if (e.getClickCount() == 2) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                if (backingClass.isInstance(node.getUserObject())) {
+                    T t = (T) node.getUserObject();
+                    if (onClickAction != null) {
+                        onClickAction.accept(t);
+                    }
                 }
             }
+        }
+        if(e.getButton() == MouseEvent.BUTTON3) {
+            TreePath path = getPathForLocation(e.getX(), e.getY());
+
+            DefaultMutableTreeNode node;
+            if(path != null) {
+                node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            }
+            else node = root;
+
+            handleRightClick(node, e.getX(), e.getY());
         }
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {
 
     }
 
@@ -272,10 +289,16 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
         @Override
         public void drop(DropTargetDropEvent dtde) {
+            ArrayList<T> previousOrder = new ArrayList<>(backingList.get());
             TreePath path = getPathForLocation((int) dtde.getLocation().getX(), (int) dtde.getLocation().getY()); // Destination
             DefaultMutableTreeNode destNode = path != null && path.getLastPathComponent() != null ? (DefaultMutableTreeNode) path.getLastPathComponent() : null;
 
             List<T> obtainedBackingList = backingList.get();
+
+            if(sourceNode == null) {
+                return;
+            }
+
             if(sourceNode.getUserObject() instanceof String) {
                 //Drag folder
                 T tSource = (T) sourceNode.getUserObject();
@@ -295,6 +318,9 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
 
                     String destFolderPath;
                     if(destNode != null) {
+                        if(destNode == sourceNode) {
+                            return;
+                        }
                         destFolderPath = Arrays.stream(destNode.getPath())
                                 .skip(1)
                                 .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
@@ -306,8 +332,12 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
                     }
 
                     for(T t : obtainedBackingList) {
-                        if(pathFunction.apply(t).equals(sourceFolderPath)) {
+                        String tPath = pathFunction.apply(t);
+                        if(tPath.equals(sourceFolderPath)) {
                             pathSetter.setPath(t, destFolderPath);
+                        }
+                        else if(tPath.startsWith(sourceFolderPath + ".")) {
+                            pathSetter.setPath(t, destFolderPath + (tPath.substring(sourceFolderPath.length())));
                         }
                     }
 
@@ -317,7 +347,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             }
             else {
                 if(destNode == null) {
-                    return;
+                    destNode = root;
                 }
 
                 T tSource = (T) sourceNode.getUserObject();
@@ -345,15 +375,107 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
                         boolean insertBefore = dtde.getLocation().getY() <= destRectangle.getY() + (destRectangle.getHeight() / 2);
                         obtainedBackingList.remove(tSource);
                         obtainedBackingList.add(obtainedBackingList.indexOf(tDest) + (insertBefore ? 0 : 1), tSource);
+                        pathSetter.setPath(tSource, pathFunction.apply(tDest));
                         window.setProjectDirty(true);
                         render(obtainedBackingList);
                     }
                 }
+            }
+
+            if(onReorderAction != null) {
+                onReorderAction.reordered(previousOrder, backingList.get());
             }
         }
     }
 
     public interface PathSetter<T> {
         public void setPath(T t, String path);
+    }
+
+    public interface ReorderAction<T> {
+        public void reordered(List<T> before, List<T> after);
+    }
+
+    private void handleRightClick(DefaultMutableTreeNode node, int x, int y) {
+        if(node != root) {
+            setSelectionPath(new TreePath(node.getPath()));
+        }
+
+        JPopupMenu popup = new JPopupMenu();
+
+        DefaultMutableTreeNode folderNode = node;
+        if(!(node.getUserObject() instanceof String)) {
+            folderNode = (DefaultMutableTreeNode) folderNode.getParent();
+        }
+        String folderPath = Arrays.stream(folderNode.getPath())
+                .skip(1)
+                .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
+                .collect(Collectors.joining("."));
+
+        //Handle creation
+        if(onCreateAction != null) {
+            JMenuItem jmi = new JMenuItem("Create");
+            jmi.addActionListener(e1 -> {
+                onCreateAction.accept(folderPath);
+                render(backingList.get());
+            });
+            popup.add(jmi);
+        }
+
+        if(backingClass.isInstance(node.getUserObject())) {
+            //Handle deletion
+            if(onDeleteAction != null) {
+                JMenuItem jmi = new JMenuItem("Delete");
+                jmi.addActionListener(e1 -> {
+                    T toDelete = (T) node.getUserObject();
+                    onDeleteAction.accept(toDelete);
+                    render(backingList.get());
+                });
+                popup.add(jmi);
+            }
+        }
+        else if(node.getUserObject() instanceof String) {
+            if(node != root) {
+                JMenuItem jmi = new JMenuItem("Rename");
+                jmi.addActionListener(e1 -> {
+                    JTextField nameField = new JTextField((String) node.getUserObject());
+                    JComponent[] inputs = {
+                            new JLabel("Folder name:"),
+                            nameField,
+                    };
+                    int result = JOptionPane.showConfirmDialog(null, inputs, "Rename Folder", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    if (result == JOptionPane.YES_OPTION) {
+                        String rightClickPath = Arrays.stream(node.getPath())
+                                .skip(1)
+                                .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
+                                .collect(Collectors.joining("."));
+
+                        String[] newPathList = Arrays.stream(node.getPath())
+                                .skip(1)
+                                .map(r -> (String) (((DefaultMutableTreeNode) r).getUserObject()))
+                                .toArray(String[]::new);
+                        newPathList[newPathList.length - 1] = nameField.getText();
+                        String newPath = Arrays.stream(newPathList).collect(Collectors.joining("."));
+
+                        for (T t : backingList.get()) {
+                            String tPath = pathFunction.apply(t);
+                            if (tPath.equals(rightClickPath)) {
+                                pathSetter.setPath(t, newPath);
+                            } else if (tPath.startsWith(rightClickPath + ".")) {
+                                pathSetter.setPath(t, newPath + (tPath.substring(rightClickPath.length())));
+                            }
+                        }
+
+                        window.setProjectDirty(true);
+                        render(backingList.get());
+                    }
+                });
+                popup.add(jmi);
+            }
+        }
+
+        if(popup.getComponentCount() > 0) {
+            popup.show(this, x, y);
+        }
     }
 }

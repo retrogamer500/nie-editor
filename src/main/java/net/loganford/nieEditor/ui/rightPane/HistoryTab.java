@@ -21,10 +21,10 @@ public class HistoryTab extends JPanel implements ProjectListener, ActionListene
         setLayout(new BorderLayout());
 
         //Setup history list
-        ScrollPane scrollPane = new ScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         jList = new JList<>();
         jList.setEnabled(false);
-        scrollPane.add(jList);
+        scrollPane.getViewport().add(jList);
         add(scrollPane, BorderLayout.CENTER);
 
         //Setup buttons

@@ -3,6 +3,7 @@ package net.loganford.nieEditor.ui.leftPane;
 import net.loganford.nieEditor.data.*;
 import net.loganford.nieEditor.ui.Window;
 import net.loganford.nieEditor.ui.dialog.TilesetDialog;
+import net.loganford.nieEditor.util.FolderTree;
 import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 
@@ -15,10 +16,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class TilesetsTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
-    private JList<Object> jList;
+public class TilesetsTab extends JPanel implements ActionListener, ProjectListener {
+
+    private FolderTree<Tileset> tree;
 
     private Window window;
 
@@ -29,12 +32,22 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         setLayout(new BorderLayout());
 
         //Setup list of tilesets
-        ScrollPane scrollPane = new ScrollPane();
-        jList = new JList<>();
-        jList.addListSelectionListener(this);
-        jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jList.addMouseListener(this);
-        scrollPane.add(jList);
+        JScrollPane scrollPane = new JScrollPane();
+
+        tree = new FolderTree<>(
+                window,
+                Tileset.class,
+                () -> window.getProject() != null ? window.getProject().getTilesets() : new ArrayList<>(),
+                Tileset::getGroup,
+                Tileset::setGroup,
+                (ts) -> ImageCache.getInstance().getImage(new File("./editor-data/tileset.png")),
+                window::setSelectedTileset
+        );
+        tree.setOnClickAction(this::editTileset);
+        tree.setOnCreateAction(this::createTileset);
+        tree.setOnDeleteAction(this::deleteTileset);
+
+        scrollPane.getViewport().add(tree);
         add(scrollPane, BorderLayout.CENTER);
 
 
@@ -60,57 +73,68 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add")) {
-            TilesetDialog td = new TilesetDialog(window, true);
-            td.show();
-
-            if(td.isAccepted()) {
-                ImageCache.getInstance().clearCache(td.getImageFile());
-                Tileset ts = new Tileset();
-                ts.setName(td.getTilesetName());
-                ts.setTileWidth(td.getTileWidth());
-                ts.setTileHeight(td.getTileHeight());
-                ts.setEngineResourceKey(td.getEngineResourceKey());
-                ts.setUuid(UUID.randomUUID().toString());
-
-                if(td.getImageFile() != null) {
-                    ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
-                }
-
-                window.getProject().getTilesets().add(ts);
-                window.getListeners().forEach(ProjectListener::tilesetsChanged);
-                window.setProjectDirty(true);
-            }
+            createTileset("");
         }
         if(e.getActionCommand().equals("Edit")) {
             Tileset ts = window.getSelectedTileset();
-            editTileset(ts);
+            if(ts != null) {
+                editTileset(ts);
+            }
         }
         if(e.getActionCommand().equals("Remove")) {
-
             if(window.getSelectedTileset() != null) {
-                int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this tileset cannot be undone. This will delete all usages of this tileset from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
+                deleteTileset(window.getSelectedTileset());
+            }
+        }
+    }
 
-                Tileset ts = window.getSelectedTileset();
-                window.getProject().getTilesets().remove(ts);
+    private void createTileset(String group) {
+        TilesetDialog td = new TilesetDialog(window, true);
+        td.setGroup(group);
+        td.show();
 
-                if(dialogResult == JOptionPane.YES_OPTION){
-                    for(Room room: window.getProject().getRooms()) {
-                        for(Layer layer: room.getLayerList()) {
-                            if(ts.getUuid().equals(layer.getTileMap().getTilesetUuid())) {
-                                layer.setTileMap(new TileMap());
-                            }
-                        }
-                        room.getActionPerformer().clearHistory();
+        if(td.isAccepted()) {
+            ImageCache.getInstance().clearCache(td.getImageFile());
+            Tileset ts = new Tileset();
+            ts.setName(td.getTilesetName());
+            ts.setGroup(td.getGroup());
+            ts.setTileWidth(td.getTileWidth());
+            ts.setTileHeight(td.getTileHeight());
+            ts.setEngineResourceKey(td.getEngineResourceKey());
+            ts.setUuid(UUID.randomUUID().toString());
+
+            if(td.getImageFile() != null) {
+                ts.setImagePath(window.getRelativeFilePath(td.getImageFile()));
+            }
+
+            window.getProject().getTilesets().add(ts);
+            window.getListeners().forEach(ProjectListener::tilesetsChanged);
+            window.setProjectDirty(true);
+        }
+    }
+
+    private void deleteTileset(Tileset ts) {
+        int dialogResult = JOptionPane.showConfirmDialog (null, "Deleting this tileset cannot be undone. This will delete all usages of this tileset from all rooms and clear their undo histories. Are you sure?", "Warning", JOptionPane.YES_NO_OPTION);
+
+        window.getProject().getTilesets().remove(ts);
+
+        if(dialogResult == JOptionPane.YES_OPTION){
+            for(Room room: window.getProject().getRooms()) {
+                for(Layer layer: room.getLayerList()) {
+                    if(ts.getUuid().equals(layer.getTileMap().getTilesetUuid())) {
+                        layer.setTileMap(new TileMap());
                     }
                 }
+                room.getActionPerformer().clearHistory();
             }
-            window.getListeners().forEach(ProjectListener::tilesetsChanged);
         }
+        window.getListeners().forEach(ProjectListener::tilesetsChanged);
     }
 
     private void editTileset(Tileset ts) {
         TilesetDialog td = new TilesetDialog(window, false);
         td.setTilesetName(ts.getName());
+        td.setGroup(ts.getGroup());
         td.setTileWidth(ts.getTileWidth());
         td.setTileHeight(ts.getTileHeight());
         td.setEngineResourceKey(ts.getEngineResourceKey());
@@ -123,6 +147,7 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
         if(td.isAccepted()) {
             ImageCache.getInstance().clearCache(td.getImageFile());
             ts.setName(td.getTilesetName());
+            ts.setGroup(td.getGroup());
             ts.setTileWidth(td.getTileWidth());
             ts.setTileHeight(td.getTileHeight());
             ts.setEngineResourceKey(td.getEngineResourceKey());
@@ -148,52 +173,6 @@ public class TilesetsTab extends JPanel implements ActionListener, ProjectListen
     }
 
     private void renderTilesets() {
-        if(window.getProject() == null) {
-            jList.setListData(new String[] {});
-        }
-        else {
-            jList.setListData(window.getProject().getTilesets().toArray());
-
-            if(window.getSelectedTileset() != null) {
-                jList.setSelectedIndex(window.getProject().getTilesets().indexOf(window.getSelectedTileset()));
-            }
-        }
-    }
-
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        if(((JList)e.getSource()).getSelectedIndices().length > 0) {
-            int selectedPos = ((JList) e.getSource()).getSelectedIndices()[0];
-            Tileset tileset = window.getProject().getTilesets().get(selectedPos);
-            window.setSelectedTileset(tileset);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            Tileset ts = window.getSelectedTileset();
-            editTileset(ts);
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        tree.render(window.getProject().getTilesets());
     }
 }

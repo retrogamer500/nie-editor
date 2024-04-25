@@ -5,6 +5,8 @@ import net.loganford.nieEditor.data.Layer;
 import net.loganford.nieEditor.data.Room;
 import net.loganford.nieEditor.data.Tileset;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.FolderTree;
+import net.loganford.nieEditor.util.ImageCache;
 import net.loganford.nieEditor.util.ProjectListener;
 import net.loganford.nieEditor.ui.dialog.LayerDialog;
 
@@ -16,10 +18,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LayersTab extends JPanel implements ActionListener, ProjectListener, ListSelectionListener, MouseListener {
 
-    private JList jList;
+    private FolderTree<Layer> tree;
     private Window window;
 
     public LayersTab(Window window) {
@@ -28,22 +33,48 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
         setLayout(new BorderLayout());
 
         //Setup layer list
-        ScrollPane scrollPane = new ScrollPane();
-        jList = new JList<>();
-        jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jList.addListSelectionListener(this);
-        jList.addMouseListener(this);
-        scrollPane.add(jList);
+        JScrollPane scrollPane = new JScrollPane();
+
+        tree = new FolderTree<>(
+                window,
+                Layer.class,
+                () -> window.getSelectedRoom() != null && window.getSelectedRoom().getLayerList() != null ? window.getSelectedRoom().getLayerList() : new ArrayList<>(),
+                (l) -> "",
+                (l, g) -> {},
+                (l) -> l.isVisible() ? ImageCache.getInstance().getImage(new File("./editor-data/layer.png")) : ImageCache.getInstance().getImage(new File("./editor-data/layer_hidden.png")),
+                (l) -> { if(window.getSelectedRoom() != null) { window.getSelectedRoom().setSelectedLayer(l); window.getListeners().forEach(ProjectListener::layerSelectionChanged); }}
+        );
+
+        tree.setOnClickAction(this::editLayer);
+        tree.setOnReorderAction((before, after) -> {
+            LayerMoved lm = new LayerMoved(window, window.getSelectedRoom(), before, after);
+            window.getSelectedRoom().getActionPerformer().perform(window, lm);
+        });
+        tree.setOnCreateAction(g -> {
+            int insertPosition = 0;
+            if(window.getSelectedRoom().getSelectedLayer() != null) {
+                insertPosition = window.getSelectedRoom().getLayerList().indexOf(window.getSelectedRoom().getSelectedLayer());
+            }
+
+            addLayerAtIndex(insertPosition);
+        });
+        tree.setOnDeleteAction(selectedLayer -> {
+            if(selectedLayer != null) {
+                RemoveLayer removeLayer = new RemoveLayer(window, window.getSelectedRoom(), selectedLayer);
+                window.getSelectedRoom().getActionPerformer().perform(window, removeLayer);
+            }
+        });
+
+        scrollPane.getViewport().add(tree);
+
         add(scrollPane, BorderLayout.CENTER);
 
         //Setup buttons
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 2));
+        buttonPanel.setLayout(new GridLayout(3, 2));
 
         addButton(buttonPanel, "Add Above");
         addButton(buttonPanel, "Add Below");
-        addButton(buttonPanel, "Move Up");
-        addButton(buttonPanel, "Move Down");
         addButton(buttonPanel, "Remove");
         addButton(buttonPanel, "Edit");
         addButton(buttonPanel, "Show");
@@ -105,26 +136,6 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
                 editLayer(selectedLayer);
             }
         }
-        if(e.getActionCommand().equals("Move Up")) {
-            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
-            if(selectedLayer != null) {
-                int layerPosition = window.getSelectedRoom().getLayerList().indexOf(selectedLayer);
-                if(layerPosition > 0) {
-                    MoveLayerUp moveLayerUp = new MoveLayerUp(window, window.getSelectedRoom(), selectedLayer);
-                    window.getSelectedRoom().getActionPerformer().perform(window, moveLayerUp);
-                }
-            }
-        }
-        if(e.getActionCommand().equals("Move Down")) {
-            Layer selectedLayer = window.getSelectedRoom().getSelectedLayer();
-            if(selectedLayer != null) {
-                int layerPosition = window.getSelectedRoom().getLayerList().indexOf(selectedLayer);
-                if(layerPosition < window.getSelectedRoom().getLayerList().size() - 1) {
-                    MoveLayerDown moveLayerDown = new MoveLayerDown(window, window.getSelectedRoom(), selectedLayer);
-                    window.getSelectedRoom().getActionPerformer().perform(window, moveLayerDown);
-                }
-            }
-        }
     }
 
     private void editLayer(Layer layer) {
@@ -151,21 +162,20 @@ public class LayersTab extends JPanel implements ActionListener, ProjectListener
 
     @Override
     public void layersChanged(Room room) {
-        updateLayers(room);
+        renderLayers(room);
     }
 
     @Override
     public void selectedRoomChanged(Room room) {
-        updateLayers(room);
+        renderLayers(room);
     }
 
-    private void updateLayers(Room room) {
+    private void renderLayers(Room room) {
         if(room != null) {
-            jList.setListData(room.getLayerList().toArray(new Layer[0]));
-
-            if(room.getSelectedLayer() != null) {
-                jList.setSelectedIndex(room.getLayerList().indexOf(room.getSelectedLayer()));
-            }
+            tree.render(room.getLayerList());
+        }
+        else {
+            tree.render(new ArrayList<>());
         }
     }
 

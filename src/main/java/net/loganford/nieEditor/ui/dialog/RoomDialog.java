@@ -40,7 +40,7 @@ public class RoomDialog implements ActionListener {
         JComponent[] inputs = {
                 new JLabel("Room Name:"),
                 roomNameField,
-                new JLabel("Group:"),
+                new JLabel("Editor Folder (Separated By \".\"):"),
                 groupField,
                 new JLabel("Room Width:"),
                 roomWidthSpinner,

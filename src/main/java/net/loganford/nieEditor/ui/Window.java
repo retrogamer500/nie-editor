@@ -123,18 +123,24 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
             menu.addSeparator();
 
-            jmi = new JMenuItem("Open Room");
+            jmi = new JMenuItem("Goto Room");
             jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK ) );
-            jmi.addActionListener(this);
-            menu.add(jmi);
-
-            jmi = new JMenuItem("Clone Room");
             jmi.addActionListener(this);
             menu.add(jmi);
 
             menu.addSeparator();
 
             jmi = new JMenuItem("Preferences");
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
+            menuBar.add(menu);
+        }
+
+        {
+            JMenu menu = new JMenu("Tools");
+
+            JMenuItem jmi = new JMenuItem("Clone Room");
             jmi.addActionListener(this);
             menu.add(jmi);
 
@@ -180,7 +186,12 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
         roomPanel = new RoomEditor(this, 1000, 1000);
 
-        roomPanel.setBackground(Color.BLACK);
+        if(Window.darkMode) {
+            roomPanel.setBackground(Color.BLACK);
+        }
+        else {
+            roomPanel.setBackground(Color.WHITE);
+        }
         roomPanel.setVisible(true);
 
         roomScrollPane.getViewport().add(roomPanel);
@@ -201,7 +212,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             askToClose();
         }
         if(e.getActionCommand().equals("About")) {
-            JOptionPane.showMessageDialog(null, "No Idea Engine Editor created by Logan Ford");
+            JOptionPane.showMessageDialog(null, "No Idea Engine Editor created by Logan Ford\nGithub: https://github.com/retrogamer500/nie-editor");
         }
         if(e.getActionCommand().equals("Undo")) {
             if(getSelectedRoom() != null) {
@@ -216,7 +227,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         if(e.getActionCommand().equals("Preferences")) {
             new net.loganford.nieEditor.ui.Preferences().show(this);;
         }
-        if(e.getActionCommand().equals("Open Room")) {
+        if(e.getActionCommand().equals("Goto Room")) {
             openRoom();
         }
         if(e.getActionCommand().equals("Clone Room")) {
@@ -227,13 +238,18 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
     private void cloneRoom() {
         if(project != null && getSelectedRoom() != null) {
             JTextField textField = new JTextField();
+            JCheckBox cloneTiles = new JCheckBox("Clone Tilemap", false);
+            JCheckBox cloneEntities = new JCheckBox("Clone Entities", false);
+
             JComponent[] inputs = {
                     new JLabel("New Room Name:"),
-                    textField
+                    textField,
+                    cloneTiles,
+                    cloneEntities
             };
             int result = JOptionPane.showConfirmDialog(null, inputs, "Clone Room: " + getSelectedRoom().getName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if(result == JOptionPane.OK_OPTION && StringUtils.isNoneBlank(textField.getText())) {
-                Room room = getSelectedRoom().duplicate(textField.getText());
+                Room room = getSelectedRoom().duplicate(textField.getText(), cloneTiles.isSelected(), cloneEntities.isSelected());
                 getProject().getRooms().add(room);
 
                 setSelectedRoom(room);

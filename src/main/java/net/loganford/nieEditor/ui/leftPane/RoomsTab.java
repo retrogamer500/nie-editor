@@ -28,7 +28,10 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
         setLayout(new BorderLayout());
 
         //Setup history list
-        ScrollPane scrollPane = new ScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setWheelScrollingEnabled(true);
 
         roomTree = new FolderTree<>(
                 window,
@@ -40,7 +43,10 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
                 window::setSelectedRoom
         );
         roomTree.setOnClickAction(this::editRoom);
-        scrollPane.add(roomTree);
+        roomTree.setOnCreateAction(this::createRoom);
+        roomTree.setOnDeleteAction(this::deleteRoom);
+
+        scrollPane.getViewport().add(roomTree);
 
         add(scrollPane, BorderLayout.CENTER);
 
@@ -71,22 +77,7 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Add")) {
-            RoomDialog rd = new RoomDialog(true);
-            rd.show();
-
-            if(rd.isAccepted()) {
-                Room room = new Room();
-                room.setName(rd.getRoomName());
-                room.setGroup(rd.getGroup());
-                room.setWidth(rd.getRoomWidth());
-                room.setHeight(rd.getRoomHeight());
-
-                room.setBackgroundColor(rd.getBackgroundColor());
-
-                window.getProject().getRooms().add(room);
-                window.getListeners().forEach(ProjectListener::roomListChanged);
-                window.setProjectDirty(true);
-            }
+            createRoom("");
         }
 
         if(e.getActionCommand().equals("Edit")) {
@@ -98,12 +89,38 @@ public class RoomsTab extends JPanel implements ActionListener, ProjectListener 
         if(e.getActionCommand().equals("Remove") &&  window.getSelectedRoom() != null) {
             int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to delete this room? This cannot be undone.", "Warning", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                window.getProject().getRooms().remove(window.getSelectedRoom());
-                window.setSelectedRoom(null);
-                window.getListeners().forEach(ProjectListener::roomListChanged);
-                window.setProjectDirty(true);
+                deleteRoom(window.getSelectedRoom());
             }
         }
+    }
+
+    private void createRoom(String group) {
+        RoomDialog rd = new RoomDialog(true);
+        rd.setGroup(group);
+        rd.show();
+
+        if(rd.isAccepted()) {
+            Room room = new Room();
+            room.setName(rd.getRoomName());
+            room.setGroup(rd.getGroup());
+            room.setWidth(rd.getRoomWidth());
+            room.setHeight(rd.getRoomHeight());
+
+            room.setBackgroundColor(rd.getBackgroundColor());
+
+            window.getProject().getRooms().add(room);
+            window.getListeners().forEach(ProjectListener::roomListChanged);
+            window.setProjectDirty(true);
+        }
+    }
+
+    private void deleteRoom(Room room) {
+        window.getProject().getRooms().remove(room);
+        if(window.getSelectedRoom() == room) {
+            window.setSelectedRoom(null);
+        }
+        window.getListeners().forEach(ProjectListener::roomListChanged);
+        window.setProjectDirty(true);
     }
 
     private void editRoom(Room room) {
