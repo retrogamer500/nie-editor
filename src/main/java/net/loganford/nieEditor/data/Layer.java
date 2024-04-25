@@ -34,7 +34,9 @@ public class Layer {
             layer.getTileMap().setTileData(this.getTileMap().getTileData().clone());
         }
         if(cloneEntities) {
-            layer.setEntities(new ArrayList<>(this.getEntities()));
+            for(Entity entity : this.getEntities()) {
+                layer.getEntities().add(entity.duplicate());
+            }
         }
         return layer;
     }
