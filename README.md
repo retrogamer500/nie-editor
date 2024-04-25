@@ -32,4 +32,4 @@ NIE Editor's goal is to be a simple 2D level editor that is pleasant to both cre
 
 See below for .JAR distributions. NIE Editor requires JRE >=17.
 
-* [1.5.1](https://github.com/retrogamer500/nie-editor/releases/download/1.5.1/nie-editor-1.5.1.zip) - NIE Editor is essentially feature-complete. Small enhancements or bug fixes might be made in the future but the editor is in a great shape to use for full games! This version contains multiple large changes to how the project folder structure behaves, and allows right clicking to create, delete, or rename folders. Several icons are updated to look better as well.
+* [1.5.2](https://github.com/retrogamer500/nie-editor/releases/download/1.5.2/nie-editor-1.5.2.zip) - NIE Editor is essentially feature-complete. Small enhancements or bug fixes might be made in the future but the editor is in a great shape to use for full games! This version contains multiple large changes to how the project folder structure behaves, and allows right clicking to create, delete, or rename folders. Several icons are updated to look better as well.
