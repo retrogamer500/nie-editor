@@ -57,7 +57,7 @@ public class TilesetDialog implements ActionListener {
                 layerNameField,
                 new JLabel("Engine Resource Key:"),
                 engineResourceNameField,
-                new JLabel("Group"),
+                new JLabel("Editor Folder (Deliminated By Periods)"),
                 groupField,
                 new JLabel("Tile Width:"),
                 tileWidthSpinner,

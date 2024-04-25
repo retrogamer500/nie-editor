@@ -212,7 +212,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             askToClose();
         }
         if(e.getActionCommand().equals("About")) {
-            JOptionPane.showMessageDialog(null, "No Idea Engine Editor created by Logan Ford");
+            JOptionPane.showMessageDialog(null, "No Idea Engine Editor created by Logan Ford\nGithub: https://github.com/retrogamer500/nie-editor");
         }
         if(e.getActionCommand().equals("Undo")) {
             if(getSelectedRoom() != null) {
