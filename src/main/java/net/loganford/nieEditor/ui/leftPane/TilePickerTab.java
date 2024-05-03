@@ -1,17 +1,17 @@
 package net.loganford.nieEditor.ui.leftPane;
 
+import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.ui.Window;
+import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class TilePickerTab extends JPanel implements ActionListener, ItemListener {
+public class TilePickerTab extends JPanel implements ActionListener, ItemListener, ProjectListener {
     private JScrollPane scroller;
     private Window window;
 
@@ -20,6 +20,7 @@ public class TilePickerTab extends JPanel implements ActionListener, ItemListene
 
     public TilePickerTab(Window window) {
         this.window = window;
+        window.getListeners().add(this);
 
         this.setLayout(new BorderLayout());
         scroller = new JScrollPane();
@@ -63,6 +64,15 @@ public class TilePickerTab extends JPanel implements ActionListener, ItemListene
     public void itemStateChanged(ItemEvent e) {
         if(e.getSource().equals(showGrid)) {
             window.getListeners().forEach(l -> l.tilePickerSettingsChanged(Integer.parseInt((String) zoomBox.getSelectedItem()), showGrid.isSelected()));
+        }
+    }
+
+    @Override
+    public void projectChanged(Project project) {
+        for(int i = 0; i < zoomBox.getItemCount(); i++) {
+            if(zoomBox.getItemAt(i).equals("" + window.getProjectPreferences().getDefaultTileZoom())) {
+                zoomBox.setSelectedIndex(i);
+            }
         }
     }
 }

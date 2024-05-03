@@ -163,13 +163,19 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
             setSelectionPath(e.getNewLeadSelectionPath());
             if (backingClass.isInstance(node.getUserObject())) {
                 T userObject = (T) node.getUserObject();
-                onChangeAction.accept(userObject);
+                if(backingList.get().contains(userObject)) {
+                    onChangeAction.accept(userObject);
+                }
+                else {
+                    onChangeAction.accept(null);
+                }
             }
             else {
                 onChangeAction.accept(null);
             }
         }
         else {
+            onChangeAction.accept(null);
             setSelectionPath(e.getOldLeadSelectionPath());
         }
     }
@@ -179,7 +185,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
         if(e.getButton() == MouseEvent.BUTTON1) {
             if (e.getClickCount() == 2) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-                if (backingClass.isInstance(node.getUserObject())) {
+                if (node != null && backingClass.isInstance(node.getUserObject())) {
                     T t = (T) node.getUserObject();
                     if (onClickAction != null) {
                         onClickAction.accept(t);

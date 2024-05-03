@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Log4j2
 public class Project {
-
+    
     @Getter @Setter private String projectName;
     @Getter @Setter private List<Tileset> tilesets = new ArrayList<>();
     @Getter @Setter private List<EntityDefinition> entityDefinitions = new ArrayList<>();
