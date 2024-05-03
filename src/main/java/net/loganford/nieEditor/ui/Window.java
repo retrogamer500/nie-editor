@@ -38,6 +38,9 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
     public static final String LAST_FILE_LOCATION = "LastFileLocation";
     public static final String DARK_MODE = "darkMode";
+    public static final String LAUNCH_COMMAND = "launchCommand";
+    public static final String WORKING_DIRECTORY = "workingDirectory";
+
     public static boolean darkMode = false;
 
     @Getter List<ProjectListener> listeners = new ArrayList<ProjectListener>();
