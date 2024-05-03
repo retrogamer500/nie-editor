@@ -2,8 +2,10 @@ package net.loganford.nieEditor.ui;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.loganford.nieEditor.data.Project;
 import net.loganford.nieEditor.util.IconRadioButton;
 import net.loganford.nieEditor.util.ImageCache;
+import net.loganford.nieEditor.util.ProjectListener;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -16,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Log4j2
-public class ToolPane extends JPanel implements ChangeListener, ActionListener {
+public class ToolPane extends JPanel implements ChangeListener, ActionListener, ProjectListener {
     private Window window;
 
     @Getter private JCheckBox snapEntities;
@@ -32,6 +34,7 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
 
     public ToolPane(Window window) {
         this.window = window;
+        window.getListeners().add(this);
 
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
@@ -131,6 +134,7 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == zoomBox) {
             int zoom = Integer.parseInt((String) zoomBox.getSelectedItem());
+            window.getProjectPreferences().setDefaultZoom(zoom);
             window.setZoom(zoom);
         }
 
@@ -151,20 +155,22 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
                     try {
                         super.run();
 
-                        String compileCommand = window.loadVal(Window.COMPILE_COMMAND);
-                        String launchCommand = window.loadVal(Window.LAUNCH_COMMAND);
-                        if(window.getSelectedRoom() != null) {
-                            launchCommand += " " + window.getSelectedRoom().getName();
-                        }
-                        String workingDirectory = window.loadVal(Window.WORKING_DIRECTORY);
-
-                        if(launchCommand != null) {
-                            if (compile && compileCommand != null) {
-                                Process p = runCommand(compileCommand, workingDirectory);
-                                p.waitFor();
+                        if(window.getProjectPreferences() != null) {
+                            String compileCommand = window.getProjectPreferences().getCompileCommand();
+                            String launchCommand = window.getProjectPreferences().getLaunchCommand();
+                            if (window.getSelectedRoom() != null) {
+                                launchCommand += " " + window.getSelectedRoom().getName();
                             }
+                            String workingDirectory = window.getProjectPreferences().getWorkingDirectory();
+
                             if (launchCommand != null) {
-                                runCommand(launchCommand, workingDirectory);
+                                if (compile && compileCommand != null) {
+                                    Process p = runCommand(compileCommand, workingDirectory);
+                                    p.waitFor();
+                                }
+                                if (launchCommand != null) {
+                                    runCommand(launchCommand, workingDirectory);
+                                }
                             }
                         }
                     }
@@ -192,5 +198,14 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
         errStream.close();
 
         return p;
+    }
+
+    @Override
+    public void projectChanged(Project project) {
+        for(int i = 0; i < zoomBox.getItemCount(); i++) {
+            if(zoomBox.getItemAt(i).equals("" + window.getProjectPreferences().getDefaultZoom())) {
+                zoomBox.setSelectedIndex(i);
+            }
+        }
     }
 }

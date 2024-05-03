@@ -43,8 +43,6 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
         setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         window.getListeners().add(this);
-        //setPreferredSize(new Dimension(500, 500));
-        //setSize(new Dimension(32, 32));
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -137,6 +135,8 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
 
     @Override
     public void projectChanged(Project project) {
+        zoom = window.getProjectPreferences().getDefaultTileZoom();
+        
         updatePicker();
     }
 
@@ -159,6 +159,8 @@ public class TilePicker extends JPanel implements ProjectListener, MouseListener
     public void tilePickerSettingsChanged(int zoom, boolean showGrid) {
         this.zoom = zoom;
         this.showGrid = showGrid;
+        window.getProjectPreferences().setDefaultTileZoom(zoom);
+
         updatePicker();
 
         if(tileImage != null) {

@@ -179,7 +179,7 @@ public class FolderTree<T> extends JTree implements TreeSelectionListener, Mouse
         if(e.getButton() == MouseEvent.BUTTON1) {
             if (e.getClickCount() == 2) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-                if (backingClass.isInstance(node.getUserObject())) {
+                if (node != null && backingClass.isInstance(node.getUserObject())) {
                     T t = (T) node.getUserObject();
                     if (onClickAction != null) {
                         onClickAction.accept(t);

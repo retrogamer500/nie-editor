@@ -2,13 +2,11 @@ package net.loganford.nieEditor.ui;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import net.loganford.nieEditor.data.EntityDefinition;
-import net.loganford.nieEditor.data.Project;
-import net.loganford.nieEditor.data.Room;
-import net.loganford.nieEditor.data.Tileset;
+import net.loganford.nieEditor.data.*;
 import net.loganford.nieEditor.ui.leftPane.LeftPane;
 import net.loganford.nieEditor.ui.leftPane.TilePicker;
 import net.loganford.nieEditor.ui.rightPane.RightPane;
@@ -29,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -38,9 +35,6 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
     public static final String LAST_FILE_LOCATION = "LastFileLocation";
     public static final String DARK_MODE = "darkMode";
-    public static final String COMPILE_COMMAND = "compileCommand";
-    public static final String LAUNCH_COMMAND = "launchCommand";
-    public static final String WORKING_DIRECTORY = "workingDirectory";
 
     public static boolean darkMode = false;
 
@@ -48,6 +42,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
     @Getter private File projectFile;
     @Getter private Project project;
+    private ProjectPreferences projectPreferences;
 
     @Getter private ToolPane toolPane;
     @Getter private RoomEditor roomPanel;
@@ -144,6 +139,12 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             jmi.addActionListener(this);
             menu.add(jmi);
 
+            menu.addSeparator();
+
+            jmi = new JMenuItem("Project Preferences");
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
             jmi = new JMenuItem("Preferences");
             jmi.addActionListener(this);
             menu.add(jmi);
@@ -221,6 +222,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         }
         if(e.getActionCommand().equals("Save Project")) {
             saveProject();
+            saveEditorData();
         }
         if(e.getActionCommand().equals("Quit")) {
             askToClose();
@@ -236,6 +238,11 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         if(e.getActionCommand().equals("Redo")) {
             if(getSelectedRoom() != null) {
                 getSelectedRoom().getActionPerformer().redo(this);
+            }
+        }
+        if(e.getActionCommand().equals("Project Preferences")) {
+            if(project != null) {
+                new ProjectPreferencesDialog().show(this);
             }
         }
         if(e.getActionCommand().equals("Preferences")) {
@@ -323,7 +330,45 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         }
     }
 
+    private File editorDataFile() {
+        return new File(projectFile.getParentFile().getAbsolutePath() + "/" + projectFile.getName() + "d");
+    }
+
+    private void loadEditorData() {
+        try {
+            File editorDataFile = editorDataFile();
+            if (editorDataFile.exists()) {
+                String fileContents = FileUtils.readFileToString(editorDataFile, StandardCharsets.UTF_8);
+                Gson gson = new Gson();
+                projectPreferences = gson.fromJson(fileContents, ProjectPreferences.class);
+            }
+        }
+        catch(IOException e) {
+            log.error("Unable to load editor data", e);
+        }
+    }
+
+    private void saveEditorData() {
+        if(projectPreferences != null) {
+            try {
+                Gson gson = new Gson();
+                File editorDataFile = editorDataFile();
+
+                String data = gson.toJson(projectPreferences);
+                FileUtils.writeStringToFile(editorDataFile, data, StandardCharsets.UTF_8);
+            }
+            catch(IOException e) {
+                log.error("Unable to write editor data", e);
+            }
+        }
+    }
+
     private void openProject(File file) {
+
+        if(projectPreferences != null && project != null) {
+            saveEditorData();
+        }
+
         try {
             String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             project = Project.load(fileContents);
@@ -331,6 +376,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             projectLastModified = new File(projectFile.getAbsolutePath()).lastModified();
             selectedRoom = null;
             frame.setTitle("NIE Editor - " + file.getName());
+            loadEditorData();
             setProjectDirty(false);
             getListeners().forEach(l -> l.projectChanged(project));
             getListeners().forEach(ProjectListener::roomListChanged);
@@ -374,6 +420,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
                 FileUtils.writeStringToFile(file, project.save(), StandardCharsets.UTF_8);
                 setProjectDirty(false);
                 saveVal(LAST_FILE_LOCATION, projectFile.getAbsolutePath());
+                loadEditorData();
                 getListeners().forEach(l -> l.projectChanged(project));
                 getListeners().forEach(ProjectListener::roomListChanged);
                 getListeners().forEach(l -> l.selectedRoomChanged(null));
@@ -417,6 +464,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
                 saveProject();
             }
         }
+        saveEditorData();
         frame.dispose();
     }
 
@@ -518,6 +566,9 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
                     getListeners().forEach(ProjectListener::roomListChanged);
                     getListeners().forEach(l -> l.selectedRoomChanged(selectedRoom));
                 }
+                else {
+                    projectLastModified = testFile.lastModified();
+                }
             }
         }
     }
@@ -525,5 +576,12 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
     @Override
     public void windowLostFocus(WindowEvent e) {
 
+    }
+
+    public ProjectPreferences getProjectPreferences() {
+        if(project != null && projectPreferences == null) {
+            projectPreferences = new ProjectPreferences();
+        }
+        return projectPreferences;
     }
 }
