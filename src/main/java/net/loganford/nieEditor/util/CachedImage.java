@@ -1,6 +1,7 @@
 package net.loganford.nieEditor.util;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+@Log4j2
 public class CachedImage {
     @Getter private String filename;
 
@@ -25,6 +27,7 @@ public class CachedImage {
             icon = new ImageIcon(image);
         }
         catch(IOException e) {
+            log.error("File path caused error: " + file.getAbsolutePath());
             throw new RuntimeException(e);
         }
     }

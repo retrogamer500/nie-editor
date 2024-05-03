@@ -45,6 +45,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
     private ProjectPreferences projectPreferences;
 
     @Getter private ToolPane toolPane;
+    private RightPane rightPane;
     @Getter private RoomEditor roomPanel;
     @Getter private LeftPane leftPane;
     @Getter private Room selectedRoom;
@@ -177,7 +178,8 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         leftPane = new LeftPane(this);
         frame.add(leftPane, BorderLayout.WEST);
         frame.add(roomGrid(), BorderLayout.CENTER);
-        frame.add(new RightPane(this), BorderLayout.EAST);
+        rightPane = new RightPane(this);
+        frame.add(rightPane, BorderLayout.EAST);
 
         frame.setJMenuBar(menuBar);
         frame.setVisible(true);
@@ -376,6 +378,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             projectLastModified = new File(projectFile.getAbsolutePath()).lastModified();
             selectedRoom = null;
             frame.setTitle("NIE Editor - " + file.getName());
+            frame.repaint();
             loadEditorData();
             setProjectDirty(false);
             getListeners().forEach(l -> l.projectChanged(project));
@@ -413,10 +416,11 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             }
 
             try {
+                selectedRoom = null;
                 project = new Project();
                 projectFile = file;
                 projectLastModified = projectFile.lastModified();
-                selectedRoom = null;
+
                 FileUtils.writeStringToFile(file, project.save(), StandardCharsets.UTF_8);
                 setProjectDirty(false);
                 saveVal(LAST_FILE_LOCATION, projectFile.getAbsolutePath());
@@ -424,6 +428,8 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
                 getListeners().forEach(l -> l.projectChanged(project));
                 getListeners().forEach(ProjectListener::roomListChanged);
                 getListeners().forEach(l -> l.selectedRoomChanged(null));
+                getListeners().forEach(l -> l.layersChanged(null));
+
             } catch (IOException ioException) {
                 log.error("Unable to save file", ioException);
                 JOptionPane.showMessageDialog(null, "Unable to save file!");
@@ -556,7 +562,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
     @Override
     public void windowGainedFocus(WindowEvent e) {
         Room oldSelectedRoom = selectedRoom;
-        if(projectFile != null) {
+        if(projectFile != null && project != null && project.getProjectName() != null) {
             File testFile = new File(projectFile.getAbsolutePath());
             if (testFile.lastModified() != projectLastModified) {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Project has been modified externally. Reload? This will undo any unsaved changes.", "Modified Project", JOptionPane.YES_NO_OPTION);
