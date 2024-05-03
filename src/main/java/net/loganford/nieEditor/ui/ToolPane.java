@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.loganford.nieEditor.util.IconRadioButton;
 import net.loganford.nieEditor.util.ImageCache;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -99,6 +98,10 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
         separator.setPreferredSize(new Dimension(4, 24));
         add(separator);
 
+        JButton compileRunButton = new JButton("Build", ImageCache.getInstance().getImage(new File("./editor-data/compile_run.png"), 14, 14));
+        compileRunButton.addActionListener(this);
+        add(compileRunButton);
+
         JButton runButton = new JButton("Run", ImageCache.getInstance().getImage(new File("./editor-data/run.png"), 14, 14));
         runButton.addActionListener(this);
         add(runButton);
@@ -132,24 +135,62 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
         }
 
         if(e.getActionCommand().equals("Run")) {
-            String command = window.loadVal(Window.LAUNCH_COMMAND);
-            String workingDirectory = window.loadVal(Window.WORKING_DIRECTORY);
-            if(StringUtils.isNotBlank(command) && StringUtils.isNoneBlank(workingDirectory)) {
-                if(window.getSelectedRoom() != null) {
-                    command += " " + window.getSelectedRoom().getName();
-                }
-                ProcessBuilder builder = new ProcessBuilder(command.split(" "));
-                builder = builder.directory(new File(workingDirectory));
-                try {
-                    Process p = builder.start();
-                    InputStream inStream = p.getInputStream();
-                    InputStream errStream = p.getErrorStream();
-                    inStream.close();
-                    errStream.close();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
+            launchGame(false);
         }
+
+        if(e.getActionCommand().equals("Build")) {
+            launchGame(true);
+        }
+    }
+
+    private void launchGame(boolean compile) {
+        try {
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        super.run();
+
+                        String compileCommand = window.loadVal(Window.COMPILE_COMMAND);
+                        String launchCommand = window.loadVal(Window.LAUNCH_COMMAND);
+                        if(window.getSelectedRoom() != null) {
+                            launchCommand += " " + window.getSelectedRoom().getName();
+                        }
+                        String workingDirectory = window.loadVal(Window.WORKING_DIRECTORY);
+
+                        if(launchCommand != null) {
+                            if (compile && compileCommand != null) {
+                                Process p = runCommand(compileCommand, workingDirectory);
+                                p.waitFor();
+                            }
+                            if (launchCommand != null) {
+                                runCommand(launchCommand, workingDirectory);
+                            }
+                        }
+                    }
+                    catch(Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+
+            thread.start();
+        }
+        catch(Exception e) {
+            log.warn(e);
+        }
+    }
+
+    private Process runCommand(String command, String workingDirectory) throws IOException {
+        ProcessBuilder builder = new ProcessBuilder(command.split(" "));
+        builder = builder.directory(new File(workingDirectory));
+
+        Process p = builder.start();
+        InputStream inStream = p.getInputStream();
+        InputStream errStream = p.getErrorStream();
+        inStream.close();
+        errStream.close();
+
+        return p;
     }
 }
