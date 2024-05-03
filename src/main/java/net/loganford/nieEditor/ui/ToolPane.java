@@ -143,7 +143,7 @@ public class ToolPane extends JPanel implements ChangeListener, ActionListener {
         }
     }
 
-    private void launchGame(boolean compile) {
+    public void launchGame(boolean compile) {
         try {
             Thread thread = new Thread() {
                 @Override

@@ -128,11 +128,21 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             menu.addSeparator();
 
             jmi = new JMenuItem("Goto Room");
-            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK ) );
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK ) );
             jmi.addActionListener(this);
             menu.add(jmi);
 
             menu.addSeparator();
+
+            jmi = new JMenuItem("Run");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK ) );
+            jmi.addActionListener(this);
+            menu.add(jmi);
+
+            jmi = new JMenuItem("Build");
+            jmi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK ) );
+            jmi.addActionListener(this);
+            menu.add(jmi);
 
             jmi = new JMenuItem("Preferences");
             jmi.addActionListener(this);
@@ -233,6 +243,12 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
         }
         if(e.getActionCommand().equals("Goto Room")) {
             openRoom();
+        }
+        if(e.getActionCommand().equals("Run")) {
+            toolPane.launchGame(false);
+        }
+        if(e.getActionCommand().equals("Build")) {
+            toolPane.launchGame(true);
         }
         if(e.getActionCommand().equals("Clone Room")) {
             cloneRoom();
