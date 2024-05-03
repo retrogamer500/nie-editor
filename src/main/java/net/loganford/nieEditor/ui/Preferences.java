@@ -16,10 +16,10 @@ public class Preferences {
 
         JComponent[] inputs = {
                 darkModeBox,
-                new JLabel("Launch Command:"),
-                scrollPane,
                 new JLabel("Working Directory:"),
-                workingDirectory
+                workingDirectory,
+                new JLabel("Run Command:"),
+                scrollPane
         };
 
         int result = JOptionPane.showConfirmDialog(null, inputs, "Preferences", JOptionPane.OK_CANCEL_OPTION);
