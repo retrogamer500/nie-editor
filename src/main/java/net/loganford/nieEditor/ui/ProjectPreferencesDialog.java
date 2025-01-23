@@ -28,6 +28,7 @@ public class ProjectPreferencesDialog {
         int result = JOptionPane.showConfirmDialog(null, inputs, "Preferences", JOptionPane.OK_CANCEL_OPTION);
 
         if(result == JOptionPane.OK_OPTION) {
+            window.setProjectDirty(true);
             window.getProjectPreferences().setCompileCommand(compileCommand.getText());
             window.getProjectPreferences().setLaunchCommand(launchCommand.getText());
             window.getProjectPreferences().setWorkingDirectory(workingDirectory.getText());
