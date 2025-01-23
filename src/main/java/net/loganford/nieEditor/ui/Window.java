@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -42,6 +43,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
 
     @Getter private File projectFile;
     @Getter private Project project;
+    private GlobalPreferences globalPreferences;
     private ProjectPreferences projectPreferences;
 
     @Getter private ToolPane toolPane;
@@ -333,7 +335,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
     }
 
     private File editorDataFile() {
-        return new File(projectFile.getParentFile().getAbsolutePath() + "/" + projectFile.getName() + "d");
+        return new File("./configuration.json");
     }
 
     private void loadEditorData() {
@@ -342,7 +344,18 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
             if (editorDataFile.exists()) {
                 String fileContents = FileUtils.readFileToString(editorDataFile, StandardCharsets.UTF_8);
                 Gson gson = new Gson();
-                projectPreferences = gson.fromJson(fileContents, ProjectPreferences.class);
+                globalPreferences = gson.fromJson(fileContents, GlobalPreferences.class);
+                if(globalPreferences == null) {
+                    globalPreferences = new GlobalPreferences();
+                }
+                if(globalPreferences.getProjectPreferences() == null) {
+                    globalPreferences.setProjectPreferences(new HashMap<>());
+                }
+                projectPreferences = globalPreferences.getProjectPreferences().get(projectFile.getParentFile().getAbsolutePath());
+                if(projectPreferences == null) {
+                    projectPreferences = new ProjectPreferences();
+                    globalPreferences.getProjectPreferences().put(projectFile.getParentFile().getAbsolutePath(), projectPreferences);
+                }
             }
         }
         catch(IOException e) {
@@ -356,7 +369,7 @@ public class Window implements ActionListener, ProjectListener, WindowListener, 
                 Gson gson = new Gson();
                 File editorDataFile = editorDataFile();
 
-                String data = gson.toJson(projectPreferences);
+                String data = gson.toJson(globalPreferences);
                 FileUtils.writeStringToFile(editorDataFile, data, StandardCharsets.UTF_8);
             }
             catch(IOException e) {
